@@ -1,0 +1,71 @@
+{
+  "version": "1.38.1",
+  "name": "projectbruno",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ],
+  "requests": [
+    {
+      "name": "Get all customers",
+      "method": "GET",
+      "url": "http://localhost:8080/customers",
+      "headers": [],
+      "params": [],
+      "body": null,
+      "description": "Fetches all customers from the API."
+    },
+    {
+      "name": "Create a new customer",
+      "method": "POST",
+      "url": "http://localhost:8080/customers",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "params": [],
+      "body": {
+        "type": "json",
+        "content": {
+          "name": "Hillmannnnnn",
+          "contact": "info@testkunde.de",
+          "address": "Hauptstraße 187, 10115 Berlin"
+        }
+      },
+      "description": "Creates a new customer in the system."
+    },
+    {
+      "name": "Get all offers",
+      "method": "GET",
+      "url": "http://localhost:8080/offers",
+      "headers": [],
+      "params": [],
+      "body": null,
+      "description": "Fetches all offers from the API."
+    },
+    {
+      "name": "Change offer status",
+      "method": "PATCH",
+      "url": "http://localhost:8080/offers/{id}/status",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Basic Account-Manager"
+        }
+      ],
+      "params": [],
+      "body": {
+        "type": "json",
+        "content": {
+          "status": "Active"
+        }
+      },
+      "description": "Updates the status of an offer."
+    }
+  ]
+}
+
+
