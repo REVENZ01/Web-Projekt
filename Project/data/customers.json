@@ -1,2 +1,47 @@
-[  
+[
+  {
+    "id": "1",
+    "name": "Bruno",
+    "email": "bruno@example.com",
+    "age": 30,
+    "address": "123 Main Street, Anytown",
+    "createdAt": "2025-01-21T20:44:04.842Z",
+    "updatedAt": "2025-01-21T20:44:04.842Z"
+  },
+  {
+    "id": "2",
+    "name": "Brunou",
+    "email": "bruno@example.com",
+    "age": 30,
+    "address": "123 Main Street, Anytown",
+    "createdAt": "2025-01-21T20:44:30.663Z",
+    "updatedAt": "2025-01-21T20:44:30.663Z"
+  },
+  {
+    "id": "3",
+    "name": "Brunou",
+    "email": "bruno@example.com",
+    "age": 30,
+    "address": "123 Main Street, Anytown",
+    "createdAt": "2025-01-21T21:03:35.328Z",
+    "updatedAt": "2025-01-21T21:03:35.328Z"
+  },
+  {
+    "id": "5",
+    "name": "Gust",
+    "email": "bruno@example.com",
+    "age": 30,
+    "address": "123 Main Street, Anytown",
+    "createdAt": "2025-01-21T21:08:38.137Z",
+    "updatedAt": "2025-01-21T21:25:44.339Z"
+  },
+  {
+    "id": "6",
+    "name": "Brunou",
+    "email": "bruno@example.com",
+    "age": 30,
+    "address": "123 Main Street, Anytown",
+    "createdAt": "2025-01-21T21:08:39.421Z",
+    "updatedAt": "2025-01-21T21:08:39.421Z"
+  }
 ]
