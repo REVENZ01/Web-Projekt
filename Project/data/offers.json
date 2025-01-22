@@ -1,1 +1,33 @@
-[]
+[
+  {
+    "id": "2",
+    "title": "Updated Offer Name",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 99.99,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-22T23:07:22.757Z",
+    "updatedAt": "2025-01-22T23:15:39.334Z",
+    "name": "Updated Offer Name"
+  },
+  {
+    "id": "3",
+    "title": "Webentwicklung Komplettpaket",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 2500,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-22T23:07:25.777Z",
+    "updatedAt": "2025-01-22T23:07:25.777Z"
+  },
+  {
+    "id": "4",
+    "title": "Webentwicklung Komplettpaket",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 2500,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-22T23:07:26.320Z",
+    "updatedAt": "2025-01-22T23:07:26.320Z"
+  }
+]

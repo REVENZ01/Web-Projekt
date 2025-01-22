@@ -1,72 +1,134 @@
-const express = require('express');
-const { v4: uuidv4 } = require('uuid');
 const fs = require('fs/promises');
 const path = require('path');
 
-const router = express.Router();
-const OFFERS_PATH = './data/offers.json';
-const ASSETS_PATH = './data/assets';
+const OFFERS_FILE = path.join(__dirname, '../data/offers.json');
 
-// Hilfsfunktionen
-async function loadOffers() {
+async function offersRoutes(fastify, options) {
+  // Hilfsfunktion: Datei lesen
+  async function readOffersFile() {
     try {
-        const data = await fs.readFile(OFFERS_PATH, 'utf8');
-        return JSON.parse(data);
+      const data = await fs.readFile(OFFERS_FILE, "utf-8");
+      const offers = JSON.parse(data);
+
+      // Validierung: Daten müssen ein Array sein
+      if (!Array.isArray(offers)) {
+        throw new Error("Invalid data format in offers.json");
+      }
+
+      return offers;
     } catch (err) {
+      if (err.code === "ENOENT") {
+        // Datei nicht gefunden: leeres Array zurückgeben
         return [];
+      }
+      throw new Error("Error reading offers file");
     }
-}
+  }
 
-async function saveOffers(offers) {
-    await fs.writeFile(OFFERS_PATH, JSON.stringify(offers, null, 2));
-}
-
-// Dateien hochladen
-router.post('/:id/files', async (req, res) => {
-    const { id } = req.params;
-    const fileContent = req.body.content; // Beispiel: Base64-codierter Text
-    const fileName = `file-${uuidv4()}.txt`;
-
+  // Hilfsfunktion: Datei schreiben
+  async function writeOffersFile(offers) {
     try {
-        const offers = await loadOffers();
-        const offer = offers.find(o => o.id === id);
-        if (!offer) return res.status(404).json({ error: 'Offer not found POST' });
-
-        const filePath = path.join(ASSETS_PATH, fileName);
-        await fs.writeFile(filePath, fileContent, 'utf8');
-
-        const fileData = { id: uuidv4(), name: fileName, url: `/files/${fileName}` };
-        offer.files.push(fileData);
-        await saveOffers(offers);
-
-        res.status(201).json(fileData);
+      await fs.writeFile(OFFERS_FILE, JSON.stringify(offers, null, 2));
     } catch (err) {
-        res.status(500).json({ error: 'File upload failed POST' });
+      throw new Error("Error writing offers file");
     }
-});
+  }
 
-router.get('/:id/files', async (req, res) => {
-    const { id } = req.params;
-    const offers = await loadOffers();
-    const offer = offers.find(o => o.id === id);
-    if (!offer) return res.status(404).json({ error: 'Offer not found GET' });
-    res.json(offer.files || []);
-});
+  // GET /offers
+  fastify.get('/', async (request, reply) => {
+    try {
+      const offers = await readOffersFile();
+      return offers;
+    } catch (err) {
+      fastify.log.error(err);
+      reply.code(500).send({ message: 'Error reading offers data' });
+    }
+  });
 
-// Kommentare hinzufügen
-router.post('/:id/comments', async (req, res) => {
-    const { id } = req.params;
-    const { text } = req.body;
+  // POST /offers
+  fastify.post('/', async (request, reply) => {
+    try {
+      const offers = await readOffersFile();
 
-    const offers = await loadOffers();
-    const offer = offers.find(o => o.id === id);
-    if (!offer) return res.status(404).json({ error: 'Offer not found' });
+      const newOffer = {
+        id: String(offers.length + 1),
+        ...request.body,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
 
-    const newComment = { id: uuidv4(), text, timestamp: new Date().toISOString() };
-    offer.comments.push(newComment);
-    await saveOffers(offers);
+      offers.push(newOffer);
+      await writeOffersFile(offers);
 
-    res.status(201).json(newComment);
-});
+      reply.code(201).send(newOffer);
+    } catch (err) {
+      fastify.log.error(err);
+      reply.code(500).send({ message: 'Error adding new offer' });
+    }
+  });
 
-module.exports = router;
+// PUT /offers/:idOrName
+fastify.put('/:id', async (request, reply) => {
+    try {
+      const { id } = request.params;
+      const updatedOfferData = request.body;
+      const offers = await readOffersFile();
+  
+      // Angebot mit der angegebenen ID finden
+      const offerIndex = offers.findIndex((offer) => offer.id === id);
+      if (offerIndex === -1) {
+        reply.code(404).send({ message: 'Offer not found' });
+        return;
+      }
+  
+      // Angebot aktualisieren
+      offers[offerIndex] = {
+        ...offers[offerIndex],
+        ...updatedOfferData,
+        updatedAt: new Date().toISOString(), // Aktualisierungszeit hinzufügen
+      };
+  
+      // Datei aktualisieren
+      await writeOffersFile(offers);
+  
+      reply.code(200).send({
+        message: 'Offer successfully updated',
+        updatedOffer: offers[offerIndex],
+      });
+    } catch (err) {
+      fastify.log.error(err);
+      reply.code(500).send({ message: 'Error updating offer' });
+    }
+  });
+  
+// DELETE /offers/:id
+fastify.delete('/:id', async (request, reply) => {
+    try {
+      const { id } = request.params;
+      const offers = await readOffersFile();
+  
+      // Angebot mit der angegebenen ID finden
+      const offerIndex = offers.findIndex((offer) => offer.id === id);
+      if (offerIndex === -1) {
+        reply.code(404).send({ message: 'Offer not found' });
+        return;
+      }
+  
+      // Angebot entfernen
+      const deletedOffer = offers.splice(offerIndex, 1);
+  
+      // Datei aktualisieren
+      await writeOffersFile(offers);
+  
+      reply.code(200).send({
+        message: 'Offer successfully deleted',
+        deletedOffer: deletedOffer[0],
+      });
+    } catch (err) {
+      fastify.log.error(err);
+      reply.code(500).send({ message: 'Error deleting offer' });
+    }
+  });  
+}
+
+module.exports = offersRoutes;

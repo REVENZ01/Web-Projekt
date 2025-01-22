@@ -3,7 +3,7 @@ const fastify = require('fastify')({ logger: true });
 // Kunden-Routen
 fastify.register(require('./routes/customers'), { prefix: '/customers' });
 // Angebote-Routen
-
+fastify.register(require('./routes/offers'), { prefix: '/offers' });
 
 // Starten des Servers
 const startServer = async () => {
