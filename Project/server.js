@@ -1,5 +1,11 @@
 const fastify = require('fastify')({ logger: true });
+const cors = require('@fastify/cors');
 
+// CORS aktivieren
+fastify.register(cors, {
+  origin: "http://localhost:3000", // Erlaubt Anfragen von diesem Frontend
+  methods: ["GET", "POST", "PUT", "DELETE"], // Erlaubte HTTP-Methoden
+});
 // Kunden-Routen
 fastify.register(require('./routes/customers'), { prefix: '/customers' });
 // Angebote-Routen

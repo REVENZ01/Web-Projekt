@@ -1,33 +1,332 @@
 [
   {
+    "id": "1",
+    "name": "Updated ",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": "99999",
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-23T16:57:30.570Z",
+    "updatedAt": "2025-01-23T17:02:10.556Z"
+  },
+  {
     "id": "2",
-    "title": "Updated Offer Name",
+    "name": "Up",
     "description": "Entwicklung einer vollständigen responsiven Website.",
     "price": 99.99,
     "currency": "EUR",
     "status": "Active",
-    "createdAt": "2025-01-22T23:07:22.757Z",
-    "updatedAt": "2025-01-22T23:15:39.334Z",
-    "name": "Updated Offer Name"
+    "createdAt": "2025-01-23T16:58:09.802Z",
+    "updatedAt": "2025-01-23T18:34:28.467Z"
   },
   {
     "id": "3",
-    "title": "Webentwicklung Komplettpaket",
+    "name": "Upe",
     "description": "Entwicklung einer vollständigen responsiven Website.",
-    "price": 2500,
+    "price": 99.99,
     "currency": "EUR",
     "status": "Active",
-    "createdAt": "2025-01-22T23:07:25.777Z",
-    "updatedAt": "2025-01-22T23:07:25.777Z"
+    "createdAt": "2025-01-23T18:38:49.937Z",
+    "updatedAt": "2025-01-23T18:38:49.937Z"
   },
   {
     "id": "4",
-    "title": "Webentwicklung Komplettpaket",
+    "name": "Upe",
     "description": "Entwicklung einer vollständigen responsiven Website.",
-    "price": 2500,
+    "price": 99.99,
     "currency": "EUR",
     "status": "Active",
-    "createdAt": "2025-01-22T23:07:26.320Z",
-    "updatedAt": "2025-01-22T23:07:26.320Z"
+    "createdAt": "2025-01-23T18:38:51.695Z",
+    "updatedAt": "2025-01-23T18:38:51.695Z"
+  },
+  {
+    "id": "5",
+    "name": "Upe",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 99.99,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-23T18:38:51.833Z",
+    "updatedAt": "2025-01-23T18:38:51.833Z"
+  },
+  {
+    "id": "6",
+    "name": "Upe",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 99.99,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-23T18:38:51.885Z",
+    "updatedAt": "2025-01-23T18:38:51.885Z"
+  },
+  {
+    "id": "7",
+    "name": "Upe",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 99.99,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-23T18:38:52.010Z",
+    "updatedAt": "2025-01-23T18:38:52.010Z"
+  },
+  {
+    "id": "8",
+    "name": "Upe",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 99.99,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-23T18:38:52.149Z",
+    "updatedAt": "2025-01-23T18:38:52.149Z"
+  },
+  {
+    "id": "9",
+    "name": "Upe",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 99.99,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-23T18:38:52.279Z",
+    "updatedAt": "2025-01-23T18:38:52.279Z"
+  },
+  {
+    "id": "10",
+    "name": "Upe",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 99.99,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-23T18:38:52.467Z",
+    "updatedAt": "2025-01-23T18:38:52.467Z"
+  },
+  {
+    "id": "11",
+    "name": "Upe",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 99.99,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-23T18:38:52.504Z",
+    "updatedAt": "2025-01-23T18:38:52.504Z"
+  },
+  {
+    "id": "12",
+    "name": "Upe",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 99.99,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-23T18:38:52.678Z",
+    "updatedAt": "2025-01-23T18:38:52.678Z"
+  },
+  {
+    "id": "13",
+    "name": "Upe",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 99.99,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-23T18:38:52.789Z",
+    "updatedAt": "2025-01-23T18:38:52.789Z"
+  },
+  {
+    "id": "14",
+    "name": "Upe",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 99.99,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-23T18:38:52.930Z",
+    "updatedAt": "2025-01-23T18:38:52.930Z"
+  },
+  {
+    "id": "15",
+    "name": "Upe",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 99.99,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-23T18:38:52.938Z",
+    "updatedAt": "2025-01-23T18:38:52.938Z"
+  },
+  {
+    "id": "16",
+    "name": "Upe",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 99.99,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-23T18:38:53.058Z",
+    "updatedAt": "2025-01-23T18:38:53.058Z"
+  },
+  {
+    "id": "17",
+    "name": "Upe",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 99.99,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-23T18:38:53.175Z",
+    "updatedAt": "2025-01-23T18:38:53.175Z"
+  },
+  {
+    "id": "18",
+    "name": "Upe",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 99.99,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-23T18:38:53.300Z",
+    "updatedAt": "2025-01-23T18:38:53.300Z"
+  },
+  {
+    "id": "19",
+    "name": "Upe",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 99.99,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-23T18:38:53.425Z",
+    "updatedAt": "2025-01-23T18:38:53.425Z"
+  },
+  {
+    "id": "20",
+    "name": "Upe",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 99.99,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-23T18:38:53.555Z",
+    "updatedAt": "2025-01-23T18:38:53.555Z"
+  },
+  {
+    "id": "21",
+    "name": "Upe",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 99.99,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-23T18:38:53.648Z",
+    "updatedAt": "2025-01-23T18:38:53.648Z"
+  },
+  {
+    "id": "22",
+    "name": "Upe",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 99.99,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-23T18:38:53.696Z",
+    "updatedAt": "2025-01-23T18:38:53.696Z"
+  },
+  {
+    "id": "23",
+    "name": "Upe",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 99.99,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-23T18:38:53.964Z",
+    "updatedAt": "2025-01-23T18:38:53.964Z"
+  },
+  {
+    "id": "24",
+    "name": "Upe",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 99.99,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-23T18:38:54.099Z",
+    "updatedAt": "2025-01-23T18:38:54.099Z"
+  },
+  {
+    "id": "25",
+    "name": "Upe",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 99.99,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-23T18:38:54.151Z",
+    "updatedAt": "2025-01-23T18:38:54.151Z"
+  },
+  {
+    "id": "26",
+    "name": "Upe",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 99.99,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-23T18:38:54.297Z",
+    "updatedAt": "2025-01-23T18:38:54.297Z"
+  },
+  {
+    "id": "27",
+    "name": "Upe",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 99.99,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-23T18:38:54.420Z",
+    "updatedAt": "2025-01-23T18:38:54.420Z"
+  },
+  {
+    "id": "28",
+    "name": "Upe",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 99.99,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-23T18:38:54.570Z",
+    "updatedAt": "2025-01-23T18:38:54.570Z"
+  },
+  {
+    "id": "29",
+    "name": "Upe",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 99.99,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-23T18:38:55.015Z",
+    "updatedAt": "2025-01-23T18:38:55.015Z"
+  },
+  {
+    "id": "30",
+    "name": "Upe",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 99.99,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-23T18:38:55.158Z",
+    "updatedAt": "2025-01-23T18:38:55.158Z"
+  },
+  {
+    "id": "31",
+    "name": "Upe",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 99.99,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-23T18:38:55.324Z",
+    "updatedAt": "2025-01-23T18:38:55.324Z"
+  },
+  {
+    "id": "32",
+    "name": "Upe",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 99.99,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-23T18:38:55.477Z",
+    "updatedAt": "2025-01-23T18:38:55.477Z"
+  },
+  {
+    "id": "33",
+    "name": "Upe",
+    "description": "Entwicklung einer vollständigen responsiven Website.",
+    "price": 99.99,
+    "currency": "EUR",
+    "status": "Active",
+    "createdAt": "2025-01-23T18:38:55.610Z",
+    "updatedAt": "2025-01-23T18:38:55.610Z"
   }
 ]
