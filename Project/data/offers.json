@@ -1,13 +1,13 @@
 [
   {
     "id": "1",
-    "name": "Updated ",
+    "name": "Updaded",
     "description": "Entwicklung einer vollständigen responsiven Website.",
-    "price": "99999",
+    "price": "1113",
     "currency": "EUR",
     "status": "Active",
     "createdAt": "2025-01-23T16:57:30.570Z",
-    "updatedAt": "2025-01-23T17:02:10.556Z"
+    "updatedAt": "2025-01-24T20:42:47.243Z"
   },
   {
     "id": "2",
@@ -311,22 +311,12 @@
   },
   {
     "id": "32",
-    "name": "Upe",
+    "name": "Upepp",
     "description": "Entwicklung einer vollständigen responsiven Website.",
     "price": 99.99,
     "currency": "EUR",
     "status": "Active",
     "createdAt": "2025-01-23T18:38:55.477Z",
-    "updatedAt": "2025-01-23T18:38:55.477Z"
-  },
-  {
-    "id": "33",
-    "name": "Upe",
-    "description": "Entwicklung einer vollständigen responsiven Website.",
-    "price": 99.99,
-    "currency": "EUR",
-    "status": "Active",
-    "createdAt": "2025-01-23T18:38:55.610Z",
-    "updatedAt": "2025-01-23T18:38:55.610Z"
+    "updatedAt": "2025-01-23T18:59:47.972Z"
   }
 ]

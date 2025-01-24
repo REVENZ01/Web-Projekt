@@ -1,0 +1,46 @@
+.customers {
+    padding: 2rem;
+  }
+  
+  .customer-form {
+    margin-bottom: 2rem;
+  }
+  
+  .customer-form input {
+    display: block;
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    width: 100%;
+    max-width: 400px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .customer-form button {
+    padding: 0.7rem 1.5rem;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 0.5rem;
+  }
+  
+  .customer-form button:hover {
+    background-color: #218838;
+  }
+  
+  .customer-list ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .customer-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .customer-list li strong {
+    font-weight: bold;
+  }
+  

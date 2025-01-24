@@ -88,5 +88,45 @@
     "address": "123 Main Street, Anytown",
     "createdAt": "2025-01-22T22:42:11.813Z",
     "updatedAt": "2025-01-22T22:42:11.813Z"
+  },
+  {
+    "id": "11",
+    "name": "Christian",
+    "contact": "otto.h@gmail.com",
+    "address": "187 Tannhausen",
+    "createdAt": "2025-01-24T21:13:11.089Z",
+    "updatedAt": "2025-01-24T21:13:11.089Z"
+  },
+  {
+    "id": "12",
+    "name": "khcgziXHdgca",
+    "contact": "dasxcgasuocgas",
+    "address": "asc;kashcipashc",
+    "createdAt": "2025-01-24T21:14:45.463Z",
+    "updatedAt": "2025-01-24T21:14:45.463Z"
+  },
+  {
+    "id": "13",
+    "name": "fdasdasd",
+    "contact": "asdadasd",
+    "address": "dasdasdasa",
+    "createdAt": "2025-01-24T21:15:46.666Z",
+    "updatedAt": "2025-01-24T21:15:46.666Z"
+  },
+  {
+    "id": "14",
+    "name": "sdasdasd",
+    "contact": "asdasdasdas",
+    "address": "dasdasdasdasd",
+    "createdAt": "2025-01-24T21:17:00.670Z",
+    "updatedAt": "2025-01-24T21:17:00.670Z"
+  },
+  {
+    "id": "15",
+    "name": "Jonas Jerger",
+    "contact": "jonasjerger010@gmail.com",
+    "address": "Gartenstraße 7",
+    "createdAt": "2025-01-24T21:37:35.941Z",
+    "updatedAt": "2025-01-24T21:37:35.941Z"
   }
 ]
