@@ -1,3 +1,4 @@
+
 .App {
   text-align: center;
 }
@@ -44,6 +45,7 @@
 main {
   padding: 2rem;
   text-align: center;
+
 }
 
 .offer-action-btn {
@@ -58,5 +60,6 @@ main {
 }
 
 .offer-action-btn:hover {
-  background-color: #d35400;
+  background-color: #e72208;
 }
+

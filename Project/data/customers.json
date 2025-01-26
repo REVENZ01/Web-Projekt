@@ -128,5 +128,13 @@
     "address": "Gartenstraße 7",
     "createdAt": "2025-01-24T21:37:35.941Z",
     "updatedAt": "2025-01-24T21:37:35.941Z"
+  },
+  {
+    "id": "16",
+    "name": "",
+    "contact": "",
+    "address": "",
+    "createdAt": "2025-01-26T21:57:20.599Z",
+    "updatedAt": "2025-01-26T21:57:20.599Z"
   }
 ]

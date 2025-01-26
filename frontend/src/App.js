@@ -3,6 +3,10 @@ import OffersList from "./components/OffersList";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import Customers from "./components/Customers";
+import Home from "./components/Home";
+
+
+
 
 function App() {
   const [userGroup, setUserGroup] = useState("Admin");
@@ -14,18 +18,18 @@ function App() {
     console.log(`Selected User Group: ${group}`);
   };
 
-  // Funktion zum Ändern der Seite
+  // Funktion zur Navigation
   const handleNavigation = (page) => {
     setCurrentPage(page);
   };
 
-  // Funktion zur Anzeige der aktuellen Seite
+  // Seitenrendering basierend auf `currentPage`
   const renderPage = () => {
     switch (currentPage) {
       case "home":
-        return <h1>Welcome to Home</h1>;
-      case "about":
-        return <h1>About Us</h1>;
+        return <Home/>
+      case "offers":
+        return <OffersList />;
       case "customers":
         return <Customers />;
       case "services":
@@ -37,37 +41,13 @@ function App() {
     }
   };
 
-  // Logik für Aktionen je nach Benutzergruppe
-  const handleOfferAction = () => {
-    if (userGroup === "Admin") {
-      alert("Admin: Can modify and delete all offers.");
-    } else if (userGroup === "Manager") {
-      alert("Manager: Can approve offers.");
-    } else {
-      alert("User: Can view offers only.");
-    }
-  };
-
   return (
-    <div>
-      {/* Header mit Navigation und Benutzergruppenauswahl */}
+    <div className="html">
+      {/* Header mit Navigation */}
       <Header onGroupChange={handleGroupChange} onNavigate={handleNavigation} />
 
-      {/* Dynamischer Seiteninhalt */}
-      <main style={{ padding: "20px" }}>
-        {renderPage()}
-
-        {/* Benutzergruppenspezifische Aktion */}
-        <h1>Welcome, {userGroup}!</h1>
-        <button onClick={handleOfferAction} className="offer-action-btn">
-          Perform Offer Action
-        </button>
-
-        {/* Offers Management */}
-        <h1 style={{ textAlign: "center", margin: "20px 0" }}>Offer Management</h1>
-        <OffersList />
-      </main>
-
+      {/* Hauptinhalt */}
+      <main className="main-content">{renderPage()}</main>
       {/* Footer */}
       <Footer />
     </div>
@@ -75,4 +55,5 @@ function App() {
 }
 
 export default App;
+
 

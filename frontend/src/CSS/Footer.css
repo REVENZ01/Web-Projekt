@@ -1,7 +1,4 @@
-html, body {
-    height: 100%;
-    margin: 0;
-  }
+
 
 
 
@@ -10,8 +7,8 @@ html, body {
     bottom: 0;
     left: 0;
     width: 100%; /* Deckt die ganze Breite ab */
-    background-color: #c40808;
-    color: rgb(82, 218, 19);
+    background-color: #002168;
+    color: rgb(255, 255, 255);
     text-align: center;
     padding: 1rem 0;
     z-index: 1000; /* Überlappt andere Inhalte */
