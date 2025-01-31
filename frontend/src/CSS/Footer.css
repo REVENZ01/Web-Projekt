@@ -4,7 +4,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative; /* Kein `absolute` oder `fixed` */
+  position: absolute; /* Kein `absolute` oder `fixed` */
   width: 100%; /* Deckt die gesamte Breite ab */
   background-color: #002168;
   color: rgb(255, 255, 255);
