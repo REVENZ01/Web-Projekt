@@ -42,12 +42,12 @@ function App() {
   };
 
   return (
-    <div className="html">
+    <div>
       {/* Header mit Navigation */}
       <Header onGroupChange={handleGroupChange} onNavigate={handleNavigation} />
 
       {/* Hauptinhalt */}
-      <main className="main-content">{renderPage()}</main>
+      <main className="html">{renderPage()}</main>
       {/* Footer */}
       <Footer />
     </div>

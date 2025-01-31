@@ -1,47 +1,47 @@
+/* src/CSS/footer.css */
 
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative; /* Kein `absolute` oder `fixed` */
+  width: 100%; /* Deckt die gesamte Breite ab */
+  background-color: #002168;
+  color: rgb(255, 255, 255);
+  text-align: center;
+  padding: 1rem 0;
+  margin-bottom: auto; /* Drückt den Footer an das Ende der Seite */
+}
 
+.footer .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
 
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
 
-  .footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%; /* Deckt die ganze Breite ab */
-    background-color: #002168;
-    color: rgb(255, 255, 255);
-    text-align: center;
-    padding: 1rem 0;
-    z-index: 1000; /* Überlappt andere Inhalte */
-  }
-  
-  .footer .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 15px;
-  }
-  
-  .footer-links {
-    list-style: none;
-    padding: 0;
-    margin: 10px 0 0;
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-  }
-  
-  .footer-links li {
-    display: inline;
-  }
-  
-  .footer-links a {
-    color: #00bcd4;
-    text-decoration: none;
-    transition: color 0.3s;
-  }
-  
-  .footer-links a:hover {
-    color: #ff5722;
-  }
+.footer-links li {
+  display: inline;
+}
+
+.footer-links a {
+  color: #00bcd4;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.footer-links a:hover {
+  color: #ff5722;
+}
+
   
 
   
