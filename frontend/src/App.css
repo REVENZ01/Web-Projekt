@@ -48,18 +48,5 @@ main {
 
 }
 
-.offer-action-btn {
-  padding: 0.7rem 1.5rem;
-  font-size: 1rem;
-  background-color: #f39c12;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
 
-.offer-action-btn:hover {
-  background-color: #e72208;
-}
 

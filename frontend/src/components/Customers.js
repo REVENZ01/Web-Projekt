@@ -1,39 +1,78 @@
 import React, { useState, useEffect } from "react";
 import "../CSS/Customers.css";
-
-
+import EditCustomer from "./EditCustomer.js"; // Importiere die neue Edit-Modal-Komponente
 
 const Customers = () => {
   const [customers, setCustomers] = useState([]);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [newCustomer, setNewCustomer] = useState({
     name: "",
     contact: "",
     address: "",
   });
 
-  // Fetch customers from API
   useEffect(() => {
-    fetch("http://localhost:8080/customers")
-      .then((response) => response.json())
-      .then((data) => setCustomers(data))
-      .catch((error) => console.error("Error fetching customers:", error));
+    fetchCustomers();
   }, []);
 
-  // Add a new customer
-  const handleAddCustomer = () => {
-    fetch("http://localhost:8080/customers", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newCustomer),
-    })
-      .then((response) => response.json())
-      .then((customer) => {
-        setCustomers([...customers, customer]);
-        setNewCustomer({ name: "", contact: "", address: "" });
-      })
-      .catch((error) => console.error("Error adding customer:", error));
+  const fetchCustomers = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/customers");
+      const data = await response.json();
+      setCustomers(data);
+    } catch (error) {
+      console.error("Error fetching customers:", error);
+    }
+  };
+
+  const handleAddCustomer = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/customers", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newCustomer),
+      });
+      const customer = await response.json();
+      setCustomers([...customers, customer]);
+      setNewCustomer({ name: "", contact: "", address: "" });
+    } catch (error) {
+      console.error("Error adding customer:", error);
+    }
+  };
+
+  const handleDeleteCustomer = async (id) => {
+    try {
+      await fetch(`http://localhost:8080/customers/${id}`, {
+        method: "DELETE",
+      });
+      setCustomers(customers.filter((customer) => customer.id !== id));
+    } catch (error) {
+      console.error("Error deleting customer:", error);
+    }
+  };
+
+  const handleUpdateCustomer = async (updatedCustomer) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/customers/${updatedCustomer.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedCustomer),
+        }
+      );
+      const data = await response.json();
+      setCustomers(
+        customers.map((customer) => (customer.id === data.id ? data : customer))
+      );
+      setSelectedCustomer(null);
+    } catch (error) {
+      console.error("Error updating customer:", error);
+    }
   };
 
   return (
@@ -51,7 +90,6 @@ const Customers = () => {
         />
         <input
           type="email"
-          id="email"
           placeholder="Contact"
           value={newCustomer.contact}
           onChange={(e) =>
@@ -76,6 +114,12 @@ const Customers = () => {
               <li key={customer.id}>
                 <strong>{customer.name}</strong> - {customer.contact} -{" "}
                 {customer.address}
+                <button onClick={() => setSelectedCustomer(customer)}>
+                  Edit
+                </button>
+                <button onClick={() => handleDeleteCustomer(customer.id)}>
+                  Delete
+                </button>
               </li>
             ))}
           </ul>
@@ -83,6 +127,15 @@ const Customers = () => {
           <p>No customers found.</p>
         )}
       </div>
+
+      {/* Integriere die neue EditCustomerModal-Komponente */}
+      {selectedCustomer && (
+        <EditCustomer
+          customer={selectedCustomer}
+          onClose={() => setSelectedCustomer(null)}
+          onSave={handleUpdateCustomer}
+        />
+      )}
     </div>
   );
 };

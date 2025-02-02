@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { Modal, Box, TextField, Button } from '@mui/material';
+import "../CSS/Offers.css";
+import { purple } from '@mui/material/colors';
 
+const a = purple[900];
 const EditOfferModal = ({ offer, onClose, onSave }) => {
   const [formData, setFormData] = useState({ ...offer });
 
@@ -21,7 +24,7 @@ const EditOfferModal = ({ offer, onClose, onSave }) => {
           left: '50%',
           transform: 'translate(-50%, -50%)',
           width: 400,
-          backgroundColor: 'white',
+          backgroundColor: 'green',
           padding: '20px',
           borderRadius: '8px',
         }}
@@ -45,7 +48,7 @@ const EditOfferModal = ({ offer, onClose, onSave }) => {
           margin="normal"
         />
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
-          <Button variant="contained" color="warning" onClick={onClose}>
+          <Button variant="contained" color="secondary" onClick={onClose}>
             Cancel
           </Button>
           <Button variant="contained" color="#000000" onClick={handleSave}>

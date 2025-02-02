@@ -7,7 +7,7 @@
     "currency": "EUR",
     "status": "Active",
     "createdAt": "2025-01-23T16:57:30.570Z",
-    "updatedAt": "2025-01-26T15:24:06.906Z"
+    "updatedAt": "2025-01-31T21:49:11.435Z"
   },
   {
     "id": "2",
@@ -23,11 +23,11 @@
     "id": "3",
     "name": "Upe",
     "description": "Entwicklung einer vollständigen responsiven Website.",
-    "price": 99.99,
+    "price": "104.99",
     "currency": "EUR",
     "status": "Active",
     "createdAt": "2025-01-23T18:38:49.937Z",
-    "updatedAt": "2025-01-23T18:38:49.937Z"
+    "updatedAt": "2025-01-31T22:13:01.012Z"
   },
   {
     "id": "4",
@@ -270,16 +270,6 @@
     "updatedAt": "2025-01-23T18:38:54.420Z"
   },
   {
-    "id": "28",
-    "name": "Upe",
-    "description": "Entwicklung einer vollständigen responsiven Website.",
-    "price": 99.99,
-    "currency": "EUR",
-    "status": "Active",
-    "createdAt": "2025-01-23T18:38:54.570Z",
-    "updatedAt": "2025-01-23T18:38:54.570Z"
-  },
-  {
     "id": "29",
     "name": "Upe",
     "description": "Entwicklung einer vollständigen responsiven Website.",
@@ -293,11 +283,11 @@
     "id": "30",
     "name": "Upe",
     "description": "Entwicklung einer vollständigen responsiven Website.",
-    "price": 99.99,
+    "price": "172",
     "currency": "EUR",
     "status": "Active",
     "createdAt": "2025-01-23T18:38:55.158Z",
-    "updatedAt": "2025-01-23T18:38:55.158Z"
+    "updatedAt": "2025-02-02T20:55:17.955Z"
   },
   {
     "id": "31",
@@ -310,13 +300,11 @@
     "updatedAt": "2025-01-23T18:38:55.324Z"
   },
   {
-    "id": "32",
-    "name": "Upepp",
-    "description": "Entwicklung einer vollständigen responsiven Website.",
-    "price": 99.99,
-    "currency": "EUR",
-    "status": "Active",
-    "createdAt": "2025-01-23T18:38:55.477Z",
-    "updatedAt": "2025-01-31T20:56:29.715Z"
+    "id": "31",
+    "name": "Christian",
+    "price": "12345678",
+    "customerId": "2",
+    "createdAt": "2025-02-02T20:55:41.061Z",
+    "updatedAt": "2025-02-02T20:55:41.061Z"
   }
 ]
