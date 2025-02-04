@@ -17,17 +17,13 @@
   }
   
   .customer-form button {
-    padding: 0.7rem 1.5rem;
-    background-color: #28a745;
+  
+    background-color: #4265ff;
     color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 0.5rem;
   }
   
   .customer-form button:hover {
-    background-color: #218838;
+    background-color: #308397;
   }
   
   .customer-list ul {

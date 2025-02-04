@@ -1,12 +1,5 @@
 [
   {
-    "id": "1",
-    "offerId": "1",
-    "text": "hallokkqwerq",
-    "createdAt": "2025-02-04T15:23:04.285Z",
-    "updatedAt": "2025-02-04T15:49:59.487Z"
-  },
-  {
     "id": "2",
     "offerId": "4",
     "text": "hallo",
@@ -16,8 +9,8 @@
   {
     "id": "3",
     "offerId": "1",
-    "text": "ddd",
-    "createdAt": "2025-02-04T15:49:54.671Z",
-    "updatedAt": "2025-02-04T15:49:54.671Z"
+    "text": "Huhu",
+    "createdAt": "2025-02-04T15:53:39.217Z",
+    "updatedAt": "2025-02-04T15:53:39.217Z"
   }
 ]

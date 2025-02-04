@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Modal, Box, TextField, Button } from "@mui/material";
+import { Modal, Box, TextField } from "@mui/material";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const EditCustomerModal = ({ customer, onClose, onSave }) => {
   const [formData, setFormData] = useState({ ...customer });
@@ -51,19 +52,13 @@ const EditCustomerModal = ({ customer, onClose, onSave }) => {
           fullWidth
           margin="normal"
         />
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginTop: "20px",
-          }}
-        >
-          <Button variant="contained" color="warning" onClick={onClose}>
+        <div className="d-flex justify-content-between mt-3">
+          <button className="btn btn-warning" onClick={onClose}>
             Cancel
-          </Button>
-          <Button variant="contained" color="primary" onClick={handleSave}>
+          </button>
+          <button className="btn btn-primary" onClick={handleSave}>
             Save
-          </Button>
+          </button>
         </div>
       </Box>
     </Modal>

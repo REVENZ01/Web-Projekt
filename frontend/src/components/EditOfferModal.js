@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Modal, Box, TextField, Button } from "@mui/material";
+import { Modal, Box, TextField } from "@mui/material";
+import "bootstrap/dist/css/bootstrap.min.css";
 import "../CSS/Offers.css";
 
 const EditOfferModal = ({ offer, onClose, onSave }) => {
@@ -22,7 +23,7 @@ const EditOfferModal = ({ offer, onClose, onSave }) => {
           left: "50%",
           transform: "translate(-50%, -50%)",
           width: 400,
-          backgroundColor: "green",
+          backgroundColor: "#E0FFFF",
           padding: "20px",
           borderRadius: "8px",
         }}
@@ -45,19 +46,13 @@ const EditOfferModal = ({ offer, onClose, onSave }) => {
           fullWidth
           margin="normal"
         />
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginTop: "20px",
-          }}
-        >
-          <Button variant="contained" color="secondary" onClick={onClose}>
+        <div className="d-flex justify-content-between mt-3">
+          <button className="btn btn-secondary" onClick={onClose}>
             Cancel
-          </Button>
-          <Button variant="contained" color="#000000" onClick={handleSave}>
+          </button>
+          <button className="btn btn-dark" onClick={handleSave}>
             Save
-          </Button>
+          </button>
         </div>
       </Box>
     </Modal>

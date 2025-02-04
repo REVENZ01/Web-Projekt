@@ -1,32 +1,5 @@
 [
   {
-    "id": "1",
-    "name": "Bruno",
-    "email": "bruno@example.com",
-    "age": 30,
-    "address": "123 Main Street, Anytown",
-    "createdAt": "2025-01-21T20:44:04.842Z",
-    "updatedAt": "2025-01-21T20:44:04.842Z"
-  },
-  {
-    "id": "2",
-    "name": "Brunou",
-    "email": "bruno@example.com",
-    "age": 30,
-    "address": "123 Main Street, Anytown",
-    "createdAt": "2025-01-21T20:44:30.663Z",
-    "updatedAt": "2025-01-21T20:44:30.663Z"
-  },
-  {
-    "id": "3",
-    "name": "Brunou",
-    "email": "bruno@example.com",
-    "age": 30,
-    "address": "123 Main Street, Anytown",
-    "createdAt": "2025-01-21T21:03:35.328Z",
-    "updatedAt": "2025-01-21T21:03:35.328Z"
-  },
-  {
     "id": "5",
     "name": "Gust",
     "email": "bruno@example.com",
@@ -90,14 +63,6 @@
     "updatedAt": "2025-01-22T22:42:11.813Z"
   },
   {
-    "id": "11",
-    "name": "Christian",
-    "contact": "otto.h@gmail.com",
-    "address": "187 Tannhausen",
-    "createdAt": "2025-01-24T21:13:11.089Z",
-    "updatedAt": "2025-01-24T21:13:11.089Z"
-  },
-  {
     "id": "12",
     "name": "khcgziXHdgca",
     "contact": "dasxcgasuocgas",
@@ -107,26 +72,26 @@
   },
   {
     "id": "13",
-    "name": "fdasdasd",
-    "contact": "asdadasd",
-    "address": "dasdasdasa",
-    "createdAt": "2025-01-24T21:15:46.666Z",
-    "updatedAt": "2025-01-24T21:15:46.666Z"
+    "name": "",
+    "contact": "",
+    "address": "",
+    "createdAt": "2025-02-04T21:31:18.316Z",
+    "updatedAt": "2025-02-04T21:31:18.316Z"
   },
   {
-    "id": "14",
-    "name": "sdasdasd",
-    "contact": "asdasdasdas",
-    "address": "dasdasdasdasd",
-    "createdAt": "2025-01-24T21:17:00.670Z",
-    "updatedAt": "2025-01-24T21:17:00.670Z"
+    "id": "11",
+    "name": "",
+    "contact": "",
+    "address": "",
+    "createdAt": "2025-02-04T21:36:21.716Z",
+    "updatedAt": "2025-02-04T21:36:21.716Z"
   },
   {
-    "id": "15",
-    "name": "Jonas Jerger",
-    "contact": "jonasjerger010@gmail.com",
-    "address": "Gartenstraße 7",
-    "createdAt": "2025-01-24T21:37:35.941Z",
-    "updatedAt": "2025-01-24T21:37:35.941Z"
+    "id": "11",
+    "name": "",
+    "contact": "",
+    "address": "",
+    "createdAt": "2025-02-04T21:38:22.937Z",
+    "updatedAt": "2025-02-04T21:38:22.937Z"
   }
 ]

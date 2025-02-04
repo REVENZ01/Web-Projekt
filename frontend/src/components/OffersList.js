@@ -1,19 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {
-  Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Paper,
-  TextField,
-  MenuItem,
-  Select,
-} from "@mui/material";
+import { Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import EditOfferModal from "./EditOfferModal";
-import CommentsModal from "./CommentsModal"; // Import der neuen Modal-Komponente
+import CommentsModal from "./CommentsModal";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const OffersList = () => {
   const [offers, setOffers] = useState([]);
@@ -82,92 +72,70 @@ const OffersList = () => {
   };
 
   return (
-    <Paper className="content" style={{ margin: "20px", padding: "20px" }}>
+    <div className="container mt-4">
       <h2>Manage Offers</h2>
-
-      <div>
-        <TextField
-          label="Name"
+      <div className="mb-3 d-flex gap-2">
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Name"
           value={newOffer.name}
           onChange={(e) => setNewOffer({ ...newOffer, name: e.target.value })}
         />
-        <TextField
-          label="Price"
+        <input
           type="number"
+          className="form-control"
+          placeholder="Price"
           value={newOffer.price}
           onChange={(e) => setNewOffer({ ...newOffer, price: e.target.value })}
         />
-        <Select
+        <select
+          className="form-select"
           value={newOffer.customerId}
-          onChange={(e) =>
-            setNewOffer({ ...newOffer, customerId: e.target.value })
-          }
-          displayEmpty
+          onChange={(e) => setNewOffer({ ...newOffer, customerId: e.target.value })}
         >
-          <MenuItem value="" disabled>
-            Select Customer
-          </MenuItem>
+          <option value="" disabled>Select Customer</option>
           {customers.map((customer) => (
-            <MenuItem key={customer.id} value={customer.id}>
-              {customer.name}
-            </MenuItem>
+            <option key={customer.id} value={customer.id}>{customer.name}</option>
           ))}
-        </Select>
-        <Button variant="contained" color="primary" onClick={handleAddOffer}>
-          Add Offer
-        </Button>
+        </select>
+        <button className="btn btn-primary" onClick={handleAddOffer}>Add Offer</button>
       </div>
-
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>ID</TableCell>
-            <TableCell>Name</TableCell>
-            <TableCell>Price</TableCell>
-            <TableCell>Customer</TableCell>
-            <TableCell>Comments</TableCell>
-            <TableCell>Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
+      <table className="table table-striped">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Customer</th>
+            <th>Comments</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
           {offers.map((offer) => (
-            <TableRow key={offer.id}>
-              <TableCell>{offer.id}</TableCell>
-              <TableCell>{offer.name}</TableCell>
-              <TableCell>${offer.price}</TableCell>
-              <TableCell>
-                {customers.find((c) => c.id === offer.customerId)?.name ||
-                  "None"}
-              </TableCell>
-              <TableCell>
-                <Button
-                  variant="contained"
-                  onClick={() => setSelectedCommentsOffer(offer)}
-                >
+            <tr key={offer.id}>
+              <td>{offer.id}</td>
+              <td>{offer.name}</td>
+              <td>${offer.price}</td>
+              <td>{customers.find((c) => c.id === offer.customerId)?.name || "None"}</td>
+              <td>
+                <button className="btn btn-info" onClick={() => setSelectedCommentsOffer(offer)}>
                   View Comments
-                </Button>
-              </TableCell>
-              <TableCell>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => setSelectedOffer(offer)}
-                >
+                </button>
+              </td>
+              <td>
+                <button className="btn btn-warning me-2" onClick={() => setSelectedOffer(offer)}>
                   Edit
-                </Button>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => handleDeleteOffer(offer.id)}
-                >
+                </button>
+                <button className="btn btn-danger" onClick={() => handleDeleteOffer(offer.id)}>
                   Delete
-                </Button>
-              </TableCell>
-            </TableRow>
+                </button>
+              </td>
+            </tr>
           ))}
-        </TableBody>
-      </Table>
-
+        </tbody>
+      </table>
       {selectedOffer && (
         <EditOfferModal
           offer={selectedOffer}
@@ -175,14 +143,13 @@ const OffersList = () => {
           onSave={handleUpdateOffer}
         />
       )}
-
       {selectedCommentsOffer && (
         <CommentsModal
           offer={selectedCommentsOffer}
           onClose={() => setSelectedCommentsOffer(null)}
         />
       )}
-    </Paper>
+    </div>
   );
 };
 

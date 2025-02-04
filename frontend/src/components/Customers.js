@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
 import "../CSS/Customers.css";
 import EditCustomer from "./EditCustomer.js"; // Importiere die neue Edit-Modal-Komponente
 
@@ -76,12 +77,13 @@ const Customers = () => {
   };
 
   return (
-    <div className="customers">
+    <div className="container mt-4">
       <h1>Customers</h1>
-      <div className="customer-form">
+      <div className="customer-form mb-4">
         <h2>Add a New Customer</h2>
         <input
           type="text"
+          className="form-control mb-2"
           placeholder="Name"
           value={newCustomer.name}
           onChange={(e) =>
@@ -90,6 +92,7 @@ const Customers = () => {
         />
         <input
           type="email"
+          className="form-control mb-2"
           placeholder="Contact"
           value={newCustomer.contact}
           onChange={(e) =>
@@ -98,28 +101,43 @@ const Customers = () => {
         />
         <input
           type="text"
+          className="form-control mb-2"
           placeholder="Address"
           value={newCustomer.address}
           onChange={(e) =>
             setNewCustomer({ ...newCustomer, address: e.target.value })
           }
         />
-        <button onClick={handleAddCustomer}>Add Customer</button>
+        <button className="btn btn-primary" onClick={handleAddCustomer}>
+          Add Customer
+        </button>
       </div>
       <div className="customer-list">
         <h2>Customer List</h2>
         {customers.length > 0 ? (
-          <ul>
+          <ul className="list-group">
             {customers.map((customer) => (
-              <li key={customer.id}>
-                <strong>{customer.name}</strong> - {customer.contact} -{" "}
-                {customer.address}
-                <button onClick={() => setSelectedCustomer(customer)}>
-                  Edit
-                </button>
-                <button onClick={() => handleDeleteCustomer(customer.id)}>
-                  Delete
-                </button>
+              <li
+                key={customer.id}
+                className="list-group-item d-flex justify-content-between align-items-center"
+              >
+                <span>
+                  <strong>{customer.name}</strong> - {customer.contact} - {customer.address}
+                </span>
+                <div>
+                  <button
+                    className="btn btn-warning btn-sm me-2"
+                    onClick={() => setSelectedCustomer(customer)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="btn btn-danger btn-sm"
+                    onClick={() => handleDeleteCustomer(customer.id)}
+                  >
+                    Delete
+                  </button>
+                </div>
               </li>
             ))}
           </ul>

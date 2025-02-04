@@ -306,5 +306,13 @@
     "customerId": "2",
     "createdAt": "2025-02-02T20:55:41.061Z",
     "updatedAt": "2025-02-02T20:55:41.061Z"
+  },
+  {
+    "id": "32",
+    "name": "",
+    "price": "",
+    "customerId": "",
+    "createdAt": "2025-02-04T21:30:45.344Z",
+    "updatedAt": "2025-02-04T21:30:45.344Z"
   }
 ]
