@@ -1,0 +1,23 @@
+[
+  {
+    "id": "1",
+    "offerId": "1",
+    "text": "hallokkqwerq",
+    "createdAt": "2025-02-04T15:23:04.285Z",
+    "updatedAt": "2025-02-04T15:49:59.487Z"
+  },
+  {
+    "id": "2",
+    "offerId": "4",
+    "text": "hallo",
+    "createdAt": "2025-02-04T15:33:59.801Z",
+    "updatedAt": "2025-02-04T15:33:59.801Z"
+  },
+  {
+    "id": "3",
+    "offerId": "1",
+    "text": "ddd",
+    "createdAt": "2025-02-04T15:49:54.671Z",
+    "updatedAt": "2025-02-04T15:49:54.671Z"
+  }
+]

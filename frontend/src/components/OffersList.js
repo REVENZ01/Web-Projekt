@@ -13,11 +13,13 @@ import {
   Select,
 } from "@mui/material";
 import EditOfferModal from "./EditOfferModal";
+import CommentsModal from "./CommentsModal"; // Import der neuen Modal-Komponente
 
 const OffersList = () => {
   const [offers, setOffers] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [selectedOffer, setSelectedOffer] = useState(null);
+  const [selectedCommentsOffer, setSelectedCommentsOffer] = useState(null);
   const [newOffer, setNewOffer] = useState({
     name: "",
     price: "",
@@ -123,6 +125,7 @@ const OffersList = () => {
             <TableCell>Name</TableCell>
             <TableCell>Price</TableCell>
             <TableCell>Customer</TableCell>
+            <TableCell>Comments</TableCell>
             <TableCell>Actions</TableCell>
           </TableRow>
         </TableHead>
@@ -135,6 +138,14 @@ const OffersList = () => {
               <TableCell>
                 {customers.find((c) => c.id === offer.customerId)?.name ||
                   "None"}
+              </TableCell>
+              <TableCell>
+                <Button
+                  variant="contained"
+                  onClick={() => setSelectedCommentsOffer(offer)}
+                >
+                  View Comments
+                </Button>
               </TableCell>
               <TableCell>
                 <Button
@@ -162,6 +173,13 @@ const OffersList = () => {
           offer={selectedOffer}
           onClose={() => setSelectedOffer(null)}
           onSave={handleUpdateOffer}
+        />
+      )}
+
+      {selectedCommentsOffer && (
+        <CommentsModal
+          offer={selectedCommentsOffer}
+          onClose={() => setSelectedCommentsOffer(null)}
         />
       )}
     </Paper>

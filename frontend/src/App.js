@@ -5,11 +5,8 @@ import Header from "./components/Header";
 import Customers from "./components/Customers";
 import Home from "./components/Home";
 
-
-
-
 function App() {
-  const [userGroup, setUserGroup] = useState("Admin");
+  const [, setUserGroup] = useState("Admin");
   const [currentPage, setCurrentPage] = useState("home");
 
   // Funktion zur Benutzergruppenänderung
@@ -27,7 +24,7 @@ function App() {
   const renderPage = () => {
     switch (currentPage) {
       case "home":
-        return <Home/>
+        return <Home />;
       case "offers":
         return <OffersList />;
       case "customers":
@@ -55,5 +52,3 @@ function App() {
 }
 
 export default App;
-
-
