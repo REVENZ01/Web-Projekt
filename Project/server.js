@@ -4,7 +4,7 @@ const cors = require("@fastify/cors");
 // CORS aktivieren
 fastify.register(cors, {
   origin: "http://localhost:3000", // Erlaubt Anfragen von diesem Frontend
-  methods: ["GET", "POST", "PUT", "DELETE"], // Erlaubte HTTP-Methoden
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], // Erlaubte HTTP-Methoden
 });
 
 // Kunden-Routen

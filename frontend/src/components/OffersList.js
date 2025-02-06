@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import EditOfferModal from "./EditOfferModal";
 import CommentsModal from "./CommentsModal";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -71,6 +70,21 @@ const OffersList = () => {
     }
   };
 
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      await axios.patch(`http://localhost:8080/offers/${id}/status`, {
+        newStatus,
+      });
+      setOffers((prevOffers) =>
+        prevOffers.map((offer) =>
+          offer.id === id ? { ...offer, status: newStatus } : offer
+        )
+      );
+    } catch (error) {
+      console.error("Error updating status:", error);
+    }
+  };
+
   return (
     <div className="container mt-4">
       <h2>Manage Offers</h2>
@@ -92,14 +106,22 @@ const OffersList = () => {
         <select
           className="form-select"
           value={newOffer.customerId}
-          onChange={(e) => setNewOffer({ ...newOffer, customerId: e.target.value })}
+          onChange={(e) =>
+            setNewOffer({ ...newOffer, customerId: e.target.value })
+          }
         >
-          <option value="" disabled>Select Customer</option>
+          <option value="" disabled>
+            Select Customer
+          </option>
           {customers.map((customer) => (
-            <option key={customer.id} value={customer.id}>{customer.name}</option>
+            <option key={customer.id} value={customer.id}>
+              {customer.name}
+            </option>
           ))}
         </select>
-        <button className="btn btn-primary" onClick={handleAddOffer}>Add Offer</button>
+        <button className="btn btn-primary" onClick={handleAddOffer}>
+          Add Offer
+        </button>
       </div>
       <table className="table table-striped">
         <thead>
@@ -108,6 +130,7 @@ const OffersList = () => {
             <th>Name</th>
             <th>Price</th>
             <th>Customer</th>
+            <th>Status</th>
             <th>Comments</th>
             <th>Actions</th>
           </tr>
@@ -118,17 +141,41 @@ const OffersList = () => {
               <td>{offer.id}</td>
               <td>{offer.name}</td>
               <td>${offer.price}</td>
-              <td>{customers.find((c) => c.id === offer.customerId)?.name || "None"}</td>
               <td>
-                <button className="btn btn-info" onClick={() => setSelectedCommentsOffer(offer)}>
+                {customers.find((c) => c.id === offer.customerId)?.name ||
+                  "None"}
+              </td>
+              <td>
+                <select
+                  className="form-select"
+                  value={offer.status}
+                  onChange={(e) => handleStatusChange(offer.id, e.target.value)}
+                >
+                  <option value="Draft">Draft</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Active">Active</option>
+                  <option value="On Ice">On Ice</option>
+                </select>
+              </td>
+              <td>
+                <button
+                  className="btn btn-info"
+                  onClick={() => setSelectedCommentsOffer(offer)}
+                >
                   View Comments
                 </button>
               </td>
               <td>
-                <button className="btn btn-warning me-2" onClick={() => setSelectedOffer(offer)}>
+                <button
+                  className="btn btn-warning me-2"
+                  onClick={() => setSelectedOffer(offer)}
+                >
                   Edit
                 </button>
-                <button className="btn btn-danger" onClick={() => handleDeleteOffer(offer.id)}>
+                <button
+                  className="btn btn-danger"
+                  onClick={() => handleDeleteOffer(offer.id)}
+                >
                   Delete
                 </button>
               </td>

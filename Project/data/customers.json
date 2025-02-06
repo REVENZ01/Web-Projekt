@@ -77,21 +77,5 @@
     "address": "",
     "createdAt": "2025-02-04T21:31:18.316Z",
     "updatedAt": "2025-02-04T21:31:18.316Z"
-  },
-  {
-    "id": "11",
-    "name": "",
-    "contact": "",
-    "address": "",
-    "createdAt": "2025-02-04T21:36:21.716Z",
-    "updatedAt": "2025-02-04T21:36:21.716Z"
-  },
-  {
-    "id": "11",
-    "name": "",
-    "contact": "",
-    "address": "",
-    "createdAt": "2025-02-04T21:38:22.937Z",
-    "updatedAt": "2025-02-04T21:38:22.937Z"
   }
 ]
