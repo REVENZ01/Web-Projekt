@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Modal, Box, TextField } from "@mui/material";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const EditCustomerModal = ({ customer, onClose, onSave }) => {
@@ -14,54 +13,56 @@ const EditCustomerModal = ({ customer, onClose, onSave }) => {
   };
 
   return (
-    <Modal open={true} onClose={onClose}>
-      <Box
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: 400,
-          backgroundColor: "white",
-          padding: "20px",
-          borderRadius: "8px",
-        }}
-      >
-        <h2>Edit Customer</h2>
-        <TextField
-          label="Name"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          label="Contact"
-          name="contact"
-          value={formData.contact}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          label="Address"
-          name="address"
-          value={formData.address}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />
-        <div className="d-flex justify-content-between mt-3">
-          <button className="btn btn-warning" onClick={onClose}>
-            Cancel
-          </button>
-          <button className="btn btn-primary" onClick={handleSave}>
-            Save
-          </button>
+    <div className="modal show d-block" tabIndex="-1">
+      <div className="modal-dialog">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title">Edit Customer</h5>
+            <button type="button" className="btn-close" onClick={onClose}></button>
+          </div>
+          <div className="modal-body">
+            <div className="mb-3">
+              <label className="form-label">Name</label>
+              <input
+                type="text"
+                className="form-control"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Contact</label>
+              <input
+                type="text"
+                className="form-control"
+                name="contact"
+                value={formData.contact}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Address</label>
+              <input
+                type="text"
+                className="form-control"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+          <div className="modal-footer">
+            <button className="btn btn-warning" onClick={onClose}>
+              Cancel
+            </button>
+            <button className="btn btn-primary" onClick={handleSave}>
+              Save
+            </button>
+          </div>
         </div>
-      </Box>
-    </Modal>
+      </div>
+    </div>
   );
 };
 
