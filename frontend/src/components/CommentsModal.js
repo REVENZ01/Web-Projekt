@@ -10,8 +10,8 @@ const CommentsModal = ({ offer, onClose }) => {
   const [adding, setAdding] = useState(false);
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editedCommentText, setEditedCommentText] = useState("");
+  const [statusMessage, setStatusMessage] = useState("");
 
-  // ✅ `fetchComments` mit useCallback verhindern, dass es in jeder Render-Phase neu erstellt wird
   const fetchComments = useCallback(async () => {
     setLoading(true);
     try {
@@ -25,80 +25,42 @@ const CommentsModal = ({ offer, onClose }) => {
     setLoading(false);
   }, [offer.id]);
 
-  // ✅ `useEffect` jetzt mit fetchComments als Dependency
   useEffect(() => {
     fetchComments();
   }, [fetchComments]);
 
   const handleAddComment = async () => {
     if (!newComment.trim()) return;
+    if (offer.status === "On Ice") {
+      setStatusMessage("Das Hinzufügen von Kommentaren ist nicht erlaubt, da das Angebot auf 'On Ice' gesetzt wurde.");
+      return;
+    }
     setAdding(true);
     try {
       await axios.post(`http://localhost:8080/offers/${offer.id}/comments`, {
         text: newComment,
       });
       setNewComment("");
-      fetchComments(); // ✅ Kommentare nach dem Hinzufügen neu laden
+      fetchComments();
     } catch (err) {
       setError("Fehler beim Hinzufügen des Kommentars.");
     }
     setAdding(false);
   };
 
-  const handleDeleteComment = async (commentId) => {
-    try {
-      await axios.delete(
-        `http://localhost:8080/offers/${offer.id}/comments/${commentId}`
-      );
-      fetchComments(); // ✅ Kommentare nach dem Löschen neu laden
-    } catch (err) {
-      setError("Fehler beim Löschen des Kommentars.");
-    }
-  };
-
-  const handleEditComment = (comment) => {
-    setEditingCommentId(comment.id);
-    setEditedCommentText(comment.text);
-  };
-
-  const handleSaveEditedComment = async () => {
-    if (!editedCommentText.trim()) return;
-    try {
-      await axios.put(
-        `http://localhost:8080/offers/${offer.id}/comments/${editingCommentId}`,
-        {
-          text: editedCommentText,
-        }
-      );
-      setEditingCommentId(null);
-      fetchComments(); // ✅ Kommentare nach dem Bearbeiten neu laden
-    } catch (err) {
-      setError("Fehler beim Aktualisieren des Kommentars.");
-    }
-  };
-
   return (
     <div className="modal fade show d-block" tabIndex="-1">
       <div className="modal-dialog">
         <div className="modal-content">
-          {/* Modal Header */}
           <div className="modal-header">
             <h5 className="modal-title">Kommentare für {offer.name}</h5>
-            <button
-              type="button"
-              className="btn-close"
-              onClick={onClose}
-            ></button>
+            <button type="button" className="btn-close" onClick={onClose}></button>
           </div>
-
-          {/* Modal Body */}
           <div className="modal-body">
+            {statusMessage && <div className="alert alert-warning">{statusMessage}</div>}
             {loading ? (
               <div className="text-center">
-                <div
-                  className="spinner-border text-primary"
-                  role="status"
-                ></div>
+                <div className="spinner-border text-primary" role="status"></div>
               </div>
             ) : error ? (
               <div className="alert alert-danger">{error}</div>
@@ -107,49 +69,13 @@ const CommentsModal = ({ offer, onClose }) => {
             ) : (
               <ul className="list-group">
                 {comments.map((comment) => (
-                  <li
-                    key={comment.id}
-                    className="list-group-item d-flex justify-content-between align-items-center"
-                  >
-                    {editingCommentId === comment.id ? (
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={editedCommentText}
-                        onChange={(e) => setEditedCommentText(e.target.value)}
-                      />
-                    ) : (
-                      <span>{comment.text}</span>
-                    )}
-                    <div>
-                      {editingCommentId === comment.id ? (
-                        <button
-                          className="btn btn-success btn-sm me-2"
-                          onClick={handleSaveEditedComment}
-                        >
-                          Speichern
-                        </button>
-                      ) : (
-                        <button
-                          className="btn btn-warning btn-sm me-2"
-                          onClick={() => handleEditComment(comment)}
-                        >
-                          Bearbeiten
-                        </button>
-                      )}
-                      <button
-                        className="btn btn-danger btn-sm"
-                        onClick={() => handleDeleteComment(comment.id)}
-                      >
-                        Löschen
-                      </button>
-                    </div>
+                  <li key={comment.id} className="list-group-item">
+                    <span>{comment.text}</span>
                   </li>
                 ))}
               </ul>
             )}
 
-            {/* Kommentar hinzufügen */}
             <div className="mt-3">
               <input
                 type="text"
@@ -157,28 +83,20 @@ const CommentsModal = ({ offer, onClose }) => {
                 placeholder="Neuer Kommentar"
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
+                disabled={offer.status === "On Ice"}
               />
               <button
                 className="btn btn-primary mt-2 w-100"
                 onClick={handleAddComment}
-                disabled={adding}
+                disabled={adding || offer.status === "On Ice"}
+                style={{ backgroundColor: offer.status === "On Ice" ? "#d3d3d3" : "" }}
               >
-                {adding ? (
-                  <span className="spinner-border spinner-border-sm"></span>
-                ) : (
-                  "Hinzufügen"
-                )}
+                {adding ? <span className="spinner-border spinner-border-sm"></span> : "Hinzufügen"}
               </button>
             </div>
           </div>
-
-          {/* Modal Footer */}
           <div className="modal-footer">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={onClose}
-            >
+            <button type="button" className="btn btn-secondary" onClick={onClose}>
               Schließen
             </button>
           </div>
@@ -189,3 +107,5 @@ const CommentsModal = ({ offer, onClose }) => {
 };
 
 export default CommentsModal;
+
+

@@ -175,6 +175,8 @@ const OffersList = () => {
                 <button
                   className="btn btn-danger"
                   onClick={() => handleDeleteOffer(offer.id)}
+                  disabled={offer.status === "In Progress"}
+                  style={{ backgroundColor: offer.status === "In Progress" ? "#d3d3d3" : "" }}
                 >
                   Delete
                 </button>
@@ -201,3 +203,4 @@ const OffersList = () => {
 };
 
 export default OffersList;
+
