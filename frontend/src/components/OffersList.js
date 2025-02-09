@@ -3,8 +3,9 @@ import axios from "axios";
 import EditOfferModal from "./EditOfferModal";
 import CommentsModal from "./CommentsModal";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { getAuthValue } from "./Header"; // Korrekt importieren
 
-const OffersList = () => {
+const OffersList = ({ userGroup }) => {  // userGroup als Prop erhalten
   const [offers, setOffers] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [selectedOffer, setSelectedOffer] = useState(null);
@@ -15,32 +16,41 @@ const OffersList = () => {
     customerId: "",
   });
 
+  // Auth-Token basierend auf Benutzergruppe setzen
+  const authValue = getAuthValue(userGroup);
+
   useEffect(() => {
     fetchOffers();
     fetchCustomers();
-  }, []);
+  }, [userGroup]); // Neue Daten laden, wenn sich userGroup ändert
 
   const fetchOffers = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/offers");
+      const response = await axios.get("http://localhost:8080/offers", {
+        headers: { Authorization: authValue }
+      });
       setOffers(response.data);
     } catch (error) {
       console.error("Error fetching offers:", error);
     }
   };
 
+
   const fetchCustomers = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/customers");
+      const response = await axios.get("http://localhost:8080/customers", {
+        headers: { Authorization: authValue }
+      });
       setCustomers(response.data);
     } catch (error) {
       console.error("Error fetching customers:", error);
     }
   };
 
+
   const handleAddOffer = async () => {
     try {
-      await axios.post("http://localhost:8080/offers", newOffer);
+      await axios.post("http://localhost:8080/offers", newOffer, {headers: { Authorization: authValue }});
       fetchOffers();
       setNewOffer({ name: "", price: "", customerId: "" });
     } catch (error) {
@@ -50,7 +60,7 @@ const OffersList = () => {
 
   const handleDeleteOffer = async (id) => {
     try {
-      await axios.delete(`http://localhost:8080/offers/${id}`);
+      await axios.delete(`http://localhost:8080/offers/${id}`, {headers: { Authorization: authValue }});
       fetchOffers();
     } catch (error) {
       console.error("Error deleting offer:", error);
@@ -61,7 +71,7 @@ const OffersList = () => {
     try {
       await axios.put(
         `http://localhost:8080/offers/${updatedOffer.id}`,
-        updatedOffer
+        updatedOffer, {headers: { Authorization: authValue }}
       );
       fetchOffers();
       setSelectedOffer(null);
@@ -73,7 +83,7 @@ const OffersList = () => {
   const handleStatusChange = async (id, newStatus) => {
     try {
       await axios.patch(`http://localhost:8080/offers/${id}/status`, {
-        newStatus,
+        newStatus, headers: { Authorization: authValue }
       });
       setOffers((prevOffers) =>
         prevOffers.map((offer) =>

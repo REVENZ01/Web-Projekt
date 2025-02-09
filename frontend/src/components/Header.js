@@ -1,13 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../CSS/Header.css"; // Für die Stilgestaltung
 
-const Header = ({ onGroupChange, onNavigate }) => {
-  const [selectedGroup, setSelectedGroup] = useState("Admin");
+// Funktion zur Generierung des Auth-Header-Werts basierend auf der User-Gruppe
+export const getAuthValue = (group) => {
+  switch (group) {
+    case "Basic Account-Manager":
+      return "Basic Account-Manager";
+    case "Basic Developer":
+      return "Basic Developer";
+    case "Basic User":
+      return "Basic User";
+    default:
+      return "Bearer StandardToken";
+  }
+};
+
+const Header = ({ onGroupChange, onNavigate, userGroup }) => {
+  const [selectedGroup, setSelectedGroup] = useState(userGroup || "Basic User");
+
+  useEffect(() => {
+    setSelectedGroup(userGroup); // Falls userGroup von App.js kommt, Dropdown aktualisieren
+  }, [userGroup]);
 
   const handleGroupChange = (event) => {
     const group = event.target.value;
     setSelectedGroup(group);
-    onGroupChange(group); // Callback, um die Auswahl an die App zu übergeben
+    onGroupChange(group); // Callback, um die Auswahl an die App weiterzugeben
   };
 
   return (
@@ -19,10 +37,10 @@ const Header = ({ onGroupChange, onNavigate }) => {
       {/* Navigation Buttons */}
       <nav style={{ display: "flex", justifyContent: "center", gap: "15px", margin: "20px 0" }}>
         <button className="buttonHeader" onClick={() => onNavigate("home")}>Home</button>
-        <button className="buttonHeader"onClick={() => onNavigate("offers")}>Offers</button>
-        <button className="buttonHeader"onClick={() => onNavigate("customers")}>Customers</button>
-        <button className="buttonHeader"onClick={() => onNavigate("services")}>Services</button>
-        <button className="buttonHeader"onClick={() => onNavigate("contact")}>Contact</button>
+        <button className="buttonHeader" onClick={() => onNavigate("offers")}>Offers</button>
+        <button className="buttonHeader" onClick={() => onNavigate("customers")}>Customers</button>
+        <button className="buttonHeader" onClick={() => onNavigate("services")}>Services</button>
+        <button className="buttonHeader" onClick={() => onNavigate("contact")}>Contact</button>
       </nav>
 
       {/* User Group Dropdown */}
@@ -34,9 +52,9 @@ const Header = ({ onGroupChange, onNavigate }) => {
           onChange={handleGroupChange}
           className="dropdown"
         >
-          <option value="Admin">Admin</option>
-          <option value="Manager">Manager</option>
-          <option value="User">User</option>
+          <option value="Basic Account-Manager">Account-Manager</option>
+          <option value="Basic Developer">Developer</option>
+          <option value="Basic User">User</option>
         </select>
       </div>
     </header>

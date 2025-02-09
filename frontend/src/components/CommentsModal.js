@@ -48,6 +48,28 @@ const CommentsModal = ({ offer, onClose }) => {
     setAdding(false);
   };
 
+  const handleEditComment = async (id) => {
+    try {
+      await axios.put(`http://localhost:8080/offers/${offer.id}/comments/${id}`, {
+        text: editedCommentText,
+      });
+      setEditingCommentId(null);
+      setEditedCommentText("");
+      fetchComments();
+    } catch (err) {
+      setError("Fehler beim Bearbeiten des Kommentars.");
+    }
+  };
+
+  const handleDeleteComment = async (id) => {
+    try {
+      await axios.delete(`http://localhost:8080/offers/${offer.id}/comments/${id}`);
+      fetchComments();
+    } catch (err) {
+      setError("Fehler beim Löschen des Kommentars.");
+    }
+  };
+
   return (
     <div className="modal fade show d-block" tabIndex="-1">
       <div className="modal-dialog">
@@ -69,8 +91,40 @@ const CommentsModal = ({ offer, onClose }) => {
             ) : (
               <ul className="list-group">
                 {comments.map((comment) => (
-                  <li key={comment.id} className="list-group-item">
-                    <span>{comment.text}</span>
+                  <li key={comment.id} className="list-group-item d-flex justify-content-between align-items-center">
+                    {editingCommentId === comment.id ? (
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={editedCommentText}
+                        onChange={(e) => setEditedCommentText(e.target.value)}
+                      />
+                    ) : (
+                      <span>{comment.text}</span>
+                    )}
+                    <div>
+                      {editingCommentId === comment.id ? (
+                        <button
+                          className="btn btn-success btn-sm me-2"
+                          onClick={() => handleEditComment(comment.id)}
+                        >
+                          Speichern
+                        </button>
+                      ) : (
+                        <button
+                          className="btn btn-warning btn-sm me-2"
+                          onClick={() => {
+                            setEditingCommentId(comment.id);
+                            setEditedCommentText(comment.text);
+                          }}
+                        >
+                          Bearbeiten
+                        </button>
+                      )}
+                      <button className="btn btn-danger btn-sm" onClick={() => handleDeleteComment(comment.id)}>
+                        Löschen
+                      </button>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -107,5 +161,4 @@ const CommentsModal = ({ offer, onClose }) => {
 };
 
 export default CommentsModal;
-
 

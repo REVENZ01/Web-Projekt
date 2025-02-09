@@ -6,7 +6,7 @@ import Customers from "./components/Customers";
 import Home from "./components/Home";
 
 function App() {
-  const [, setUserGroup] = useState("Admin");
+  const [userGroup, setUserGroup] = useState("Basic User"); // Benutzergruppe speichern
   const [currentPage, setCurrentPage] = useState("home");
 
   // Funktion zur Benutzergruppenänderung
@@ -26,7 +26,7 @@ function App() {
       case "home":
         return <Home />;
       case "offers":
-        return <OffersList />;
+          return <OffersList userGroup={userGroup} />; // userGroup übergeben
       case "customers":
         return <Customers />;
       case "services":
@@ -45,6 +45,7 @@ function App() {
 
       {/* Hauptinhalt */}
       <main className="html">{renderPage()}</main>
+      
       {/* Footer */}
       <Footer />
     </div>
