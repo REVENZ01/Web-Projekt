@@ -1,16 +1,12 @@
-/* src/CSS/footer.css */
-
 .footer {
   display: flex;
   justify-content: center;
   align-items: center;
-  position: absolute; /* Kein `absolute` oder `fixed` */
-  width: 100%; /* Deckt die gesamte Breite ab */
+  width: 100%;
   background-color: #002168;
-  color: rgb(255, 255, 255);
+  color: #fff;
   text-align: center;
   padding: 1rem 0;
-  margin-bottom: auto; /* Drückt den Footer an das Ende der Seite */
 }
 
 .footer .container {

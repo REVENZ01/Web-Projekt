@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { getAuthValue } from "./Header"; // Korrekt importieren
 
-const CommentsModal = ({ offer, onClose }) => {
+const CommentsModal = ({ userGroup, onClose, offer }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(true);
@@ -12,18 +13,21 @@ const CommentsModal = ({ offer, onClose }) => {
   const [editedCommentText, setEditedCommentText] = useState("");
   const [statusMessage, setStatusMessage] = useState("");
 
+  const authValue = getAuthValue(userGroup);
+
   const fetchComments = useCallback(async () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `http://localhost:8080/offers/${offer.id}/comments`
+        `http://localhost:8080/offers/${offer.id}/comments`,
+        { headers: { Authorization: authValue } }
       );
       setComments(response.data);
     } catch (err) {
       setError("Fehler beim Laden der Kommentare.");
     }
     setLoading(false);
-  }, [offer.id]);
+  }, [offer.id, authValue]);
 
   useEffect(() => {
     fetchComments();
@@ -32,14 +36,19 @@ const CommentsModal = ({ offer, onClose }) => {
   const handleAddComment = async () => {
     if (!newComment.trim()) return;
     if (offer.status === "On Ice") {
-      setStatusMessage("Das Hinzufügen von Kommentaren ist nicht erlaubt, da das Angebot auf 'On Ice' gesetzt wurde.");
+      setStatusMessage(
+        "Das Hinzufügen von Kommentaren ist nicht erlaubt, da das Angebot auf 'On Ice' gesetzt wurde."
+      );
       return;
     }
     setAdding(true);
     try {
-      await axios.post(`http://localhost:8080/offers/${offer.id}/comments`, {
-        text: newComment,
-      });
+      // Korrekte Übergabe: Daten und Config (Headers) als separate Argumente
+      await axios.post(
+        `http://localhost:8080/offers/${offer.id}/comments`,
+        { text: newComment },
+        { headers: { Authorization: authValue } }
+      );
       setNewComment("");
       fetchComments();
     } catch (err) {
@@ -50,9 +59,12 @@ const CommentsModal = ({ offer, onClose }) => {
 
   const handleEditComment = async (id) => {
     try {
-      await axios.put(`http://localhost:8080/offers/${offer.id}/comments/${id}`, {
-        text: editedCommentText,
-      });
+      // Auch hier: Daten als zweites Argument, Headers als drittes Argument
+      await axios.put(
+        `http://localhost:8080/offers/${offer.id}/comments/${id}`,
+        { text: editedCommentText },
+        { headers: { Authorization: authValue } }
+      );
       setEditingCommentId(null);
       setEditedCommentText("");
       fetchComments();
@@ -63,7 +75,10 @@ const CommentsModal = ({ offer, onClose }) => {
 
   const handleDeleteComment = async (id) => {
     try {
-      await axios.delete(`http://localhost:8080/offers/${offer.id}/comments/${id}`);
+      await axios.delete(
+        `http://localhost:8080/offers/${offer.id}/comments/${id}`,
+        { headers: { Authorization: authValue } }
+      );
       fetchComments();
     } catch (err) {
       setError("Fehler beim Löschen des Kommentars.");
@@ -91,7 +106,10 @@ const CommentsModal = ({ offer, onClose }) => {
             ) : (
               <ul className="list-group">
                 {comments.map((comment) => (
-                  <li key={comment.id} className="list-group-item d-flex justify-content-between align-items-center">
+                  <li
+                    key={comment.id}
+                    className="list-group-item d-flex justify-content-between align-items-center"
+                  >
                     {editingCommentId === comment.id ? (
                       <input
                         type="text"
@@ -121,7 +139,10 @@ const CommentsModal = ({ offer, onClose }) => {
                           Bearbeiten
                         </button>
                       )}
-                      <button className="btn btn-danger btn-sm" onClick={() => handleDeleteComment(comment.id)}>
+                      <button
+                        className="btn btn-danger btn-sm"
+                        onClick={() => handleDeleteComment(comment.id)}
+                      >
                         Löschen
                       </button>
                     </div>
@@ -143,9 +164,15 @@ const CommentsModal = ({ offer, onClose }) => {
                 className="btn btn-primary mt-2 w-100"
                 onClick={handleAddComment}
                 disabled={adding || offer.status === "On Ice"}
-                style={{ backgroundColor: offer.status === "On Ice" ? "#d3d3d3" : "" }}
+                style={{
+                  backgroundColor: offer.status === "On Ice" ? "#d3d3d3" : "",
+                }}
               >
-                {adding ? <span className="spinner-border spinner-border-sm"></span> : "Hinzufügen"}
+                {adding ? (
+                  <span className="spinner-border spinner-border-sm"></span>
+                ) : (
+                  "Hinzufügen"
+                )}
               </button>
             </div>
           </div>
@@ -161,4 +188,5 @@ const CommentsModal = ({ offer, onClose }) => {
 };
 
 export default CommentsModal;
+
 

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../CSS/Customers.css";
 import EditCustomer from "./EditCustomer.js"; // Importiere die neue Edit-Modal-Komponente
+import { getAuthValue } from "./Header"; // Korrekt importieren
 
-const Customers = () => {
+const Customers = ({ userGroup }) => {
   const [customers, setCustomers] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [newCustomer, setNewCustomer] = useState({
@@ -12,15 +14,18 @@ const Customers = () => {
     address: "",
   });
 
+  const authValue = getAuthValue(userGroup);
+
   useEffect(() => {
     fetchCustomers();
-  }, []);
+  }, [userGroup]);
 
   const fetchCustomers = async () => {
     try {
-      const response = await fetch("http://localhost:8080/customers");
-      const data = await response.json();
-      setCustomers(data);
+      const response = await axios.get("http://localhost:8080/customers", {
+        headers: { Authorization: authValue },
+      });
+      setCustomers(response.data);
     } catch (error) {
       console.error("Error fetching customers:", error);
     }
@@ -28,15 +33,12 @@ const Customers = () => {
 
   const handleAddCustomer = async () => {
     try {
-      const response = await fetch("http://localhost:8080/customers", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newCustomer),
-      });
-      const customer = await response.json();
-      setCustomers([...customers, customer]);
+      const response = await axios.post(
+        "http://localhost:8080/customers",
+        newCustomer,
+        { headers: { Authorization: authValue } }
+      );
+      setCustomers([...customers, response.data]);
       setNewCustomer({ name: "", contact: "", address: "" });
     } catch (error) {
       console.error("Error adding customer:", error);
@@ -45,8 +47,8 @@ const Customers = () => {
 
   const handleDeleteCustomer = async (id) => {
     try {
-      await fetch(`http://localhost:8080/customers/${id}`, {
-        method: "DELETE",
+      await axios.delete(`http://localhost:8080/customers/${id}`, {
+        headers: { Authorization: authValue },
       });
       setCustomers(customers.filter((customer) => customer.id !== id));
     } catch (error) {
@@ -56,19 +58,16 @@ const Customers = () => {
 
   const handleUpdateCustomer = async (updatedCustomer) => {
     try {
-      const response = await fetch(
+      const response = await axios.put(
         `http://localhost:8080/customers/${updatedCustomer.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updatedCustomer),
-        }
+        updatedCustomer,
+        { headers: { Authorization: authValue } }
       );
-      const data = await response.json();
+      const updatedData = response.data;
       setCustomers(
-        customers.map((customer) => (customer.id === data.id ? data : customer))
+        customers.map((customer) =>
+          customer.id === updatedData.id ? updatedData : customer
+        )
       );
       setSelectedCustomer(null);
     } catch (error) {
@@ -122,7 +121,8 @@ const Customers = () => {
                 className="list-group-item d-flex justify-content-between align-items-center"
               >
                 <span>
-                  <strong>{customer.name}</strong> - {customer.contact} - {customer.address}
+                  <strong>{customer.name}</strong> - {customer.contact} -{" "}
+                  {customer.address}
                 </span>
                 <div>
                   <button
@@ -146,7 +146,7 @@ const Customers = () => {
         )}
       </div>
 
-      {/* Integriere die neue EditCustomerModal-Komponente */}
+      {/* Integriere die EditCustomer-Modal-Komponente */}
       {selectedCustomer && (
         <EditCustomer
           customer={selectedCustomer}

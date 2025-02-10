@@ -26,9 +26,9 @@ function App() {
       case "home":
         return <Home />;
       case "offers":
-          return <OffersList userGroup={userGroup} />; // userGroup übergeben
+        return <OffersList userGroup={userGroup} />;
       case "customers":
-        return <Customers />;
+        return <Customers userGroup={userGroup} />;
       case "services":
         return <h1>Our Services</h1>;
       case "contact":
@@ -39,17 +39,13 @@ function App() {
   };
 
   return (
-    <div>
-      {/* Header mit Navigation */}
+    <div className="App">
       <Header onGroupChange={handleGroupChange} onNavigate={handleNavigation} />
-
-      {/* Hauptinhalt */}
-      <main className="html">{renderPage()}</main>
-      
-      {/* Footer */}
+      <main>{renderPage()}</main>
       <Footer />
     </div>
   );
 }
 
 export default App;
+

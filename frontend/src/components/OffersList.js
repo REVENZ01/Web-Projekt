@@ -197,6 +197,7 @@ const OffersList = ({ userGroup }) => {  // userGroup als Prop erhalten
       </table>
       {selectedOffer && (
         <EditOfferModal
+          userGroup={userGroup} 
           offer={selectedOffer}
           onClose={() => setSelectedOffer(null)}
           onSave={handleUpdateOffer}
@@ -204,6 +205,7 @@ const OffersList = ({ userGroup }) => {  // userGroup als Prop erhalten
       )}
       {selectedCommentsOffer && (
         <CommentsModal
+          userGroup={userGroup} 
           offer={selectedCommentsOffer}
           onClose={() => setSelectedCommentsOffer(null)}
         />

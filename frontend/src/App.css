@@ -1,5 +1,13 @@
-
 .App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  text-align: center;
+}
+
+main {
+  flex: 1;
+  padding: 2rem;
   text-align: center;
 }
 
@@ -38,15 +46,6 @@
   }
 }
 
-.content {
-  min-height: calc(100vh - 1rem); /* Subtrahiert die Footer-Höhe */
-}
-
-main {
-  padding: 2rem;
-  text-align: center;
-
-}
 
 
 

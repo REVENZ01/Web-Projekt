@@ -1,31 +1,17 @@
 /* src/CSS/Home.css */
-body {
-  flex: 1;
-}
-
-
-html {
-  height: 100%;
-  margin: 0;
-  display: flex;
-  flex-direction: column; /* Flexbox für das Layout */
-  background-color: #819dfa;
-  flex: 1;
-  min-height: 100vh;
-}
 
 .home-container {
-  flex: 100%; /* Nimmt den verbleibenden Platz ein */
+  /* Der Container passt sich jetzt dem übergeordneten flex-Layout an */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start; /* Text beginnt oben */
   background-color: #819dfa;
-  max-width: 100%;
-  max-height: 100%;
-  height: 100vh;
+  width: 100%;
+  padding: 2rem;           /* Etwas Innenabstand, damit Inhalte nicht direkt am Rand kleben */
+  box-sizing: border-box;  /* Damit Padding in der Breite enthalten ist */
+  min-height: 100vh;       /* Falls du sicherstellen möchtest, dass der Home-Inhalt mindestens die gesamte Höhe einnimmt */
 }
-
 
 .home-title {
   font-size: 2.5rem;
@@ -55,6 +41,7 @@ html {
 .home-button:hover {
   background-color: #0056b3;
 }
+
 
  
   

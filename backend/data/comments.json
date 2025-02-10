@@ -6,20 +6,25 @@
     "createdAt": "2025-02-04T15:33:59.801Z",
     "updatedAt": "2025-02-04T15:33:59.801Z"
   },
-
-  {
-    "id": "3",
-    "offerId": "1",
-    "text": "Huhu",
-    "createdAt": "2025-02-04T15:53:39.217Z",
-    "updatedAt": "2025-02-06T19:55:51.372Z"
-  },
-  
   {
     "id": "4",
     "offerId": "5",
-    "text": "hahaha",
-    "createdAt": "2025-02-06T20:36:55.764Z",
-    "updatedAt": "2025-02-06T20:36:55.764Z"
+    "text": "hallo",
+    "createdAt": "2025-02-10T16:38:20.249Z",
+    "updatedAt": "2025-02-10T16:38:20.249Z"
+  },
+  {
+    "id": "5",
+    "offerId": "5",
+    "text": "asdhasjd",
+    "createdAt": "2025-02-10T16:38:23.231Z",
+    "updatedAt": "2025-02-10T16:38:23.231Z"
+  },
+  {
+    "id": "6",
+    "offerId": "5",
+    "text": "Hallo",
+    "createdAt": "2025-02-10T16:38:37.914Z",
+    "updatedAt": "2025-02-10T16:38:37.914Z"
   }
 ]
