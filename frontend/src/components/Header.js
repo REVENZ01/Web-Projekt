@@ -1,5 +1,7 @@
+// src/components/Header.js
 import React, { useState, useEffect } from "react";
 import "../CSS/Header.css"; // Für die Stilgestaltung
+import { seedAllData } from "./seedData"; // Importieren der Seed-Funktion
 
 // Funktion zur Generierung des Auth-Header-Werts basierend auf der User-Gruppe
 export const getAuthValue = (group) => {
@@ -19,13 +21,24 @@ const Header = ({ onGroupChange, onNavigate, userGroup }) => {
   const [selectedGroup, setSelectedGroup] = useState(userGroup || "Basic User");
 
   useEffect(() => {
-    setSelectedGroup(userGroup); // Falls userGroup von App.js kommt, Dropdown aktualisieren
+    setSelectedGroup(userGroup);
   }, [userGroup]);
 
   const handleGroupChange = (event) => {
     const group = event.target.value;
     setSelectedGroup(group);
-    onGroupChange(group); // Callback, um die Auswahl an die App weiterzugeben
+    onGroupChange(group);
+  };
+
+  // Handler zum direkten Aufruf der Seed-Funktion, ohne Navigation
+  const handleSeedData = async () => {
+    try {
+      await seedAllData(selectedGroup);
+      alert("Seed Data erfolgreich erzeugt.");
+    } catch (error) {
+      console.error("Error seeding data:", error);
+      alert("Beim Erzeugen der Seed Data ist ein Fehler aufgetreten.");
+    }
   };
 
   return (
@@ -34,18 +47,35 @@ const Header = ({ onGroupChange, onNavigate, userGroup }) => {
         <a href="/">MyWebsite</a>
       </div>
 
-      {/* Navigation Buttons */}
-      <nav style={{ display: "flex", justifyContent: "center", gap: "15px", margin: "20px 0" }}>
-        <button className="buttonHeader" onClick={() => onNavigate("home")}>Home</button>
-        <button className="buttonHeader" onClick={() => onNavigate("offers")}>Offers</button>
-        <button className="buttonHeader" onClick={() => onNavigate("customers")}>Customers</button>
-        <button className="buttonHeader" onClick={() => onNavigate("services")}>Services</button>
-        <button className="buttonHeader" onClick={() => onNavigate("contact")}>Contact</button>
+      <nav className="main-nav">
+        <button className="buttonHeader" onClick={() => onNavigate("home")}>
+          Home
+        </button>
+        <button className="buttonHeader" onClick={() => onNavigate("offers")}>
+          Offers
+        </button>
+        <button
+          className="buttonHeader"
+          onClick={() => onNavigate("customers")}
+        >
+          Customers
+        </button>
+        <button className="buttonHeader" onClick={() => onNavigate("contact")}>
+          Contact
+        </button>
       </nav>
 
-      {/* User Group Dropdown */}
+      {/* Extra Container für den Seed Data Button, rechts positioniert */}
+      <div className="seed-button-container">
+        <button className="seedButton" onClick={handleSeedData}>
+          Seed Data
+        </button>
+      </div>
+
       <div className="user-dropdown">
-        <label htmlFor="user-group" className="dropdown-label">User Group:</label>
+        <label htmlFor="user-group" className="dropdown-label">
+          User Group:
+        </label>
         <select
           id="user-group"
           value={selectedGroup}
@@ -62,5 +92,3 @@ const Header = ({ onGroupChange, onNavigate, userGroup }) => {
 };
 
 export default Header;
-
-

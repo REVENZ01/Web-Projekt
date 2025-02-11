@@ -1,6 +1,6 @@
 const fs = require("fs/promises");
 const path = require("path");
-const authorize = require("../Authorization/Authorization");
+const authorize = require("../authorization/authorization");
 const COMMENTS_FILE = path.join(__dirname, "../data/comments.json");
 
 async function commentsRoutes(fastify, options) {
@@ -31,57 +31,61 @@ async function commentsRoutes(fastify, options) {
   }
 
   // **GET /offers/:offerId/comments** → Alle Kommentare für ein Angebot abrufen
-  fastify.get("/offers/:offerId/comments",
-    { preHandler: authorize(["Account-Manager", "Developer", "User"]) },
-     async (request, reply) => {
-    try {
-      const { offerId } = request.params;
-      const comments = await readCommentsFile();
-      const offerComments = comments.filter(
-        (comment) => comment.offerId === offerId
-      );
-      reply.send(offerComments);
-    } catch (err) {
-      fastify.log.error(err);
-      reply.code(500).send({ message: "Error retrieving comments" });
-    }
-  });
-
-  // **POST /offers/:offerId/comments** → Neuen Kommentar hinzufügen
-  fastify.post("/offers/:offerId/comments",
+  fastify.get(
+    "/offers/:offerId/comments",
     { preHandler: authorize(["Account-Manager", "Developer", "User"]) },
     async (request, reply) => {
-    try {
-      const { offerId } = request.params;
-      const { text } = request.body;
-
-      if (!text) {
-        return reply.code(400).send({ message: "Comment text is required" });
+      try {
+        const { offerId } = request.params;
+        const comments = await readCommentsFile();
+        const offerComments = comments.filter(
+          (comment) => comment.offerId === offerId
+        );
+        reply.send(offerComments);
+      } catch (err) {
+        fastify.log.error(err);
+        reply.code(500).send({ message: "Error retrieving comments" });
       }
-
-      const comments = await readCommentsFile();
-      const newId =
-        comments.length > 0
-          ? String(Number(comments[comments.length - 1].id) + 1)
-          : "1"; // ID hochzählen
-
-      const newComment = {
-        id: newId,
-        offerId,
-        text,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-
-      comments.push(newComment);
-      await writeCommentsFile(comments);
-
-      reply.code(201).send(newComment);
-    } catch (err) {
-      fastify.log.error(err);
-      reply.code(500).send({ message: "Error adding comment" });
     }
-  });
+  );
+
+  // **POST /offers/:offerId/comments** → Neuen Kommentar hinzufügen
+  fastify.post(
+    "/offers/:offerId/comments",
+    { preHandler: authorize(["Account-Manager", "Developer", "User"]) },
+    async (request, reply) => {
+      try {
+        const { offerId } = request.params;
+        const { text } = request.body;
+
+        if (!text) {
+          return reply.code(400).send({ message: "Comment text is required" });
+        }
+
+        const comments = await readCommentsFile();
+        const newId =
+          comments.length > 0
+            ? String(Number(comments[comments.length - 1].id) + 1)
+            : "1"; // ID hochzählen
+
+        const newComment = {
+          id: newId,
+          offerId,
+          text,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+
+        comments.push(newComment);
+        await writeCommentsFile(comments);
+
+        reply.code(201).send(newComment);
+      } catch (err) {
+        fastify.log.error(err);
+        reply.code(500).send({ message: "Error adding comment" });
+      }
+    }
+  );
 
   // **PUT /offers/:offerId/comments/:commentId** → Kommentar aktualisieren
   fastify.put(
@@ -154,24 +158,23 @@ async function commentsRoutes(fastify, options) {
     }
   );
 
-// **Automatisches Löschen von Kommentaren ohne zugewiesene Offer-ID**
-async function removeUnassignedComments() {
-  try {
-    let comments = await readCommentsFile();
-    const filteredComments = comments.filter(comment => comment.offerId);
+  // **Automatisches Löschen von Kommentaren ohne zugewiesene Offer-ID**
+  async function removeUnassignedComments() {
+    try {
+      let comments = await readCommentsFile();
+      const filteredComments = comments.filter((comment) => comment.offerId);
 
-    if (filteredComments.length !== comments.length) {
-      await writeCommentsFile(filteredComments);
-      fastify.log.info("Comments without assigned offer IDs were deleted.");
+      if (filteredComments.length !== comments.length) {
+        await writeCommentsFile(filteredComments);
+        fastify.log.info("Comments without assigned offer IDs were deleted.");
+      }
+    } catch (err) {
+      fastify.log.error("Error cleaning up comments:", err);
     }
-  } catch (err) {
-    fastify.log.error("Error cleaning up comments:", err);
   }
-}
 
-// Rufe die Bereinigung regelmäßig auf
-setInterval(removeUnassignedComments, 60000); // Alle 60 Sekunden
-
+  // Rufe die Bereinigung regelmäßig auf
+  setInterval(removeUnassignedComments, 60000); // Alle 60 Sekunden
 }
 
 module.exports = commentsRoutes;

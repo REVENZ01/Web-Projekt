@@ -1,67 +1,93 @@
 /* Header Styles */
 .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 2rem;
-    background-color: #222;
-    color: rgb(255, 255, 255);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
-  
-  .logo a {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: white;
-    text-decoration: none;
-  }
-  
-  .navigation ul {
-    list-style: none;
-    display: flex;
-    gap: 1.5rem;
-  }
-  
-  .navigation ul li a {
-    text-decoration: none;
-    color: rgb(255, 255, 255);
-    font-size: 1rem;
-    transition: color 0.3s ease;
-  }
-  
-  .navigation ul li a:hover {
-    color: #f39c12;
-  }
-  
-  .user-dropdown {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  
-  .dropdown-label {
-    color: white;
-    font-size: 1rem;
-  }
-  
-  .dropdown {
-    padding: 0.5rem;
-    border-radius: 4px;
-    border: none;
-    font-size: 1rem;
-    outline: none;
-  }
-  
-  .buttonHeader{
-    color: white; /* Weißer Text */
-    background: none; /* Kein Hintergrund */
-    border: none; /* Kein Rahmen */
-    text-decoration: none; /* Kein Unterstrich */
-    font-size: 16px; /* Schriftgröße anpassen */
-    cursor: pointer; /* Zeiger zeigt an, dass es klickbar ist */
-    transition: color 0.3s ease; /* Sanfter Übergang beim Hovern */
-  }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #222;
+  color: rgb(255, 255, 255);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  height: 6rem;
+}
 
-  .buttonHeader:hover {
-    color: #007bff;
-  }
+.logo a {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
+}
+
+/* Navigation */
+.navigation ul {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+}
+
+.navigation ul li a {
+  text-decoration: none;
+  color: rgb(255, 255, 255);
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+.navigation ul li a:hover {
+  color: #f39c12;
+}
+
+/* Benutzer-Dropdown */
+.user-dropdown {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dropdown-label {
+  color: white;
+  font-size: 1rem;
+}
+
+.dropdown {
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: none;
+  font-size: 1rem;
+  outline: none;
+}
+
+/* Standard Navigation Buttons */
+.buttonHeader {
+  color: white; /* Weißer Text */
+  background: none; /* Kein Hintergrund */
+  border: none; /* Kein Rahmen */
+  text-decoration: none; /* Kein Unterstrich */
+  font-size: 16px; /* Schriftgröße anpassen */
+  cursor: pointer; /* Zeiger zeigt an, dass es klickbar ist */
+  transition: color 0.3s ease; /* Sanfter Übergang beim Hovern */
+}
+
+.buttonHeader:hover {
+  color: #007bff;
+}
+
+/* Container für den Seed Data Button, separat rechts positioniert */
+.seed-button-container {
+  margin-right: 20px;
+}
+
+/* Gestalteter Seed Button */
+.seedButton {
+  background-color: #4caf50; /* Grüne Hintergrundfarbe */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.seedButton:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
