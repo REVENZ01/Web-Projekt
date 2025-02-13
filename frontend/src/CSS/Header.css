@@ -4,7 +4,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background-color: #222;
+  background-color: #006C84;
   color: rgb(255, 255, 255);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   height: 6rem;
@@ -67,7 +67,7 @@
 }
 
 .buttonHeader:hover {
-  color: #007bff;
+  color: #f89777;
 }
 
 /* Container für den Seed Data Button, separat rechts positioniert */
@@ -77,8 +77,8 @@
 
 /* Gestalteter Seed Button */
 .seedButton {
-  background-color: #4caf50; /* Grüne Hintergrundfarbe */
-  color: white;
+  background-color: #ffccbb; /* Grüne Hintergrundfarbe */
+  color: black;
   border: none;
   padding: 10px 20px;
   font-size: 1rem;
@@ -88,6 +88,6 @@
 }
 
 .seedButton:hover {
-  background-color: #45a049;
+  background-color: #f89777;
   transform: scale(1.05);
 }

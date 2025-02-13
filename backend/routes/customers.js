@@ -34,14 +34,40 @@ async function customersRoutes(fastify, options) {
     }
   }
 
-  // GET /customers
+  // GET /customers – Mit Filterung via Query-Parameter (name, contact, address)
   fastify.get(
     "/",
     { preHandler: authorize(["Account-Manager", "Developer", "User"]) },
     async (request, reply) => {
       try {
-        const data = await fs.readFile(CUSTOMERS_FILE, "utf-8");
-        const customers = JSON.parse(data);
+        let data = await fs.readFile(CUSTOMERS_FILE, "utf-8");
+        let customers = JSON.parse(data);
+
+        // Validierung: Daten müssen ein Array sein
+        if (!Array.isArray(customers)) {
+          throw new Error("Invalid data format in customers.json");
+        }
+
+        // Filterung anhand von Query-Parametern
+        const { name, contact, address } = request.query;
+        if (name) {
+          customers = customers.filter((customer) =>
+            customer.name.toLowerCase().includes(name.toLowerCase())
+          );
+        }
+        if (contact) {
+          customers = customers.filter((customer) =>
+            customer.contact
+              ? customer.contact.toLowerCase().includes(contact.toLowerCase())
+              : false
+          );
+        }
+        if (address) {
+          customers = customers.filter((customer) =>
+            customer.address.toLowerCase().includes(address.toLowerCase())
+          );
+        }
+
         return customers;
       } catch (err) {
         fastify.log.error(err);
@@ -60,7 +86,7 @@ async function customersRoutes(fastify, options) {
 
         try {
           const data = await fs.readFile(CUSTOMERS_FILE, "utf-8");
-          customers = JSON.parse(data); // Daten aus der Datei parsen
+          customers = JSON.parse(data);
 
           // Validierung der Struktur
           if (!Array.isArray(customers)) {
@@ -68,10 +94,9 @@ async function customersRoutes(fastify, options) {
           }
         } catch (err) {
           if (err.code === "ENOENT") {
-            // Wenn die Datei nicht existiert, wird ein leeres Array verwendet
             customers = [];
           } else {
-            throw err; // Andere Fehler werfen
+            throw err;
           }
         }
 
@@ -83,11 +108,11 @@ async function customersRoutes(fastify, options) {
           updatedAt: new Date().toISOString(),
         };
 
-        customers.push(newCustomer); // Neuen Kunden hinzufügen
+        customers.push(newCustomer);
 
         // Datei aktualisieren
-        await fs.writeFile(CUSTOMERS_FILE, JSON.stringify(customers, null, 2)); // Array speichern
-        reply.code(201).send(newCustomer); // Erfolgsantwort mit neuem Kunden
+        await fs.writeFile(CUSTOMERS_FILE, JSON.stringify(customers, null, 2));
+        reply.code(201).send(newCustomer);
       } catch (err) {
         fastify.log.error(err);
         reply.code(500).send({ message: "Error saving customer data" });
@@ -101,7 +126,7 @@ async function customersRoutes(fastify, options) {
     { preHandler: authorize(["Account-Manager", "Developer"]) },
     async (request, reply) => {
       try {
-        const { idOrName } = request.params; // Kann eine ID oder ein Name sein
+        const { idOrName } = request.params;
         const customers = await readCustomersFile();
 
         // Gesuchten Kunden finden (per ID oder Name)
@@ -117,7 +142,7 @@ async function customersRoutes(fastify, options) {
         }
 
         // Daten aus dem Request übernehmen
-        const { name, email, age, address } = request.body;
+        const { name, email, age, address, contact } = request.body;
 
         // Kunden aktualisieren
         customers[customerIndex] = {
@@ -126,13 +151,14 @@ async function customersRoutes(fastify, options) {
           email: email || customers[customerIndex].email,
           age: age || customers[customerIndex].age,
           address: address || customers[customerIndex].address,
+          contact: contact || customers[customerIndex].contact,
           updatedAt: new Date().toISOString(),
         };
 
         // Datei aktualisieren
         await writeCustomersFile(customers);
 
-        reply.code(200).send(customers[customerIndex]); // Erfolgsantwort
+        reply.code(200).send(customers[customerIndex]);
       } catch (err) {
         fastify.log.error(err);
         reply.code(500).send({ message: "Error updating customer" });
@@ -164,7 +190,7 @@ async function customersRoutes(fastify, options) {
         // Datei aktualisieren
         await writeCustomersFile(customers);
 
-        reply.code(200).send(deletedCustomer[0]); // Erfolgsantwort
+        reply.code(200).send(deletedCustomer[0]);
       } catch (err) {
         fastify.log.error(err);
         reply.code(500).send({ message: "Error deleting customer" });
@@ -178,53 +204,56 @@ async function customersRoutes(fastify, options) {
     { preHandler: authorize(["Account-Manager", "Developer"]) },
     async (request, reply) => {
       try {
-        // Fiktive Kunden-Daten mit allen Feldern
         const testCustomers = [
           {
             name: "Test Kunde 1",
             email: "test1@example.com",
             age: 25,
             address: "Teststraße 1, Musterstadt",
+            contact: "123456789"
           },
           {
             name: "Test Kunde 2",
             email: "test2@example.com",
             age: 30,
             address: "Teststraße 2, Musterstadt",
+            contact: "987654321"
           },
           {
             name: "Test Kunde 3",
             email: "test3@example.com",
             age: 35,
             address: "Teststraße 3, Musterstadt",
+            contact: "555555555"
           },
           {
             name: "Test Kunde 4",
             email: "test4@example.com",
             age: 40,
             address: "Teststraße 4, Musterstadt",
+            contact: "444444444"
           },
           {
             name: "Test Kunde 5",
             email: "test5@example.com",
             age: 45,
             address: "Teststraße 5, Musterstadt",
+            contact: "333333333"
           },
         ];
 
         const now = new Date().toISOString();
-        // Neue Kundenobjekte erstellen (IDs fortlaufend)
         const newCustomers = testCustomers.map((customer, index) => ({
           id: String(index + 1),
           name: customer.name,
           email: customer.email,
           age: customer.age,
           address: customer.address,
+          contact: customer.contact,
           createdAt: now,
           updatedAt: now,
         }));
 
-        // Überschreibe die Kunden-Datei mit den Testdaten
         await writeCustomersFile(newCustomers);
         reply.code(201).send(newCustomers);
       } catch (err) {

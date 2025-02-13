@@ -34,10 +34,10 @@ const Header = ({ onGroupChange, onNavigate, userGroup }) => {
   const handleSeedData = async () => {
     try {
       await seedAllData(selectedGroup);
-      alert("Seed Data erfolgreich erzeugt.");
+      window.location.reload();
     } catch (error) {
       console.error("Error seeding data:", error);
-      alert("Beim Erzeugen der Seed Data ist ein Fehler aufgetreten.");
+      alert("Rolle -User- darf keine Testdaten erzeugen!");
     }
   };
 

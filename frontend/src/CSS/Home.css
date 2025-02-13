@@ -6,7 +6,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start; /* Text beginnt oben */
-  background-color: #819dfa;
+  background-color: #9cc2ca;
   width: 100%;
   padding: 2rem;           /* Etwas Innenabstand, damit Inhalte nicht direkt am Rand kleben */
   box-sizing: border-box;  /* Damit Padding in der Breite enthalten ist */

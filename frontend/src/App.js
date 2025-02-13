@@ -4,6 +4,8 @@ import Footer from "./components/Footer";
 import Header from "./components/Header";
 import Customers from "./components/Customers";
 import Home from "./components/Home";
+import "./App.css"
+
 
 function App() {
   const [userGroup, setUserGroup] = useState("Basic User"); // Benutzergruppe speichern

@@ -32,12 +32,12 @@ const EditCustomerModal = ({ customer, onClose, onSave }) => {
               />
             </div>
             <div className="mb-3">
-              <label className="form-label">Contact</label>
+              <label className="form-label">E-Mail</label>
               <input
                 type="text"
                 className="form-control"
-                name="contact"
-                value={formData.contact}
+                name="email"
+                value={formData.email}
                 onChange={handleChange}
               />
             </div>

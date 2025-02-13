@@ -4,8 +4,10 @@ import EditOfferModal from "./EditOfferModal";
 import CommentsModal from "./CommentsModal";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { getAuthValue } from "./Header"; // Korrekt importieren
+import "../CSS/Offers.css"; // Importiere die CSS-Datei
 
-const OffersList = ({ userGroup }) => {  // userGroup als Prop erhalten
+const OffersList = ({ userGroup }) => {
+  // Zustände für Angebote, Kunden, Modals und neue Angebote
   const [offers, setOffers] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [selectedOffer, setSelectedOffer] = useState(null);
@@ -16,6 +18,15 @@ const OffersList = ({ userGroup }) => {  // userGroup als Prop erhalten
     customerId: "",
   });
 
+  // Zustände für die Filterung
+  const [filterOffer, setFilterOffer] = useState({
+    name: "",
+    price: "",
+    status: ""
+  });
+  // Steuerung, ob der Filterbereich angezeigt wird
+  const [showFilters, setShowFilters] = useState(false);
+
   // Auth-Token basierend auf Benutzergruppe setzen
   const authValue = getAuthValue(userGroup);
 
@@ -24,17 +35,18 @@ const OffersList = ({ userGroup }) => {  // userGroup als Prop erhalten
     fetchCustomers();
   }, [userGroup]); // Neue Daten laden, wenn sich userGroup ändert
 
-  const fetchOffers = async () => {
+  // fetchOffers akzeptiert optional Filter-Parameter (wird als Query-Parameter gesendet)
+  const fetchOffers = async (filters = {}) => {
     try {
       const response = await axios.get("http://localhost:8080/offers", {
-        headers: { Authorization: authValue }
+        headers: { Authorization: authValue },
+        params: filters,
       });
       setOffers(response.data);
     } catch (error) {
       console.error("Error fetching offers:", error);
     }
   };
-
 
   const fetchCustomers = async () => {
     try {
@@ -47,10 +59,11 @@ const OffersList = ({ userGroup }) => {  // userGroup als Prop erhalten
     }
   };
 
-
   const handleAddOffer = async () => {
     try {
-      await axios.post("http://localhost:8080/offers", newOffer, {headers: { Authorization: authValue }});
+      await axios.post("http://localhost:8080/offers", newOffer, {
+        headers: { Authorization: authValue }
+      });
       fetchOffers();
       setNewOffer({ name: "", price: "", customerId: "" });
     } catch (error) {
@@ -60,7 +73,9 @@ const OffersList = ({ userGroup }) => {  // userGroup als Prop erhalten
 
   const handleDeleteOffer = async (id) => {
     try {
-      await axios.delete(`http://localhost:8080/offers/${id}`, {headers: { Authorization: authValue }});
+      await axios.delete(`http://localhost:8080/offers/${id}`, {
+        headers: { Authorization: authValue }
+      });
       fetchOffers();
     } catch (error) {
       console.error("Error deleting offer:", error);
@@ -71,7 +86,8 @@ const OffersList = ({ userGroup }) => {  // userGroup als Prop erhalten
     try {
       await axios.put(
         `http://localhost:8080/offers/${updatedOffer.id}`,
-        updatedOffer, {headers: { Authorization: authValue }}
+        updatedOffer,
+        { headers: { Authorization: authValue } }
       );
       fetchOffers();
       setSelectedOffer(null);
@@ -82,22 +98,34 @@ const OffersList = ({ userGroup }) => {  // userGroup als Prop erhalten
 
   const handleStatusChange = async (id, newStatus) => {
     try {
-      await axios.patch(`http://localhost:8080/offers/${id}/status`, {
-        newStatus, headers: { Authorization: authValue }
-      });
-      setOffers((prevOffers) =>
-        prevOffers.map((offer) =>
-          offer.id === id ? { ...offer, status: newStatus } : offer
-        )
+      await axios.patch(
+        `http://localhost:8080/offers/${id}/status`,
+        { newStatus },
+        { headers: { Authorization: authValue } }
       );
+      // Nach Statusänderung werden die Angebote (unter Berücksichtigung des aktuellen Filters) neu geladen
+      fetchOffers(filterOffer);
     } catch (error) {
       console.error("Error updating status:", error);
     }
   };
 
+  // Filter-Funktion: Es werden die Filter-Parameter an den Server gesendet
+  const handleFilterOffers = () => {
+    fetchOffers(filterOffer);
+  };
+
+  // Filter zurücksetzen
+  const handleClearFilter = () => {
+    setFilterOffer({ name: "", price: "", status: "" });
+    fetchOffers({});
+  };
+
   return (
-    <div className="container mt-4">
+    <div className="container mt-4 offers-container" style={{marginTop: "2rem", marginBottom:"2rem"}}>
       <h2>Manage Offers</h2>
+      
+      {/* Abschnitt zum Hinzufügen eines neuen Angebots */}
       <div className="mb-3 d-flex gap-2">
         <input
           type="text"
@@ -133,6 +161,67 @@ const OffersList = ({ userGroup }) => {  // userGroup als Prop erhalten
           Add Offer
         </button>
       </div>
+      
+      {/* Button zum Ein-/Ausblenden des Filterbereichs */}
+      <div className="mb-3">
+        <button
+          className="btn btn-outline-primary"
+          onClick={() => setShowFilters(!showFilters)}
+        >
+          {showFilters ? "Filter ausblenden" : "Filter anzeigen"}
+        </button>
+      </div>
+
+      {/* Filterbereich, der farblich hervorgehoben ist */}
+      {showFilters && (
+        <div
+          className="mb-3 d-flex gap-2"
+          style={{
+            backgroundColor: "#e3f2fd",
+            padding: "10px",
+            borderRadius: "5px"
+          }}
+        >
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Filter by Name"
+            value={filterOffer.name}
+            onChange={(e) =>
+              setFilterOffer({ ...filterOffer, name: e.target.value })
+            }
+          />
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Filter by Price"
+            value={filterOffer.price}
+            onChange={(e) =>
+              setFilterOffer({ ...filterOffer, price: e.target.value })
+            }
+          />
+          <select
+            className="form-select"
+            value={filterOffer.status}
+            onChange={(e) =>
+              setFilterOffer({ ...filterOffer, status: e.target.value })
+            }
+          >
+            <option value="">Filter by Status</option>
+            <option value="Draft">Draft</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Active">Active</option>
+            <option value="On Ice">On Ice</option>
+          </select>
+          <button className="btn btn-secondary" onClick={handleFilterOffers}>
+            Filter Offers
+          </button>
+          <button className="btn btn-outline-secondary" onClick={handleClearFilter}>
+            Clear Filter
+          </button>
+        </div>
+      )}
+
       <table className="table table-striped">
         <thead>
           <tr>
@@ -159,7 +248,9 @@ const OffersList = ({ userGroup }) => {  // userGroup als Prop erhalten
                 <select
                   className="form-select"
                   value={offer.status}
-                  onChange={(e) => handleStatusChange(offer.id, e.target.value)}
+                  onChange={(e) =>
+                    handleStatusChange(offer.id, e.target.value)
+                  }
                 >
                   <option value="Draft">Draft</option>
                   <option value="In Progress">In Progress</option>
@@ -186,7 +277,10 @@ const OffersList = ({ userGroup }) => {  // userGroup als Prop erhalten
                   className="btn btn-danger"
                   onClick={() => handleDeleteOffer(offer.id)}
                   disabled={offer.status === "In Progress"}
-                  style={{ backgroundColor: offer.status === "In Progress" ? "#d3d3d3" : "" }}
+                  style={{
+                    backgroundColor:
+                      offer.status === "In Progress" ? "#d3d3d3" : "",
+                  }}
                 >
                   Delete
                 </button>
@@ -197,7 +291,7 @@ const OffersList = ({ userGroup }) => {  // userGroup als Prop erhalten
       </table>
       {selectedOffer && (
         <EditOfferModal
-          userGroup={userGroup} 
+          userGroup={userGroup}
           offer={selectedOffer}
           onClose={() => setSelectedOffer(null)}
           onSave={handleUpdateOffer}
@@ -205,7 +299,7 @@ const OffersList = ({ userGroup }) => {  // userGroup als Prop erhalten
       )}
       {selectedCommentsOffer && (
         <CommentsModal
-          userGroup={userGroup} 
+          userGroup={userGroup}
           offer={selectedCommentsOffer}
           onClose={() => setSelectedCommentsOffer(null)}
         />
@@ -215,4 +309,3 @@ const OffersList = ({ userGroup }) => {  // userGroup als Prop erhalten
 };
 
 export default OffersList;
-

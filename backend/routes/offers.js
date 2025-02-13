@@ -37,13 +37,30 @@ async function offersRoutes(fastify, options) {
     }
   }
 
-  // GET /offers
+  // GET /offers – Mit Filterung via Query-Parameter (name, price, status)
   fastify.get(
     "/",
     { preHandler: authorize(["Account-Manager", "Developer", "User"]) },
     async (request, reply) => {
       try {
-        const offers = await readOffersFile();
+        let offers = await readOffersFile();
+
+        // Filterung anhand von Query-Parametern
+        const { name, price, status } = request.query;
+        if (name) {
+          offers = offers.filter((offer) =>
+            offer.name.toLowerCase().includes(name.toLowerCase())
+          );
+        }
+        if (price) {
+          offers = offers.filter((offer) =>
+            offer.price.toString().includes(price)
+          );
+        }
+        if (status) {
+          offers = offers.filter((offer) => offer.status === status);
+        }
+
         return offers;
       } catch (err) {
         fastify.log.error(err);
@@ -210,7 +227,7 @@ async function offersRoutes(fastify, options) {
     }
   );
 
-  // Neuer Endpoint: POST /offers/seed – Fiktive Angebote generieren
+  // POST /offers/seed – Fiktive Angebote generieren
   fastify.post(
     "/seed",
     { preHandler: authorize(["Account-Manager", "Developer"]) },
@@ -251,3 +268,4 @@ async function offersRoutes(fastify, options) {
 }
 
 module.exports = offersRoutes;
+

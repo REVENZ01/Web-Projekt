@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../CSS/Customers.css";
-import EditCustomer from "./EditCustomer.js"; // Importiere die neue Edit-Modal-Komponente
+import EditCustomer from "./EditCustomer.js"; // Importiere die Edit-Modal-Komponente
 import { getAuthValue } from "./Header"; // Korrekt importieren
 
 const Customers = ({ userGroup }) => {
@@ -10,9 +10,17 @@ const Customers = ({ userGroup }) => {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [newCustomer, setNewCustomer] = useState({
     name: "",
-    contact: "",
+    email: "",
     address: "",
   });
+
+  // Zustände für die Filterung
+  const [filterCustomer, setFilterCustomer] = useState({
+    name: "",
+    email: "",
+    address: "",
+  });
+  const [showFilters, setShowFilters] = useState(false);
 
   const authValue = getAuthValue(userGroup);
 
@@ -20,10 +28,12 @@ const Customers = ({ userGroup }) => {
     fetchCustomers();
   }, [userGroup]);
 
-  const fetchCustomers = async () => {
+  // fetchCustomers akzeptiert optional Filter-Parameter (als Query-Parameter)
+  const fetchCustomers = async (filters = {}) => {
     try {
       const response = await axios.get("http://localhost:8080/customers", {
         headers: { Authorization: authValue },
+        params: filters,
       });
       setCustomers(response.data);
     } catch (error) {
@@ -32,6 +42,11 @@ const Customers = ({ userGroup }) => {
   };
 
   const handleAddCustomer = async () => {
+    // Prüfen, ob in der Email ein "@" enthalten ist
+    if (!newCustomer.email.includes("@")) {
+      alert("Die Email-Adresse muss ein '@' enthalten.");
+      return;
+    }
     try {
       const response = await axios.post(
         "http://localhost:8080/customers",
@@ -39,7 +54,7 @@ const Customers = ({ userGroup }) => {
         { headers: { Authorization: authValue } }
       );
       setCustomers([...customers, response.data]);
-      setNewCustomer({ name: "", contact: "", address: "" });
+      setNewCustomer({ name: "", email: "", address: "" });
     } catch (error) {
       console.error("Error adding customer:", error);
     }
@@ -75,6 +90,15 @@ const Customers = ({ userGroup }) => {
     }
   };
 
+  const handleFilterCustomers = () => {
+    fetchCustomers(filterCustomer);
+  };
+
+  const handleClearFilter = () => {
+    setFilterCustomer({ name: "", email: "", address: "" });
+    fetchCustomers({});
+  };
+
   return (
     <div className="container mt-4">
       <h1>Customers</h1>
@@ -92,10 +116,10 @@ const Customers = ({ userGroup }) => {
         <input
           type="email"
           className="form-control mb-2"
-          placeholder="Contact"
-          value={newCustomer.contact}
+          placeholder="Email"
+          value={newCustomer.email}
           onChange={(e) =>
-            setNewCustomer({ ...newCustomer, contact: e.target.value })
+            setNewCustomer({ ...newCustomer, email: e.target.value })
           }
         />
         <input
@@ -113,34 +137,101 @@ const Customers = ({ userGroup }) => {
       </div>
       <div className="customer-list">
         <h2>Customer List</h2>
+        {/* Button zum Ein-/Ausblenden des Filterbereichs */}
+        <div className="mb-3">
+          <button
+            className="btn btn-outline-primary"
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            {showFilters ? "Hide Filters" : "Show Filters"}
+          </button>
+        </div>
+        {showFilters && (
+          <div
+            className="mb-3 d-flex gap-2"
+            style={{
+              backgroundColor: "#e3f2fd",
+              padding: "10px",
+              borderRadius: "5px",
+            }}
+          >
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Filter by Name"
+              value={filterCustomer.name}
+              onChange={(e) =>
+                setFilterCustomer({ ...filterCustomer, name: e.target.value })
+              }
+            />
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Filter by Email"
+              value={filterCustomer.email}
+              onChange={(e) =>
+                setFilterCustomer({ ...filterCustomer, email: e.target.value })
+              }
+            />
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Filter by Address"
+              value={filterCustomer.address}
+              onChange={(e) =>
+                setFilterCustomer({ ...filterCustomer, address: e.target.value })
+              }
+            />
+            <button
+              className="btn btn-secondary"
+              onClick={handleFilterCustomers}
+            >
+              Filter Customers
+            </button>
+            <button
+              className="btn btn-outline-secondary"
+              onClick={handleClearFilter}
+            >
+              Clear Filter
+            </button>
+          </div>
+        )}
         {customers.length > 0 ? (
-          <ul className="list-group">
-            {customers.map((customer) => (
-              <li
-                key={customer.id}
-                className="list-group-item d-flex justify-content-between align-items-center"
-              >
-                <span>
-                  <strong>{customer.name}</strong> - {customer.contact} -{" "}
-                  {customer.address}
-                </span>
-                <div>
-                  <button
-                    className="btn btn-warning btn-sm me-2"
-                    onClick={() => setSelectedCustomer(customer)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="btn btn-danger btn-sm"
-                    onClick={() => handleDeleteCustomer(customer.id)}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
+          <table className="table table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Address</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {customers.map((customer) => (
+                <tr key={customer.id}>
+                  <td>{customer.id}</td>
+                  <td>{customer.name}</td>
+                  <td>{customer.email}</td>
+                  <td>{customer.address}</td>
+                  <td>
+                    <button
+                      className="btn btn-warning btn-sm me-2"
+                      onClick={() => setSelectedCustomer(customer)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="btn btn-danger btn-sm"
+                      onClick={() => handleDeleteCustomer(customer.id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         ) : (
           <p>No customers found.</p>
         )}

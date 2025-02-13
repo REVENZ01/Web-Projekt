@@ -25,18 +25,12 @@
   .customer-form button:hover {
     background-color: #308397;
   }
+
   
-  .customer-list ul {
-    list-style: none;
-    padding: 0;
+
+  .customer-list {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
-  
-  .customer-list li {
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #ccc;
-  }
-  
-  .customer-list li strong {
-    font-weight: bold;
-  }
-  
