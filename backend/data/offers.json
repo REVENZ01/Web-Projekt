@@ -3,149 +3,110 @@
     "id": "1",
     "name": "Test Angebot 1",
     "description": "Dies ist die Beschreibung für Angebot 1.",
-    "price": "663",
+    "price": "557",
     "currency": "EUR",
-    "customerId": "2",
-    "status": "On Ice",
-    "createdAt": "2025-02-13T20:06:39.475Z",
-    "updatedAt": "2025-02-13T20:06:39.475Z"
+    "customerId": "3",
+    "status": "In Progress",
+    "createdAt": "2025-02-14T21:26:35.083Z",
+    "updatedAt": "2025-02-14T21:26:35.083Z"
   },
   {
     "id": "2",
     "name": "Test Angebot 2",
     "description": "Dies ist die Beschreibung für Angebot 2.",
-    "price": "590",
+    "price": "608",
     "currency": "EUR",
-    "customerId": "5",
-    "status": "On Ice",
-    "createdAt": "2025-02-13T20:06:39.475Z",
-    "updatedAt": "2025-02-13T20:06:39.475Z"
+    "customerId": "4",
+    "status": "In Progress",
+    "createdAt": "2025-02-14T21:26:35.083Z",
+    "updatedAt": "2025-02-14T21:26:35.083Z"
   },
   {
     "id": "3",
     "name": "Test Angebot 3",
     "description": "Dies ist die Beschreibung für Angebot 3.",
-    "price": "188",
+    "price": "643",
     "currency": "EUR",
-    "customerId": "5",
+    "customerId": "2",
     "status": "Draft",
-    "createdAt": "2025-02-13T20:06:39.475Z",
-    "updatedAt": "2025-02-13T20:06:39.475Z"
+    "createdAt": "2025-02-14T21:26:35.083Z",
+    "updatedAt": "2025-02-14T21:26:35.083Z"
   },
   {
     "id": "4",
     "name": "Test Angebot 4",
     "description": "Dies ist die Beschreibung für Angebot 4.",
-    "price": "399",
+    "price": "823",
     "currency": "EUR",
     "customerId": "5",
     "status": "Active",
-    "createdAt": "2025-02-13T20:06:39.475Z",
-    "updatedAt": "2025-02-13T20:06:39.475Z"
+    "createdAt": "2025-02-14T21:26:35.083Z",
+    "updatedAt": "2025-02-14T21:26:35.083Z"
+  },
+  {
+    "id": "5",
+    "name": "Test Angebot 5",
+    "description": "Dies ist die Beschreibung für Angebot 5.",
+    "price": "450",
+    "currency": "EUR",
+    "customerId": "3",
+    "status": "On Ice",
+    "createdAt": "2025-02-14T21:26:35.083Z",
+    "updatedAt": "2025-02-14T21:26:35.083Z"
+  },
+  {
+    "id": "6",
+    "name": "Test Angebot 6",
+    "description": "Dies ist die Beschreibung für Angebot 6.",
+    "price": "365",
+    "currency": "EUR",
+    "customerId": "2",
+    "status": "In Progress",
+    "createdAt": "2025-02-14T21:26:35.083Z",
+    "updatedAt": "2025-02-14T21:26:35.083Z"
   },
   {
     "id": "7",
     "name": "Test Angebot 7",
     "description": "Dies ist die Beschreibung für Angebot 7.",
-    "price": "188",
+    "price": "866",
+    "currency": "EUR",
+    "customerId": "4",
+    "status": "In Progress",
+    "createdAt": "2025-02-14T21:26:35.083Z",
+    "updatedAt": "2025-02-14T21:26:35.083Z"
+  },
+  {
+    "id": "8",
+    "name": "Test Angebot 8",
+    "description": "Dies ist die Beschreibung für Angebot 8.",
+    "price": "407",
     "currency": "EUR",
     "customerId": "5",
-    "status": "Active",
-    "createdAt": "2025-02-13T20:06:39.475Z",
-    "updatedAt": "2025-02-13T20:06:39.475Z"
+    "status": "Draft",
+    "createdAt": "2025-02-14T21:26:35.083Z",
+    "updatedAt": "2025-02-14T21:26:35.083Z"
   },
   {
     "id": "9",
     "name": "Test Angebot 9",
     "description": "Dies ist die Beschreibung für Angebot 9.",
-    "price": "985",
+    "price": "305",
     "currency": "EUR",
-    "customerId": "3",
+    "customerId": "4",
     "status": "In Progress",
-    "createdAt": "2025-02-13T20:06:39.475Z",
-    "updatedAt": "2025-02-13T20:06:39.475Z"
+    "createdAt": "2025-02-14T21:26:35.083Z",
+    "updatedAt": "2025-02-14T21:26:35.083Z"
   },
   {
     "id": "10",
     "name": "Test Angebot 10",
     "description": "Dies ist die Beschreibung für Angebot 10.",
-    "price": "939",
+    "price": "118",
     "currency": "EUR",
-    "customerId": "1",
-    "status": "In Progress",
-    "createdAt": "2025-02-13T20:06:39.475Z",
-    "updatedAt": "2025-02-13T20:06:39.475Z"
-  },
-  {
-    "id": "8",
-    "name": "",
-    "price": "",
-    "customerId": "",
-    "createdAt": "2025-02-13T20:54:15.433Z",
-    "updatedAt": "2025-02-13T20:54:15.433Z"
-  },
-  {
-    "id": "9",
-    "name": "",
-    "price": "",
-    "customerId": "",
-    "createdAt": "2025-02-13T20:54:15.607Z",
-    "updatedAt": "2025-02-13T20:54:15.607Z"
-  },
-  {
-    "id": "10",
-    "name": "",
-    "price": "",
-    "customerId": "",
-    "createdAt": "2025-02-13T20:54:15.778Z",
-    "updatedAt": "2025-02-13T20:54:15.778Z"
-  },
-  {
-    "id": "11",
-    "name": "",
-    "price": "",
-    "customerId": "",
-    "createdAt": "2025-02-13T20:54:18.104Z",
-    "updatedAt": "2025-02-13T20:54:18.104Z"
-  },
-  {
-    "id": "12",
-    "name": "",
-    "price": "",
-    "customerId": "",
-    "createdAt": "2025-02-13T20:54:18.250Z",
-    "updatedAt": "2025-02-13T20:54:18.250Z"
-  },
-  {
-    "id": "13",
-    "name": "",
-    "price": "",
-    "customerId": "",
-    "createdAt": "2025-02-13T20:54:18.411Z",
-    "updatedAt": "2025-02-13T20:54:18.411Z"
-  },
-  {
-    "id": "14",
-    "name": "",
-    "price": "",
-    "customerId": "",
-    "createdAt": "2025-02-13T20:54:18.574Z",
-    "updatedAt": "2025-02-13T20:54:18.574Z"
-  },
-  {
-    "id": "15",
-    "name": "",
-    "price": "",
-    "customerId": "",
-    "createdAt": "2025-02-13T20:54:18.739Z",
-    "updatedAt": "2025-02-13T20:54:18.739Z"
-  },
-  {
-    "id": "16",
-    "name": "",
-    "price": "",
-    "customerId": "",
-    "createdAt": "2025-02-13T20:54:18.879Z",
-    "updatedAt": "2025-02-13T20:54:18.879Z"
+    "customerId": "5",
+    "status": "Active",
+    "createdAt": "2025-02-14T21:26:35.083Z",
+    "updatedAt": "2025-02-14T21:26:35.083Z"
   }
 ]

@@ -44,12 +44,12 @@ const Header = ({ onGroupChange, onNavigate, userGroup }) => {
   return (
     <header className="header">
       <div className="logo">
-        <a href="/">MyWebsite</a>
+        <a href="/">🪐</a>
       </div>
 
       <nav className="main-nav">
         <button className="buttonHeader" onClick={() => onNavigate("home")}>
-          Home
+        Home
         </button>
         <button className="buttonHeader" onClick={() => onNavigate("offers")}>
           Offers
