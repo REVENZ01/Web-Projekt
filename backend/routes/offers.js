@@ -1,66 +1,70 @@
-const fs = require("fs/promises");
-const path = require("path");
 const authorize = require("../authorization/authorization");
-const OFFERS_FILE = path.join(__dirname, "../data/offers.json");
-
-// Erlaubte Statuswerte
+const db = require("../db");
 const VALID_STATUSES = ["Draft", "In Progress", "Active", "On Ice"];
 
+// Promise-basierte Wrapper für SQLite-Methoden
+function run(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.run(sql, params, function (err) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve({ lastID: this.lastID, changes: this.changes });
+      }
+    });
+  });
+}
+
+function all(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.all(sql, params, (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows);
+      }
+    });
+  });
+}
+
+function get(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.get(sql, params, (err, row) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(row);
+      }
+    });
+  });
+}
+
 async function offersRoutes(fastify, options) {
-  // Hilfsfunktion: Datei lesen
-  async function readOffersFile() {
-    try {
-      const data = await fs.readFile(OFFERS_FILE, "utf-8");
-      const offers = JSON.parse(data);
-
-      // Validierung: Daten müssen ein Array sein
-      if (!Array.isArray(offers)) {
-        throw new Error("Invalid data format in offers.json");
-      }
-
-      return offers;
-    } catch (err) {
-      if (err.code === "ENOENT") {
-        // Datei nicht gefunden: leeres Array zurückgeben
-        return [];
-      }
-      throw new Error("Error reading offers file");
-    }
-  }
-
-  // Hilfsfunktion: Datei schreiben
-  async function writeOffersFile(offers) {
-    try {
-      await fs.writeFile(OFFERS_FILE, JSON.stringify(offers, null, 2));
-    } catch (err) {
-      throw new Error("Error writing offers file");
-    }
-  }
-
   // GET /offers – Mit Filterung via Query-Parameter (name, price, status)
   fastify.get(
     "/",
     { preHandler: authorize(["Account-Manager", "Developer", "User"]) },
     async (request, reply) => {
       try {
-        let offers = await readOffersFile();
-
-        // Filterung anhand von Query-Parametern
         const { name, price, status } = request.query;
+        let query = "SELECT * FROM offers WHERE 1=1";
+        const params = [];
+
         if (name) {
-          offers = offers.filter((offer) =>
-            offer.name.toLowerCase().includes(name.toLowerCase())
-          );
+          query += " AND lower(name) LIKE ?";
+          params.push(`%${name.toLowerCase()}%`);
         }
         if (price) {
-          offers = offers.filter((offer) =>
-            offer.price.toString().includes(price)
-          );
+          // Umwandlung der Zahl in String, damit LIKE funktioniert
+          query += " AND CAST(price AS TEXT) LIKE ?";
+          params.push(`%${price}%`);
         }
         if (status) {
-          offers = offers.filter((offer) => offer.status === status);
+          query += " AND status = ?";
+          params.push(status);
         }
 
+        const offers = await all(query, params);
         return offers;
       } catch (err) {
         fastify.log.error(err);
@@ -69,25 +73,27 @@ async function offersRoutes(fastify, options) {
     }
   );
 
-  // POST /offers
+  // POST /offers – Neues Angebot anlegen mit fortlaufender ID
   fastify.post(
     "/",
     { preHandler: authorize(["Account-Manager", "Developer"]) },
     async (request, reply) => {
       try {
-        const offers = await readOffersFile();
+        const { name, description, price, currency, customerId, status } = request.body;
+        const now = new Date().toISOString();
 
-        const newOffer = {
-          id: String(offers.length + 1),
-          ...request.body,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        };
+        // Ermittlung der aktuell höchsten ID in der Tabelle und Vergabe einer neuen fortlaufenden ID
+        const result = await get("SELECT MAX(CAST(id AS INTEGER)) as maxId FROM offers");
+        const newId = result && result.maxId ? (parseInt(result.maxId, 10) + 1).toString() : "1";
 
-        offers.push(newOffer);
-        await writeOffersFile(offers);
+        const sql = `
+          INSERT INTO offers (id, name, description, price, currency, customerId, status, createdAt, updatedAt)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+        await run(sql, [newId, name, description, price, currency, customerId, status, now, now]);
 
-        reply.code(201).send(newOffer);
+        const offer = await get("SELECT * FROM offers WHERE id = ?", [newId]);
+        reply.code(201).send(offer);
       } catch (err) {
         fastify.log.error(err);
         reply.code(500).send({ message: "Error adding new offer" });
@@ -103,28 +109,32 @@ async function offersRoutes(fastify, options) {
       try {
         const { id } = request.params;
         const updatedOfferData = request.body;
-        const offers = await readOffersFile();
-
-        // Angebot mit der angegebenen ID finden
-        const offerIndex = offers.findIndex((offer) => offer.id === id);
-        if (offerIndex === -1) {
+        // Bestehendes Angebot abrufen
+        const offer = await get("SELECT * FROM offers WHERE id = ?", [id]);
+        if (!offer) {
           reply.code(404).send({ message: "Offer not found" });
           return;
         }
 
-        // Angebot aktualisieren
-        offers[offerIndex] = {
-          ...offers[offerIndex],
-          ...updatedOfferData,
-          updatedAt: new Date().toISOString(), // Aktualisierungszeit hinzufügen
-        };
+        const updatedName = updatedOfferData.name || offer.name;
+        const updatedDescription = updatedOfferData.description || offer.description;
+        const updatedPrice = updatedOfferData.price || offer.price;
+        const updatedCurrency = updatedOfferData.currency || offer.currency;
+        const updatedCustomerId = updatedOfferData.customerId || offer.customerId;
+        const updatedStatus = updatedOfferData.status || offer.status;
+        const now = new Date().toISOString();
 
-        // Datei aktualisieren
-        await writeOffersFile(offers);
+        const sql = `
+          UPDATE offers
+          SET name = ?, description = ?, price = ?, currency = ?, customerId = ?, status = ?, updatedAt = ?
+          WHERE id = ?
+        `;
+        await run(sql, [updatedName, updatedDescription, updatedPrice, updatedCurrency, updatedCustomerId, updatedStatus, now, id]);
 
+        const updatedOffer = await get("SELECT * FROM offers WHERE id = ?", [id]);
         reply.code(200).send({
           message: "Offer successfully updated",
-          updatedOffer: offers[offerIndex],
+          updatedOffer,
         });
       } catch (err) {
         fastify.log.error(err);
@@ -140,24 +150,16 @@ async function offersRoutes(fastify, options) {
     async (request, reply) => {
       try {
         const { id } = request.params;
-        const offers = await readOffersFile();
-
-        // Angebot mit der angegebenen ID finden
-        const offerIndex = offers.findIndex((offer) => offer.id === id);
-        if (offerIndex === -1) {
+        // Angebot abrufen, um es später zurückzugeben
+        const offer = await get("SELECT * FROM offers WHERE id = ?", [id]);
+        if (!offer) {
           reply.code(404).send({ message: "Offer not found" });
           return;
         }
-
-        // Angebot entfernen
-        const deletedOffer = offers.splice(offerIndex, 1);
-
-        // Datei aktualisieren
-        await writeOffersFile(offers);
-
+        await run("DELETE FROM offers WHERE id = ?", [id]);
         reply.code(200).send({
           message: "Offer successfully deleted",
-          deletedOffer: deletedOffer[0],
+          deletedOffer: offer,
         });
       } catch (err) {
         fastify.log.error(err);
@@ -175,50 +177,38 @@ async function offersRoutes(fastify, options) {
         const { id } = request.params;
         const { newStatus } = request.body;
 
-        fastify.log.info(
-          `Received status update request for offer ID: ${id}, New Status: ${newStatus}`
-        );
+        fastify.log.info(`Received status update request for offer ID: ${id}, New Status: ${newStatus}`);
 
         // ID-Format überprüfen (nur Zahlen zulässig)
         if (!/^\d+$/.test(id)) {
-          reply
-            .code(400)
-            .send({ message: "Invalid ID format. It must be a number." });
+          reply.code(400).send({ message: "Invalid ID format. It must be a number." });
           return;
         }
 
         // Validierung des Status
         if (!VALID_STATUSES.includes(newStatus)) {
           reply.code(400).send({
-            message: `Invalid status value. Allowed values are: ${VALID_STATUSES.join(
-              ", "
-            )}`,
+            message: `Invalid status value. Allowed values are: ${VALID_STATUSES.join(", ")}`
           });
           return;
         }
 
-        const offers = await readOffersFile();
-        const offerIndex = offers.findIndex((offer) => offer.id === id);
-
-        if (offerIndex === -1) {
+        // Bestehendes Angebot abrufen
+        const offer = await get("SELECT * FROM offers WHERE id = ?", [id]);
+        if (!offer) {
           reply.code(404).send({ message: "Offer not found" });
           return;
         }
 
-        // Status aktualisieren
-        offers[offerIndex].status = newStatus;
-        offers[offerIndex].updatedAt = new Date().toISOString();
+        const now = new Date().toISOString();
+        await run("UPDATE offers SET status = ?, updatedAt = ? WHERE id = ?", [newStatus, now, id]);
 
-        // Datei aktualisieren
-        await writeOffersFile(offers);
-
-        fastify.log.info(
-          `Offer ID ${id} successfully updated to status: ${newStatus}`
-        );
+        const updatedOffer = await get("SELECT * FROM offers WHERE id = ?", [id]);
+        fastify.log.info(`Offer ID ${id} successfully updated to status: ${newStatus}`);
 
         reply.code(200).send({
           message: "Offer status successfully updated",
-          updatedOffer: offers[offerIndex],
+          updatedOffer,
         });
       } catch (err) {
         fastify.log.error(err);
@@ -237,16 +227,12 @@ async function offersRoutes(fastify, options) {
         const testOffers = [];
         // Erstelle 10 fiktive Angebote
         for (let i = 1; i <= 10; i++) {
-          // Zufälliger Preis zwischen 100 und 1000 (als String)
-          const price = String(Math.floor(Math.random() * 901) + 100);
-          // Zufällige Statuswahl
-          const randomStatus =
-            VALID_STATUSES[Math.floor(Math.random() * VALID_STATUSES.length)];
-          // Zufällige Kunden-Zuordnung (IDs "1" bis "5")
-          const randomCustomerId = String(Math.floor(Math.random() * 5) + 1);
+          const price = Math.floor(Math.random() * 901) + 100; // Zufälliger Preis zwischen 100 und 1000
+          const randomStatus = VALID_STATUSES[Math.floor(Math.random() * VALID_STATUSES.length)];
+          const randomCustomerId = String(Math.floor(Math.random() * 5) + 1); // Zufällige Kunden-Zuordnung (IDs "1" bis "5")
 
           testOffers.push({
-            id: String(i),
+            id: i.toString(),
             name: `Test Angebot ${i}`,
             description: `Dies ist die Beschreibung für Angebot ${i}.`,
             price: price,
@@ -257,8 +243,31 @@ async function offersRoutes(fastify, options) {
             updatedAt: now,
           });
         }
-        await writeOffersFile(testOffers);
-        reply.code(201).send(testOffers);
+
+        // Vorhandene Angebote löschen
+        await run("DELETE FROM offers");
+
+        // Testangebote einfügen
+        for (const offer of testOffers) {
+          const sql = `
+            INSERT INTO offers (id, name, description, price, currency, customerId, status, createdAt, updatedAt)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `;
+          await run(sql, [
+            offer.id,
+            offer.name,
+            offer.description,
+            offer.price,
+            offer.currency,
+            offer.customerId,
+            offer.status,
+            offer.createdAt,
+            offer.updatedAt,
+          ]);
+        }
+
+        const seededOffers = await all("SELECT * FROM offers");
+        reply.code(201).send(seededOffers);
       } catch (err) {
         fastify.log.error(err);
         reply.code(500).send({ message: "Error seeding offers data" });
@@ -268,4 +277,6 @@ async function offersRoutes(fastify, options) {
 }
 
 module.exports = offersRoutes;
+
+
 

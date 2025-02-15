@@ -3,110 +3,110 @@
     "id": "1",
     "name": "Test Angebot 1",
     "description": "Dies ist die Beschreibung für Angebot 1.",
-    "price": "557",
+    "price": "678",
     "currency": "EUR",
-    "customerId": "3",
-    "status": "In Progress",
-    "createdAt": "2025-02-14T21:26:35.083Z",
-    "updatedAt": "2025-02-14T21:26:35.083Z"
+    "customerId": "5",
+    "status": "On Ice",
+    "createdAt": "2025-02-15T22:18:31.248Z",
+    "updatedAt": "2025-02-15T22:18:31.248Z"
   },
   {
     "id": "2",
     "name": "Test Angebot 2",
     "description": "Dies ist die Beschreibung für Angebot 2.",
-    "price": "608",
+    "price": "310",
     "currency": "EUR",
-    "customerId": "4",
-    "status": "In Progress",
-    "createdAt": "2025-02-14T21:26:35.083Z",
-    "updatedAt": "2025-02-14T21:26:35.083Z"
+    "customerId": "1",
+    "status": "Active",
+    "createdAt": "2025-02-15T22:18:31.248Z",
+    "updatedAt": "2025-02-15T22:18:31.248Z"
   },
   {
     "id": "3",
     "name": "Test Angebot 3",
     "description": "Dies ist die Beschreibung für Angebot 3.",
-    "price": "643",
+    "price": "803",
     "currency": "EUR",
     "customerId": "2",
-    "status": "Draft",
-    "createdAt": "2025-02-14T21:26:35.083Z",
-    "updatedAt": "2025-02-14T21:26:35.083Z"
+    "status": "Active",
+    "createdAt": "2025-02-15T22:18:31.248Z",
+    "updatedAt": "2025-02-15T22:18:31.248Z"
   },
   {
     "id": "4",
     "name": "Test Angebot 4",
     "description": "Dies ist die Beschreibung für Angebot 4.",
-    "price": "823",
+    "price": "764",
     "currency": "EUR",
-    "customerId": "5",
-    "status": "Active",
-    "createdAt": "2025-02-14T21:26:35.083Z",
-    "updatedAt": "2025-02-14T21:26:35.083Z"
+    "customerId": "2",
+    "status": "In Progress",
+    "createdAt": "2025-02-15T22:18:31.248Z",
+    "updatedAt": "2025-02-15T22:18:31.248Z"
   },
   {
     "id": "5",
     "name": "Test Angebot 5",
     "description": "Dies ist die Beschreibung für Angebot 5.",
-    "price": "450",
+    "price": "630",
     "currency": "EUR",
-    "customerId": "3",
-    "status": "On Ice",
-    "createdAt": "2025-02-14T21:26:35.083Z",
-    "updatedAt": "2025-02-14T21:26:35.083Z"
+    "customerId": "5",
+    "status": "Active",
+    "createdAt": "2025-02-15T22:18:31.248Z",
+    "updatedAt": "2025-02-15T22:18:31.248Z"
   },
   {
     "id": "6",
     "name": "Test Angebot 6",
     "description": "Dies ist die Beschreibung für Angebot 6.",
-    "price": "365",
+    "price": "990",
     "currency": "EUR",
-    "customerId": "2",
+    "customerId": "4",
     "status": "In Progress",
-    "createdAt": "2025-02-14T21:26:35.083Z",
-    "updatedAt": "2025-02-14T21:26:35.083Z"
+    "createdAt": "2025-02-15T22:18:31.248Z",
+    "updatedAt": "2025-02-15T22:18:31.248Z"
   },
   {
     "id": "7",
     "name": "Test Angebot 7",
     "description": "Dies ist die Beschreibung für Angebot 7.",
-    "price": "866",
+    "price": "195",
     "currency": "EUR",
-    "customerId": "4",
-    "status": "In Progress",
-    "createdAt": "2025-02-14T21:26:35.083Z",
-    "updatedAt": "2025-02-14T21:26:35.083Z"
+    "customerId": "2",
+    "status": "Active",
+    "createdAt": "2025-02-15T22:18:31.248Z",
+    "updatedAt": "2025-02-15T22:18:31.248Z"
   },
   {
     "id": "8",
     "name": "Test Angebot 8",
     "description": "Dies ist die Beschreibung für Angebot 8.",
-    "price": "407",
+    "price": "776",
     "currency": "EUR",
-    "customerId": "5",
+    "customerId": "3",
     "status": "Draft",
-    "createdAt": "2025-02-14T21:26:35.083Z",
-    "updatedAt": "2025-02-14T21:26:35.083Z"
+    "createdAt": "2025-02-15T22:18:31.248Z",
+    "updatedAt": "2025-02-15T22:18:31.248Z"
   },
   {
     "id": "9",
     "name": "Test Angebot 9",
     "description": "Dies ist die Beschreibung für Angebot 9.",
-    "price": "305",
+    "price": "122",
     "currency": "EUR",
     "customerId": "4",
-    "status": "In Progress",
-    "createdAt": "2025-02-14T21:26:35.083Z",
-    "updatedAt": "2025-02-14T21:26:35.083Z"
+    "status": "Active",
+    "createdAt": "2025-02-15T22:18:31.248Z",
+    "updatedAt": "2025-02-15T22:18:31.248Z"
   },
   {
     "id": "10",
     "name": "Test Angebot 10",
     "description": "Dies ist die Beschreibung für Angebot 10.",
-    "price": "118",
+    "price": "620",
     "currency": "EUR",
-    "customerId": "5",
+    "customerId": "3",
     "status": "Active",
-    "createdAt": "2025-02-14T21:26:35.083Z",
-    "updatedAt": "2025-02-14T21:26:35.083Z"
+    "createdAt": "2025-02-15T22:18:31.248Z",
+    "updatedAt": "2025-02-15T22:18:31.248Z"
   }
 ]

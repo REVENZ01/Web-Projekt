@@ -1,47 +1,56 @@
-const fs = require("fs/promises");
-const path = require("path");
 const authorize = require("../authorization/authorization");
-const COMMENTS_FILE = path.join(__dirname, "../data/comments.json");
+const db = require("../db");
+
+// Promise-basierte Wrapper für SQLite-Methoden
+function run(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.run(sql, params, function (err) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve({ lastID: this.lastID, changes: this.changes });
+      }
+    });
+  });
+}
+
+function get(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.get(sql, params, (err, row) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(row);
+      }
+    });
+  });
+}
+
+function all(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.all(sql, params, (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows);
+      }
+    });
+  });
+}
 
 async function commentsRoutes(fastify, options) {
-  // Hilfsfunktion: Kommentare-Datei lesen
-  async function readCommentsFile() {
-    try {
-      const data = await fs.readFile(COMMENTS_FILE, "utf-8");
-      const comments = JSON.parse(data);
-      if (!Array.isArray(comments)) {
-        throw new Error("Invalid data format in comments.json");
-      }
-      return comments;
-    } catch (err) {
-      if (err.code === "ENOENT") {
-        return []; // Datei existiert nicht, Rückgabe eines leeren Arrays
-      }
-      throw new Error("Error reading comments file");
-    }
-  }
-
-  // Hilfsfunktion: Kommentare-Datei schreiben
-  async function writeCommentsFile(comments) {
-    try {
-      await fs.writeFile(COMMENTS_FILE, JSON.stringify(comments, null, 2));
-    } catch (err) {
-      throw new Error("Error writing comments file");
-    }
-  }
-
-  // **GET /offers/:offerId/comments** → Alle Kommentare für ein Angebot abrufen
+  // GET /offers/:offerId/comments – Alle Kommentare für ein Angebot abrufen
   fastify.get(
     "/offers/:offerId/comments",
     { preHandler: authorize(["Account-Manager", "Developer", "User"]) },
     async (request, reply) => {
       try {
         const { offerId } = request.params;
-        const comments = await readCommentsFile();
-        const offerComments = comments.filter(
-          (comment) => comment.offerId === offerId
+        const comments = await all(
+          "SELECT * FROM comments WHERE offerId = ?",
+          [offerId]
         );
-        reply.send(offerComments);
+        reply.send(comments);
       } catch (err) {
         fastify.log.error(err);
         reply.code(500).send({ message: "Error retrieving comments" });
@@ -49,7 +58,7 @@ async function commentsRoutes(fastify, options) {
     }
   );
 
-  // **POST /offers/:offerId/comments** → Neuen Kommentar hinzufügen
+  // POST /offers/:offerId/comments – Neuen Kommentar hinzufügen
   fastify.post(
     "/offers/:offerId/comments",
     { preHandler: authorize(["Account-Manager", "Developer", "User"]) },
@@ -57,28 +66,24 @@ async function commentsRoutes(fastify, options) {
       try {
         const { offerId } = request.params;
         const { text } = request.body;
-
         if (!text) {
-          return reply.code(400).send({ message: "Comment text is required" });
+          return reply
+            .code(400)
+            .send({ message: "Comment text is required" });
         }
+        const now = new Date().toISOString();
 
-        const comments = await readCommentsFile();
-        const newId =
-          comments.length > 0
-            ? String(Number(comments[comments.length - 1].id) + 1)
-            : "1"; // ID hochzählen
+        // Ermittle die aktuell höchste ID in der comments-Tabelle
+        const result = await get("SELECT MAX(CAST(id AS INTEGER)) as maxId FROM comments");
+        // Wenn keine Kommentare existieren, starte bei "1"
+        const newId = result && result.maxId ? (parseInt(result.maxId, 10) + 1).toString() : "1";
 
-        const newComment = {
-          id: newId,
-          offerId,
-          text,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        };
-
-        comments.push(newComment);
-        await writeCommentsFile(comments);
-
+        const sql = `
+          INSERT INTO comments (id, offerId, text, createdAt, updatedAt)
+          VALUES (?, ?, ?, ?, ?)
+        `;
+        await run(sql, [newId, offerId, text, now, now]);
+        const newComment = await get("SELECT * FROM comments WHERE id = ?", [newId]);
         reply.code(201).send(newComment);
       } catch (err) {
         fastify.log.error(err);
@@ -87,7 +92,7 @@ async function commentsRoutes(fastify, options) {
     }
   );
 
-  // **PUT /offers/:offerId/comments/:commentId** → Kommentar aktualisieren
+  // PUT /offers/:offerId/comments/:commentId – Kommentar aktualisieren
   fastify.put(
     "/offers/:offerId/comments/:commentId",
     { preHandler: authorize(["Account-Manager", "Developer"]) },
@@ -95,31 +100,33 @@ async function commentsRoutes(fastify, options) {
       try {
         const { offerId, commentId } = request.params;
         const { text } = request.body;
-
         if (!text) {
-          return reply.code(400).send({ message: "Comment text is required" });
+          return reply
+            .code(400)
+            .send({ message: "Comment text is required" });
         }
-
-        const comments = await readCommentsFile();
-        const commentIndex = comments.findIndex(
-          (comment) => comment.id === commentId && comment.offerId === offerId
+        // Existierenden Kommentar abrufen
+        const comment = await get(
+          "SELECT * FROM comments WHERE id = ? AND offerId = ?",
+          [commentId, offerId]
         );
-
-        if (commentIndex === -1) {
+        if (!comment) {
           return reply.code(404).send({ message: "Comment not found" });
         }
-
-        comments[commentIndex] = {
-          ...comments[commentIndex],
-          text,
-          updatedAt: new Date().toISOString(),
-        };
-
-        await writeCommentsFile(comments);
-
+        const now = new Date().toISOString();
+        const sql = `
+          UPDATE comments
+          SET text = ?, updatedAt = ?
+          WHERE id = ? AND offerId = ?
+        `;
+        await run(sql, [text, now, commentId, offerId]);
+        const updatedComment = await get(
+          "SELECT * FROM comments WHERE id = ? AND offerId = ?",
+          [commentId, offerId]
+        );
         reply.code(200).send({
           message: "Comment successfully updated",
-          updatedComment: comments[commentIndex],
+          updatedComment,
         });
       } catch (err) {
         fastify.log.error(err);
@@ -128,28 +135,28 @@ async function commentsRoutes(fastify, options) {
     }
   );
 
-  // **DELETE /offers/:offerId/comments/:commentId** → Kommentar löschen
+  // DELETE /offers/:offerId/comments/:commentId – Kommentar löschen
   fastify.delete(
     "/offers/:offerId/comments/:commentId",
     { preHandler: authorize(["Account-Manager", "Developer"]) },
     async (request, reply) => {
       try {
         const { offerId, commentId } = request.params;
-        const comments = await readCommentsFile();
-
-        const commentIndex = comments.findIndex(
-          (comment) => comment.id === commentId && comment.offerId === offerId
+        // Kommentar abrufen, um ihn später zurückzugeben
+        const comment = await get(
+          "SELECT * FROM comments WHERE id = ? AND offerId = ?",
+          [commentId, offerId]
         );
-        if (commentIndex === -1) {
+        if (!comment) {
           return reply.code(404).send({ message: "Comment not found" });
         }
-
-        const deletedComment = comments.splice(commentIndex, 1);
-        await writeCommentsFile(comments);
-
+        await run("DELETE FROM comments WHERE id = ? AND offerId = ?", [
+          commentId,
+          offerId,
+        ]);
         reply.code(200).send({
           message: "Comment successfully deleted",
-          deletedComment: deletedComment[0],
+          deletedComment: comment,
         });
       } catch (err) {
         fastify.log.error(err);
@@ -158,23 +165,23 @@ async function commentsRoutes(fastify, options) {
     }
   );
 
-  // **Automatisches Löschen von Kommentaren ohne zugewiesene Offer-ID**
+  // Automatisches Löschen von Kommentaren ohne zugewiesene Offer-ID
   async function removeUnassignedComments() {
     try {
-      let comments = await readCommentsFile();
-      const filteredComments = comments.filter((comment) => comment.offerId);
-
-      if (filteredComments.length !== comments.length) {
-        await writeCommentsFile(filteredComments);
-        fastify.log.info("Comments without assigned offer IDs were deleted.");
-      }
+      // Lösche alle Kommentare, bei denen offerId NULL oder leer ist
+      await run(
+        "DELETE FROM comments WHERE offerId IS NULL OR TRIM(offerId) = ''"
+      );
+      fastify.log.info("Comments without assigned offer IDs were deleted.");
     } catch (err) {
       fastify.log.error("Error cleaning up comments:", err);
     }
   }
 
-  // Rufe die Bereinigung regelmäßig auf
-  setInterval(removeUnassignedComments, 60000); // Alle 60 Sekunden
+  // Rufe die Bereinigung regelmäßig alle 60 Sekunden auf
+  setInterval(removeUnassignedComments, 60000);
 }
 
 module.exports = commentsRoutes;
+
+

@@ -236,7 +236,7 @@ const OffersList = ({ userGroup }) => {
             <tr key={offer.id}>
               <td>{offer.id}</td>
               <td>{offer.name}</td>
-              <td>${offer.price}</td>
+              <td>{offer.price}€</td>
               <td>
                 {customers.find((c) => c.id === offer.customerId)?.name || "None"}
               </td>

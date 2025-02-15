@@ -1,36 +1,54 @@
-// routes/textDataRoutes.js
 const fs = require("fs");
-const fsPromises = require("fs/promises");
 const path = require("path");
 const { v4: uuidv4 } = require("uuid");
 const pump = require("util").promisify(require("stream").pipeline);
+const db = require("../db");
+
+// Promise-basierte Wrapper für SQLite-Methoden
+function run(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.run(sql, params, function (err) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve({ lastID: this.lastID, changes: this.changes });
+      }
+    });
+  });
+}
+
+function get(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.get(sql, params, (err, row) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(row);
+      }
+    });
+  });
+}
+
+function all(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.all(sql, params, (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows);
+      }
+    });
+  });
+}
 
 async function fileRoutes(fastify, options) {
   // Definiert das Verzeichnis, in dem die Dateien gespeichert werden
   const assetsDir = path.join(__dirname, "..", "assets");
-  await fsPromises.mkdir(assetsDir, { recursive: true });
-
-  // Pfad zur JSON-Datei, in der Dateimetadaten gespeichert werden
-  const dataFilePath = path.join(__dirname, "../data/textdata.json");
-
-  // Hilfsfunktionen zum Laden und Speichern der Dateimetadaten
-  async function loadFileData() {
-    try {
-      const data = await fsPromises.readFile(dataFilePath, "utf8");
-      return JSON.parse(data);
-    } catch (error) {
-      return [];
-    }
-  }
-
-  async function saveFileData(data) {
-    await fsPromises.writeFile(dataFilePath, JSON.stringify(data, null, 2));
-  }
+  await fs.promises.mkdir(assetsDir, { recursive: true });
 
   // POST-Endpoint: Datei-Upload für ein Angebot
   fastify.post("/offers/:offerId/files", async (request, reply) => {
     const { offerId } = request.params;
-
     // Mithilfe von fastify-multipart die hochgeladene Datei abrufen
     const data = await request.file();
     const originalName = data.filename;
@@ -51,20 +69,17 @@ async function fileRoutes(fastify, options) {
 
       // URL zum Abruf der Datei (Statische Bereitstellung via fastify-static)
       const fileUrl = `/assets/${storedFileName}`;
+      const now = new Date().toISOString();
 
-      // Dateimetadaten in der JSON-Datei speichern
-      const fileData = await loadFileData();
-      const newFileEntry = {
-        id: fileId,
-        originalName,
-        storedName: storedFileName,
-        url: fileUrl,
-        offerId,
-        uploadedAt: new Date().toISOString(),
-      };
-      fileData.push(newFileEntry);
-      await saveFileData(fileData);
+      // Dateimetadaten in der Datenbank speichern
+      const insertSql = `
+        INSERT INTO textdata (id, originalName, storedName, url, offerId, uploadedAt)
+        VALUES (?, ?, ?, ?, ?, ?)
+      `;
+      await run(insertSql, [fileId, originalName, storedFileName, fileUrl, offerId, now]);
 
+      // Neuen Datensatz abrufen
+      const newFileEntry = await get("SELECT * FROM textdata WHERE id = ?", [fileId]);
       reply.send(newFileEntry);
     } catch (error) {
       fastify.log.error(error);
@@ -76,14 +91,11 @@ async function fileRoutes(fastify, options) {
   fastify.get("/offers/:offerId/files", async (request, reply) => {
     const { offerId } = request.params;
     try {
-      const fileData = await loadFileData();
-      const filesForOffer = fileData.filter((file) => file.offerId === offerId);
-      const responseData = filesForOffer.map((file) => ({
-        id: file.id,
-        name: file.originalName,
-        url: file.url,
-      }));
-      reply.send(responseData);
+      const filesForOffer = await all(
+        "SELECT id, originalName AS name, url FROM textdata WHERE offerId = ?",
+        [offerId]
+      );
+      reply.send(filesForOffer);
     } catch (error) {
       fastify.log.error(error);
       reply.status(500).send({ error: "Interner Serverfehler" });
@@ -92,3 +104,4 @@ async function fileRoutes(fastify, options) {
 }
 
 module.exports = fileRoutes;
+

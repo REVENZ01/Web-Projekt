@@ -6,8 +6,8 @@
     "age": 25,
     "address": "Teststraße 1, Musterstadt",
     "contact": "123456789",
-    "createdAt": "2025-02-14T21:26:35.082Z",
-    "updatedAt": "2025-02-14T21:26:35.082Z"
+    "createdAt": "2025-02-15T10:30:31.349Z",
+    "updatedAt": "2025-02-15T10:30:31.349Z"
   },
   {
     "id": "2",
@@ -16,8 +16,8 @@
     "age": 30,
     "address": "Teststraße 2, Musterstadt",
     "contact": "987654321",
-    "createdAt": "2025-02-14T21:26:35.082Z",
-    "updatedAt": "2025-02-14T21:26:35.082Z"
+    "createdAt": "2025-02-15T10:30:31.349Z",
+    "updatedAt": "2025-02-15T10:30:31.349Z"
   },
   {
     "id": "3",
@@ -26,8 +26,8 @@
     "age": 35,
     "address": "Teststraße 3, Musterstadt",
     "contact": "555555555",
-    "createdAt": "2025-02-14T21:26:35.082Z",
-    "updatedAt": "2025-02-14T21:26:35.082Z"
+    "createdAt": "2025-02-15T10:30:31.349Z",
+    "updatedAt": "2025-02-15T10:30:31.349Z"
   },
   {
     "id": "4",
@@ -36,8 +36,8 @@
     "age": 40,
     "address": "Teststraße 4, Musterstadt",
     "contact": "444444444",
-    "createdAt": "2025-02-14T21:26:35.082Z",
-    "updatedAt": "2025-02-14T21:26:35.082Z"
+    "createdAt": "2025-02-15T10:30:31.349Z",
+    "updatedAt": "2025-02-15T10:30:31.349Z"
   },
   {
     "id": "5",
@@ -46,7 +46,7 @@
     "age": 45,
     "address": "Teststraße 5, Musterstadt",
     "contact": "333333333",
-    "createdAt": "2025-02-14T21:26:35.082Z",
-    "updatedAt": "2025-02-14T21:26:35.082Z"
+    "createdAt": "2025-02-15T10:30:31.349Z",
+    "updatedAt": "2025-02-15T10:30:31.349Z"
   }
 ]
