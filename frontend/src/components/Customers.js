@@ -127,7 +127,7 @@ const Customers = ({ userGroup }) => {
         <input
           type="text"
           className="form-control mb-2"
-          placeholder="Address"
+          placeholder="🏠︎ Address"
           value={newCustomer.address}
           onChange={(e) =>
             setNewCustomer({ ...newCustomer, address: e.target.value })
