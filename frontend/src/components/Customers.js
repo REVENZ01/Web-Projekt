@@ -12,6 +12,7 @@ const Customers = ({ userGroup }) => {
     name: "",
     email: "",
     address: "",
+    contact: "", // Neues Feld für Telefonnummer
   });
 
   // Zustände für die Filterung
@@ -19,6 +20,7 @@ const Customers = ({ userGroup }) => {
     name: "",
     email: "",
     address: "",
+    contact: "", // Optional: Filter für Telefonnummer
   });
   const [showFilters, setShowFilters] = useState(false);
 
@@ -54,7 +56,7 @@ const Customers = ({ userGroup }) => {
         { headers: { Authorization: authValue } }
       );
       setCustomers([...customers, response.data]);
-      setNewCustomer({ name: "", email: "", address: "" });
+      setNewCustomer({ name: "", email: "", address: "", contact: "" });
     } catch (error) {
       console.error("Error adding customer:", error);
     }
@@ -95,7 +97,7 @@ const Customers = ({ userGroup }) => {
   };
 
   const handleClearFilter = () => {
-    setFilterCustomer({ name: "", email: "", address: "" });
+    setFilterCustomer({ name: "", email: "", address: "", contact: "" });
     fetchCustomers({});
   };
 
@@ -116,7 +118,7 @@ const Customers = ({ userGroup }) => {
         <input
           type="email"
           className="form-control mb-2"
-          placeholder="Email"
+          placeholder="✉ Email"
           value={newCustomer.email}
           onChange={(e) =>
             setNewCustomer({ ...newCustomer, email: e.target.value })
@@ -129,6 +131,15 @@ const Customers = ({ userGroup }) => {
           value={newCustomer.address}
           onChange={(e) =>
             setNewCustomer({ ...newCustomer, address: e.target.value })
+          }
+        />
+        <input
+          type="text"
+          className="form-control mb-2"
+          placeholder="☏ Contact"
+          value={newCustomer.contact}
+          onChange={(e) =>
+            setNewCustomer({ ...newCustomer, contact: e.target.value })
           }
         />
         <button className="btn btn-primary" onClick={handleAddCustomer}>
@@ -182,6 +193,15 @@ const Customers = ({ userGroup }) => {
                 setFilterCustomer({ ...filterCustomer, address: e.target.value })
               }
             />
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Filter by Contact"
+              value={filterCustomer.contact}
+              onChange={(e) =>
+                setFilterCustomer({ ...filterCustomer, contact: e.target.value })
+              }
+            />
             <button
               className="btn btn-secondary"
               onClick={handleFilterCustomers}
@@ -204,6 +224,7 @@ const Customers = ({ userGroup }) => {
                 <th>Name</th>
                 <th>Email</th>
                 <th>Address</th>
+                <th>Contact</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -214,6 +235,7 @@ const Customers = ({ userGroup }) => {
                   <td>{customer.name}</td>
                   <td>{customer.email}</td>
                   <td>{customer.address}</td>
+                  <td>{customer.contact}</td>
                   <td>
                     <button
                       className="btn btn-warning btn-sm me-2"
@@ -250,3 +272,4 @@ const Customers = ({ userGroup }) => {
 };
 
 export default Customers;
+

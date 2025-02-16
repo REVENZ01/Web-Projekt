@@ -1,3 +1,4 @@
+// offers.js (Backend)
 const authorize = require("../authorization/authorization");
 const db = require("../db");
 const VALID_STATUSES = ["Draft", "In Progress", "Active", "On Ice"];
@@ -84,7 +85,9 @@ async function offersRoutes(fastify, options) {
 
         // Ermittlung der aktuell höchsten ID in der Tabelle und Vergabe einer neuen fortlaufenden ID
         const result = await get("SELECT MAX(CAST(id AS INTEGER)) as maxId FROM offers");
-        const newId = result && result.maxId ? (parseInt(result.maxId, 10) + 1).toString() : "1";
+        const newId = result && result.maxId
+          ? (parseInt(result.maxId, 10) + 1).toString()
+          : "1";
 
         const sql = `
           INSERT INTO offers (id, name, description, price, currency, customerId, status, createdAt, updatedAt)
@@ -129,7 +132,16 @@ async function offersRoutes(fastify, options) {
           SET name = ?, description = ?, price = ?, currency = ?, customerId = ?, status = ?, updatedAt = ?
           WHERE id = ?
         `;
-        await run(sql, [updatedName, updatedDescription, updatedPrice, updatedCurrency, updatedCustomerId, updatedStatus, now, id]);
+        await run(sql, [
+          updatedName,
+          updatedDescription,
+          updatedPrice,
+          updatedCurrency,
+          updatedCustomerId,
+          updatedStatus,
+          now,
+          id,
+        ]);
 
         const updatedOffer = await get("SELECT * FROM offers WHERE id = ?", [id]);
         reply.code(200).send({
@@ -177,7 +189,9 @@ async function offersRoutes(fastify, options) {
         const { id } = request.params;
         const { newStatus } = request.body;
 
-        fastify.log.info(`Received status update request for offer ID: ${id}, New Status: ${newStatus}`);
+        fastify.log.info(
+          `Received status update request for offer ID: ${id}, New Status: ${newStatus}`
+        );
 
         // ID-Format überprüfen (nur Zahlen zulässig)
         if (!/^\d+$/.test(id)) {
@@ -188,7 +202,7 @@ async function offersRoutes(fastify, options) {
         // Validierung des Status
         if (!VALID_STATUSES.includes(newStatus)) {
           reply.code(400).send({
-            message: `Invalid status value. Allowed values are: ${VALID_STATUSES.join(", ")}`
+            message: `Invalid status value. Allowed values are: ${VALID_STATUSES.join(", ")}`,
           });
           return;
         }
@@ -201,7 +215,11 @@ async function offersRoutes(fastify, options) {
         }
 
         const now = new Date().toISOString();
-        await run("UPDATE offers SET status = ?, updatedAt = ? WHERE id = ?", [newStatus, now, id]);
+        await run("UPDATE offers SET status = ?, updatedAt = ? WHERE id = ?", [
+          newStatus,
+          now,
+          id,
+        ]);
 
         const updatedOffer = await get("SELECT * FROM offers WHERE id = ?", [id]);
         fastify.log.info(`Offer ID ${id} successfully updated to status: ${newStatus}`);
@@ -228,7 +246,8 @@ async function offersRoutes(fastify, options) {
         // Erstelle 10 fiktive Angebote
         for (let i = 1; i <= 10; i++) {
           const price = Math.floor(Math.random() * 901) + 100; // Zufälliger Preis zwischen 100 und 1000
-          const randomStatus = VALID_STATUSES[Math.floor(Math.random() * VALID_STATUSES.length)];
+          const randomStatus =
+            VALID_STATUSES[Math.floor(Math.random() * VALID_STATUSES.length)];
           const randomCustomerId = String(Math.floor(Math.random() * 5) + 1); // Zufällige Kunden-Zuordnung (IDs "1" bis "5")
 
           testOffers.push({
@@ -277,6 +296,7 @@ async function offersRoutes(fastify, options) {
 }
 
 module.exports = offersRoutes;
+
 
 
 

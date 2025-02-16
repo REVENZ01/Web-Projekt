@@ -23,7 +23,6 @@ db.serialize(() => {
       id TEXT PRIMARY KEY,
       name TEXT,
       email TEXT,
-      age INTEGER,
       address TEXT,
       contact TEXT,
       createdAt TEXT,

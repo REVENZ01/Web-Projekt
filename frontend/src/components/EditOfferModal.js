@@ -1,3 +1,4 @@
+// EditOfferModal.js
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../CSS/Offers.css";
@@ -42,6 +43,29 @@ const EditOfferModal = ({ offer, onClose, onSave }) => {
                 onChange={handleChange}
               />
             </div>
+            <div className="mb-3">
+              <label className="form-label">Currency</label>
+              <select
+                className="form-select"
+                name="currency"
+                value={formData.currency}
+                onChange={handleChange}
+              >
+                <option value="EUR">EUR</option>
+                <option value="USD">USD</option>
+                <option value="GBP">GBP</option>
+              </select>
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Description</label>
+              <textarea
+                className="form-control"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                rows="3"
+              ></textarea>
+            </div>
           </div>
           <div className="modal-footer">
             <button className="btn btn-secondary" onClick={onClose}>
@@ -58,3 +82,4 @@ const EditOfferModal = ({ offer, onClose, onSave }) => {
 };
 
 export default EditOfferModal;
+

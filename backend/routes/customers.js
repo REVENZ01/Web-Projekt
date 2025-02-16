@@ -39,19 +39,23 @@ function get(sql, params = []) {
 }
 
 async function customersRoutes(fastify, options) {
-  // GET /customers – Mit Filterung via Query-Parameter (name, contact, address)
+  // GET /customers – Mit Filterung via Query-Parameter (name, email, contact, address)
   fastify.get(
     "/",
     { preHandler: authorize(["Account-Manager", "Developer", "User"]) },
     async (request, reply) => {
       try {
-        const { name, contact, address } = request.query;
+        const { name, email, contact, address } = request.query;
         let query = "SELECT * FROM customers WHERE 1=1";
         const params = [];
 
         if (name) {
           query += " AND lower(name) LIKE ?";
           params.push(`%${name.toLowerCase()}%`);
+        }
+        if (email) {
+          query += " AND lower(email) LIKE ?";
+          params.push(`%${email.toLowerCase()}%`);
         }
         if (contact) {
           query += " AND lower(contact) LIKE ?";
@@ -77,7 +81,7 @@ async function customersRoutes(fastify, options) {
     { preHandler: authorize(["Account-Manager", "Developer"]) },
     async (request, reply) => {
       try {
-        const { name, email, age, address, contact } = request.body;
+        const { name, email, address, contact } = request.body;
         const now = new Date().toISOString();
 
         // Hole die aktuell höchste ID (als Zahl) aus der Datenbank
@@ -86,8 +90,8 @@ async function customersRoutes(fastify, options) {
         const newId = result && result.maxId ? (parseInt(result.maxId, 10) + 1).toString() : "1";
 
         const sql =
-          "INSERT INTO customers (id, name, email, age, address, contact, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        await run(sql, [newId, name, email, age, address, contact, now, now]);
+          "INSERT INTO customers (id, name, email, address, contact, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        await run(sql, [newId, name, email, address, contact, now, now]);
 
         // Neuen Kunden auslesen und zurückgeben
         const customer = await get("SELECT * FROM customers WHERE id = ?", [newId]);
@@ -116,20 +120,18 @@ async function customersRoutes(fastify, options) {
           return;
         }
 
-        const { name, email, age, address, contact } = request.body;
+        const { name, email, address, contact } = request.body;
         const updatedName = name || customer.name;
         const updatedEmail = email || customer.email;
-        const updatedAge = age || customer.age;
         const updatedAddress = address || customer.address;
         const updatedContact = contact || customer.contact;
         const now = new Date().toISOString();
 
         const sql =
-          "UPDATE customers SET name = ?, email = ?, age = ?, address = ?, contact = ?, updatedAt = ? WHERE id = ?";
+          "UPDATE customers SET name = ?, email = ?, address = ?, contact = ?, updatedAt = ? WHERE id = ?";
         await run(sql, [
           updatedName,
           updatedEmail,
-          updatedAge,
           updatedAddress,
           updatedContact,
           now,
@@ -180,35 +182,30 @@ async function customersRoutes(fastify, options) {
           {
             name: "Test Kunde 1",
             email: "test1@example.com",
-            age: 25,
             address: "Teststraße 1, Musterstadt",
             contact: "123456789",
           },
           {
             name: "Test Kunde 2",
             email: "test2@example.com",
-            age: 30,
             address: "Teststraße 2, Musterstadt",
             contact: "987654321",
           },
           {
             name: "Test Kunde 3",
             email: "test3@example.com",
-            age: 35,
             address: "Teststraße 3, Musterstadt",
             contact: "555555555",
           },
           {
             name: "Test Kunde 4",
             email: "test4@example.com",
-            age: 40,
             address: "Teststraße 4, Musterstadt",
             contact: "444444444",
           },
           {
             name: "Test Kunde 5",
             email: "test5@example.com",
-            age: 45,
             address: "Teststraße 5, Musterstadt",
             contact: "333333333",
           },
@@ -224,12 +221,11 @@ async function customersRoutes(fastify, options) {
           // Verwende hier eine einfache ID (i+1 als String)
           const id = (i + 1).toString();
           const sql =
-            "INSERT INTO customers (id, name, email, age, address, contact, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            "INSERT INTO customers (id, name, email, address, contact, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?)";
           await run(sql, [
             id,
             customer.name,
             customer.email,
-            customer.age,
             customer.address,
             customer.contact,
             now,

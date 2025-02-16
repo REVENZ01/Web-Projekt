@@ -51,6 +51,16 @@ const EditCustomerModal = ({ customer, onClose, onSave }) => {
                 onChange={handleChange}
               />
             </div>
+            <div className="mb-3">
+              <label className="form-label">Contact</label>
+              <input
+                type="text"
+                className="form-control"
+                name="contact"
+                value={formData.contact}
+                onChange={handleChange}
+              />
+            </div>
           </div>
           <div className="modal-footer">
             <button className="btn btn-warning" onClick={onClose}>
@@ -67,4 +77,5 @@ const EditCustomerModal = ({ customer, onClose, onSave }) => {
 };
 
 export default EditCustomerModal;
+
 

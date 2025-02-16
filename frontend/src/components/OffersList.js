@@ -1,4 +1,4 @@
-// offersList.js
+// OffersList.js
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import EditOfferModal from "./EditOfferModal";
@@ -15,10 +15,15 @@ const OffersList = ({ userGroup }) => {
   const [selectedOffer, setSelectedOffer] = useState(null);
   const [selectedCommentsOffer, setSelectedCommentsOffer] = useState(null);
   const [selectedFilesOffer, setSelectedFilesOffer] = useState(null);
+  const [selectedDescriptionOffer, setSelectedDescriptionOffer] = useState(null);
+
   const [newOffer, setNewOffer] = useState({
     name: "",
     price: "",
     customerId: "",
+    currency: "EUR",      // Dropdown zur Währungsauswahl
+    description: "",      // Beschreibungstext, der im neuen Modal angezeigt wird
+    status: "Draft"       // Standardstatus
   });
 
   // Filter-Zustände
@@ -66,7 +71,14 @@ const OffersList = ({ userGroup }) => {
         headers: { Authorization: authValue },
       });
       fetchOffers();
-      setNewOffer({ name: "", price: "", customerId: "" });
+      setNewOffer({
+        name: "",
+        price: "",
+        customerId: "",
+        currency: "EUR",
+        description: "",
+        status: "Draft"
+      });
     } catch (error) {
       console.error("Error adding offer:", error);
     }
@@ -123,37 +135,54 @@ const OffersList = ({ userGroup }) => {
     <div className="container mt-4 offers-container" style={{ marginTop: "2rem", marginBottom: "2rem" }}>
       <h2>Manage Offers</h2>
       {/* Hinzufügen eines neuen Angebots */}
-      <div className="mb-3 d-flex gap-2">
-        <input
-          type="text"
-          className="form-control"
-          placeholder="Name"
-          value={newOffer.name}
-          onChange={(e) => setNewOffer({ ...newOffer, name: e.target.value })}
-        />
-        <input
-          type="number"
-          className="form-control"
-          placeholder="Price"
-          value={newOffer.price}
-          onChange={(e) => setNewOffer({ ...newOffer, price: e.target.value })}
-        />
-        <select
-          className="form-select"
-          value={newOffer.customerId}
-          onChange={(e) =>
-            setNewOffer({ ...newOffer, customerId: e.target.value })
-          }
-        >
-          <option value="" disabled>
-            Select Customer
-          </option>
-          {customers.map((customer) => (
-            <option key={customer.id} value={customer.id}>
-              {customer.name}
-            </option>
-          ))}
-        </select>
+      <div className="mb-3 d-flex gap-2 align-items-end">
+        <div className="flex-grow-1">
+          <label>Name</label>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Name"
+            value={newOffer.name}
+            onChange={(e) => setNewOffer({ ...newOffer, name: e.target.value })}
+          />
+        </div>
+        <div>
+          <label>Price</label>
+          <input
+            type="number"
+            className="form-control"
+            placeholder="Price"
+            value={newOffer.price}
+            onChange={(e) => setNewOffer({ ...newOffer, price: e.target.value })}
+          />
+        </div>
+        <div>
+          <label>Currency</label>
+          <select
+            className="form-select"
+            value={newOffer.currency}
+            onChange={(e) => setNewOffer({ ...newOffer, currency: e.target.value })}
+          >
+            <option value="EUR">EUR</option>
+            <option value="USD">USD</option>
+            <option value="GBP">GBP</option>
+          </select>
+        </div>
+        <div>
+          <label>Customer</label>
+          <select
+            className="form-select"
+            value={newOffer.customerId}
+            onChange={(e) => setNewOffer({ ...newOffer, customerId: e.target.value })}
+          >
+            <option value="" disabled>Select Customer</option>
+            {customers.map((customer) => (
+              <option key={customer.id} value={customer.id}>
+                {customer.name}
+              </option>
+            ))}
+          </select>
+        </div>
         <button className="btn btn-primary" onClick={handleAddOffer}>
           Add Offer
         </button>
@@ -168,14 +197,13 @@ const OffersList = ({ userGroup }) => {
           {showFilters ? "Filter ausblenden" : "Filter anzeigen"}
         </button>
       </div>
-
       {showFilters && (
         <div
           className="mb-3 d-flex gap-2"
           style={{
             backgroundColor: "#e3f2fd",
             padding: "10px",
-            borderRadius: "5px"
+            borderRadius: "5px",
           }}
         >
           <input
@@ -183,25 +211,19 @@ const OffersList = ({ userGroup }) => {
             className="form-control"
             placeholder="Filter by Name"
             value={filterOffer.name}
-            onChange={(e) =>
-              setFilterOffer({ ...filterOffer, name: e.target.value })
-            }
+            onChange={(e) => setFilterOffer({ ...filterOffer, name: e.target.value })}
           />
           <input
             type="text"
             className="form-control"
             placeholder="Filter by Price"
             value={filterOffer.price}
-            onChange={(e) =>
-              setFilterOffer({ ...filterOffer, price: e.target.value })
-            }
+            onChange={(e) => setFilterOffer({ ...filterOffer, price: e.target.value })}
           />
           <select
             className="form-select"
             value={filterOffer.status}
-            onChange={(e) =>
-              setFilterOffer({ ...filterOffer, status: e.target.value })
-            }
+            onChange={(e) => setFilterOffer({ ...filterOffer, status: e.target.value })}
           >
             <option value="">Filter by Status</option>
             <option value="Draft">Draft</option>
@@ -225,8 +247,10 @@ const OffersList = ({ userGroup }) => {
             <th>ID</th>
             <th>Name</th>
             <th>Price</th>
+            <th>Currency</th>
             <th>Customer</th>
             <th>Status</th>
+            <th>Description</th>
             <th>Comments</th>
             <th>Actions</th>
           </tr>
@@ -236,10 +260,9 @@ const OffersList = ({ userGroup }) => {
             <tr key={offer.id}>
               <td>{offer.id}</td>
               <td>{offer.name}</td>
-              <td>{offer.price}€</td>
-              <td>
-                {customers.find((c) => c.id === offer.customerId)?.name || "None"}
-              </td>
+              <td>{offer.price}</td>
+              <td>{offer.currency}</td>
+              <td>{customers.find((c) => c.id === offer.customerId)?.name || "None"}</td>
               <td>
                 <select
                   className="form-select"
@@ -252,6 +275,15 @@ const OffersList = ({ userGroup }) => {
                   <option value="On Ice">On Ice</option>
                 </select>
               </td>
+              {/* Neuer Button zum Anzeigen der Beschreibung */}
+              <td>
+                <button
+                  className="btn btn-info"
+                  onClick={() => setSelectedDescriptionOffer(offer)}
+                >
+                  View Description
+                </button>
+              </td>
               <td>
                 <button
                   className="btn btn-info"
@@ -261,6 +293,7 @@ const OffersList = ({ userGroup }) => {
                 </button>
               </td>
               <td>
+                {/* Der Button zum Uploaden von .txt-Dateien bleibt erhalten */}
                 <button
                   className="btn btn-secondary me-2"
                   onClick={() => setSelectedFilesOffer(offer)}
@@ -313,9 +346,40 @@ const OffersList = ({ userGroup }) => {
           onClose={() => setSelectedFilesOffer(null)}
         />
       )}
+      {selectedDescriptionOffer && (
+        <DescriptionModal
+          offer={selectedDescriptionOffer}
+          onClose={() => setSelectedDescriptionOffer(null)}
+        />
+      )}
+    </div>
+  );
+};
+
+// Neuer Inline-Modal für die Angebotsbeschreibung
+const DescriptionModal = ({ offer, onClose }) => {
+  return (
+    <div className="modal show d-block" tabIndex="-1">
+      <div className="modal-dialog">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title">Offer Description</h5>
+            <button type="button" className="btn-close" onClick={onClose}></button>
+          </div>
+          <div className="modal-body">
+            <p>{offer.description}</p>
+          </div>
+          <div className="modal-footer">
+            <button className="btn btn-secondary" onClick={onClose}>
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
 
 export default OffersList;
+
 
