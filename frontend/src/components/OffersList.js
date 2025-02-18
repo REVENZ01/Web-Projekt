@@ -16,14 +16,15 @@ const OffersList = ({ userGroup }) => {
   const [selectedCommentsOffer, setSelectedCommentsOffer] = useState(null);
   const [selectedFilesOffer, setSelectedFilesOffer] = useState(null);
   const [selectedDescriptionOffer, setSelectedDescriptionOffer] = useState(null);
+  const [selectedDetailOffer, setSelectedDetailOffer] = useState(null);
 
   const [newOffer, setNewOffer] = useState({
     name: "",
     price: "",
     customerId: "",
-    currency: "EUR",      // Dropdown zur Währungsauswahl
-    description: "",      // Beschreibungstext, der im neuen Modal angezeigt wird
-    status: "Draft"       // Standardstatus
+    currency: "EUR", // Dropdown zur Währungsauswahl
+    description: "", // Beschreibungstext, der im neuen Modal angezeigt wird
+    status: "Draft"  // Standardstatus
   });
 
   // Filter-Zustände
@@ -131,6 +132,34 @@ const OffersList = ({ userGroup }) => {
     fetchOffers({});
   };
 
+  // Neue Funktion: Beispielangebote hinzufügen über den neuen Endpoint /offers/sample
+  const handleAddSampleOffers = async () => {
+    try {
+      await axios.post("http://localhost:8080/offers/sample", {}, {
+        headers: { Authorization: authValue },
+      });
+      fetchOffers();
+    } catch (error) {
+      console.error("Error adding sample offers:", error);
+    }
+  };
+
+  // Funktionen für die Detailansicht, die die jeweiligen Modals öffnen
+  const handleDetailViewComments = () => {
+    setSelectedCommentsOffer(selectedDetailOffer);
+    setSelectedDetailOffer(null);
+  };
+
+  const handleDetailViewDescription = () => {
+    setSelectedDescriptionOffer(selectedDetailOffer);
+    setSelectedDetailOffer(null);
+  };
+
+  const handleDetailViewTxt = () => {
+    setSelectedFilesOffer(selectedDetailOffer);
+    setSelectedDetailOffer(null);
+  };
+
   return (
     <div className="container mt-4 offers-container" style={{ marginTop: "2rem", marginBottom: "2rem" }}>
       <h2>Manage Offers</h2>
@@ -198,14 +227,7 @@ const OffersList = ({ userGroup }) => {
         </button>
       </div>
       {showFilters && (
-        <div
-          className="mb-3 d-flex gap-2"
-          style={{
-            backgroundColor: "#e3f2fd",
-            padding: "10px",
-            borderRadius: "5px",
-          }}
-        >
+        <div className="mb-3 d-flex gap-2" style={{ backgroundColor: "#e3f2fd", padding: "10px", borderRadius: "5px" }}>
           <input
             type="text"
             className="form-control"
@@ -240,6 +262,13 @@ const OffersList = ({ userGroup }) => {
         </div>
       )}
 
+      {/* Button zum Hinzufügen von Beispielangeboten */}
+      <div className="mb-3">
+        <button className="btn btn-success" onClick={handleAddSampleOffers}>
+          Add legacy data
+        </button>
+      </div>
+
       {/* Angebote-Tabelle */}
       <table className="table table-striped">
         <thead>
@@ -250,8 +279,6 @@ const OffersList = ({ userGroup }) => {
             <th>Currency</th>
             <th>Customer</th>
             <th>Status</th>
-            <th>Description</th>
-            <th>Comments</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -275,30 +302,12 @@ const OffersList = ({ userGroup }) => {
                   <option value="On Ice">On Ice</option>
                 </select>
               </td>
-              {/* Neuer Button zum Anzeigen der Beschreibung */}
               <td>
                 <button
-                  className="btn btn-info"
-                  onClick={() => setSelectedDescriptionOffer(offer)}
+                  className="btn btn-info me-2"
+                  onClick={() => setSelectedDetailOffer(offer)}
                 >
-                  View Description
-                </button>
-              </td>
-              <td>
-                <button
-                  className="btn btn-info"
-                  onClick={() => setSelectedCommentsOffer(offer)}
-                >
-                  View Comments
-                </button>
-              </td>
-              <td>
-                {/* Der Button zum Uploaden von .txt-Dateien bleibt erhalten */}
-                <button
-                  className="btn btn-secondary me-2"
-                  onClick={() => setSelectedFilesOffer(offer)}
-                >
-                  📄.txt
+                  Detailansicht
                 </button>
                 <button
                   className="btn btn-warning me-2"
@@ -310,10 +319,7 @@ const OffersList = ({ userGroup }) => {
                   className="btn btn-danger"
                   onClick={() => handleDeleteOffer(offer.id)}
                   disabled={offer.status === "In Progress"}
-                  style={{
-                    backgroundColor:
-                      offer.status === "In Progress" ? "#d3d3d3" : "",
-                  }}
+                  style={{ backgroundColor: offer.status === "In Progress" ? "#d3d3d3" : "" }}
                 >
                   🗑️
                 </button>
@@ -323,7 +329,7 @@ const OffersList = ({ userGroup }) => {
         </tbody>
       </table>
 
-      {/* Modale */}
+      {/* Externe Modale */}
       {selectedOffer && (
         <EditOfferModal
           userGroup={userGroup}
@@ -352,11 +358,20 @@ const OffersList = ({ userGroup }) => {
           onClose={() => setSelectedDescriptionOffer(null)}
         />
       )}
+      {selectedDetailOffer && (
+        <DetailViewModal
+          offer={selectedDetailOffer}
+          onClose={() => setSelectedDetailOffer(null)}
+          onViewComments={handleDetailViewComments}
+          onViewDescription={handleDetailViewDescription}
+          onViewTxt={handleDetailViewTxt}
+        />
+      )}
     </div>
   );
 };
 
-// Neuer Inline-Modal für die Angebotsbeschreibung
+// Inline-Modal für die Angebotsbeschreibung (unverändert)
 const DescriptionModal = ({ offer, onClose }) => {
   return (
     <div className="modal show d-block" tabIndex="-1">
@@ -380,6 +395,56 @@ const DescriptionModal = ({ offer, onClose }) => {
   );
 };
 
+// DetailViewModal als Navigations-Hub mit orangefarbenen Buttons und Back-Button
+const DetailViewModal = ({ offer, onClose, onViewComments, onViewDescription, onViewTxt }) => {
+  return (
+    <div className="modal show d-block" tabIndex="-1">
+      <div className="modal-dialog">
+         <div className="modal-content" style={{ backgroundColor: "#006C84", marginTop: "10rem" }}>
+           <div className="modal-header">
+             <h5 className="modal-title" style={{ color: "white" }}>
+               Detailansicht - {offer.name}
+             </h5>
+             <button type="button" className="btn-close" onClick={onClose}></button>
+           </div>
+           <div className="modal-body d-flex flex-column gap-2">
+             <button
+               className="btn"
+               style={{ backgroundColor: "#ffccbb", border: "none" }}
+               onClick={onViewComments}
+             >
+               View Comments
+             </button>
+             <button
+               className="btn"
+               style={{ backgroundColor: "#ffccbb", border: "none" }}
+               onClick={onViewDescription}
+             >
+               View Description
+             </button>
+             <button
+               className="btn"
+               style={{ backgroundColor: "#ffccbb", border: "none" }}
+               onClick={onViewTxt}
+             >
+               📄.txt
+             </button>
+           </div>
+           <div className="modal-footer d-flex justify-content-start">
+             <button className="btn btn-secondary" onClick={onClose}>
+               Back
+             </button>
+           </div>
+         </div>
+      </div>
+    </div>
+  );
+};
+
 export default OffersList;
+
+
+
+
 
 

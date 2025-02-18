@@ -1,0 +1,3 @@
+Dies ist die erste Testdatei.
+Sie enthält einige Beispieldaten,
+um den Datei-Upload zu testen.

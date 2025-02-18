@@ -56,7 +56,6 @@ async function offersRoutes(fastify, options) {
           params.push(`%${name.toLowerCase()}%`);
         }
         if (price) {
-          // Umwandlung der Zahl in String, damit LIKE funktioniert
           query += " AND CAST(price AS TEXT) LIKE ?";
           params.push(`%${price}%`);
         }
@@ -83,11 +82,9 @@ async function offersRoutes(fastify, options) {
         const { name, description, price, currency, customerId, status } = request.body;
         const now = new Date().toISOString();
 
-        // Ermittlung der aktuell höchsten ID in der Tabelle und Vergabe einer neuen fortlaufenden ID
+        // Ermittlung der aktuell höchsten ID in der Tabelle
         const result = await get("SELECT MAX(CAST(id AS INTEGER)) as maxId FROM offers");
-        const newId = result && result.maxId
-          ? (parseInt(result.maxId, 10) + 1).toString()
-          : "1";
+        const newId = result && result.maxId ? (parseInt(result.maxId, 10) + 1).toString() : "1";
 
         const sql = `
           INSERT INTO offers (id, name, description, price, currency, customerId, status, createdAt, updatedAt)
@@ -112,7 +109,6 @@ async function offersRoutes(fastify, options) {
       try {
         const { id } = request.params;
         const updatedOfferData = request.body;
-        // Bestehendes Angebot abrufen
         const offer = await get("SELECT * FROM offers WHERE id = ?", [id]);
         if (!offer) {
           reply.code(404).send({ message: "Offer not found" });
@@ -162,7 +158,6 @@ async function offersRoutes(fastify, options) {
     async (request, reply) => {
       try {
         const { id } = request.params;
-        // Angebot abrufen, um es später zurückzugeben
         const offer = await get("SELECT * FROM offers WHERE id = ?", [id]);
         if (!offer) {
           reply.code(404).send({ message: "Offer not found" });
@@ -189,25 +184,20 @@ async function offersRoutes(fastify, options) {
         const { id } = request.params;
         const { newStatus } = request.body;
 
-        fastify.log.info(
-          `Received status update request for offer ID: ${id}, New Status: ${newStatus}`
-        );
+        fastify.log.info(`Received status update request for offer ID: ${id}, New Status: ${newStatus}`);
 
-        // ID-Format überprüfen (nur Zahlen zulässig)
         if (!/^\d+$/.test(id)) {
           reply.code(400).send({ message: "Invalid ID format. It must be a number." });
           return;
         }
 
-        // Validierung des Status
         if (!VALID_STATUSES.includes(newStatus)) {
           reply.code(400).send({
-            message: `Invalid status value. Allowed values are: ${VALID_STATUSES.join(", ")}`,
+            message: `Invalid status value. Allowed values are: ${VALID_STATUSES.join(", ")}`
           });
           return;
         }
 
-        // Bestehendes Angebot abrufen
         const offer = await get("SELECT * FROM offers WHERE id = ?", [id]);
         if (!offer) {
           reply.code(404).send({ message: "Offer not found" });
@@ -215,11 +205,7 @@ async function offersRoutes(fastify, options) {
         }
 
         const now = new Date().toISOString();
-        await run("UPDATE offers SET status = ?, updatedAt = ? WHERE id = ?", [
-          newStatus,
-          now,
-          id,
-        ]);
+        await run("UPDATE offers SET status = ?, updatedAt = ? WHERE id = ?", [newStatus, now, id]);
 
         const updatedOffer = await get("SELECT * FROM offers WHERE id = ?", [id]);
         fastify.log.info(`Offer ID ${id} successfully updated to status: ${newStatus}`);
@@ -243,12 +229,10 @@ async function offersRoutes(fastify, options) {
       try {
         const now = new Date().toISOString();
         const testOffers = [];
-        // Erstelle 10 fiktive Angebote
         for (let i = 1; i <= 10; i++) {
-          const price = Math.floor(Math.random() * 901) + 100; // Zufälliger Preis zwischen 100 und 1000
-          const randomStatus =
-            VALID_STATUSES[Math.floor(Math.random() * VALID_STATUSES.length)];
-          const randomCustomerId = String(Math.floor(Math.random() * 5) + 1); // Zufällige Kunden-Zuordnung (IDs "1" bis "5")
+          const price = Math.floor(Math.random() * 901) + 100;
+          const randomStatus = VALID_STATUSES[Math.floor(Math.random() * VALID_STATUSES.length)];
+          const randomCustomerId = String(Math.floor(Math.random() * 5) + 1);
 
           testOffers.push({
             id: i.toString(),
@@ -263,10 +247,8 @@ async function offersRoutes(fastify, options) {
           });
         }
 
-        // Vorhandene Angebote löschen
         await run("DELETE FROM offers");
 
-        // Testangebote einfügen
         for (const offer of testOffers) {
           const sql = `
             INSERT INTO offers (id, name, description, price, currency, customerId, status, createdAt, updatedAt)
@@ -293,9 +275,89 @@ async function offersRoutes(fastify, options) {
       }
     }
   );
+
+  // Neuer Endpoint: POST /offers/sample – Beispielangebote hinzufügen
+  fastify.post(
+    "/sample",
+    { preHandler: authorize(["Account-Manager", "Developer"]) },
+    async (request, reply) => {
+      try {
+        const sampleOffers = [
+          {
+            xCreatedOn: "2024-10-19T00:00:00Z",
+            xCreatedBy: "John Doe",
+            xSoftwareVersion: "1.0.0",
+            xOffer: {
+              customerId: 1,
+              price: 142000,
+              currency: "USD",
+              state: "Active",
+              name: "Offer 1",
+              hints: []
+            }
+          },
+          {
+            xCreatedOn: "2024-10-20T00:00:00Z",
+            xCreatedBy: "Luise Fröhlich",
+            xSoftwareVersion: "1.2.0",
+            xOffer: {
+              customerId: 3,
+              price: 56000,
+              currency: "EUR",
+              state: "On-Ice",
+              name: "Offer 2",
+              hints: ["Toller Kunde sollten wir definitiv gewinnen!"]
+            }
+          }
+        ];
+
+        for (const sample of sampleOffers) {
+          const { xOffer } = sample;
+          // Konvertierung: hints in description übernehmen, state anpassen (On-Ice => On Ice)
+          const convertedOffer = {
+            name: xOffer.name,
+            description: xOffer.hints && xOffer.hints.length > 0 ? xOffer.hints.join(" ") : "",
+            price: xOffer.price,
+            currency: xOffer.currency,
+            customerId: xOffer.customerId.toString(),
+            status: xOffer.state === "On-Ice" ? "On Ice" : xOffer.state
+          };
+
+          // Ermittlung einer neuen fortlaufenden ID
+          const result = await get("SELECT MAX(CAST(id AS INTEGER)) as maxId FROM offers");
+          const newId = result && result.maxId ? (parseInt(result.maxId, 10) + 1).toString() : "1";
+          const now = new Date().toISOString();
+
+          const sql = `
+            INSERT INTO offers (id, name, description, price, currency, customerId, status, createdAt, updatedAt)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `;
+          await run(sql, [
+            newId,
+            convertedOffer.name,
+            convertedOffer.description,
+            convertedOffer.price,
+            convertedOffer.currency,
+            convertedOffer.customerId,
+            convertedOffer.status,
+            now,
+            now
+          ]);
+        }
+        const seededOffers = await all("SELECT * FROM offers");
+        reply.code(201).send(seededOffers);
+      } catch (err) {
+        fastify.log.error(err);
+        reply.code(500).send({ message: "Error adding sample offers" });
+      }
+    }
+  );
 }
 
 module.exports = offersRoutes;
+
+
+
 
 
 
