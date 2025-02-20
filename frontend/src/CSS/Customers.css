@@ -31,4 +31,15 @@
     padding: 2rem;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+  }
+
+  .btn-primary{
+    background-color: #308397;
+    border-color: #308397;
+  }
+
+  .btn-primary:hover{
+    background-color: #9cc2ca;
+    border-color: #9cc2ca;
   }

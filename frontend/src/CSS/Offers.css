@@ -19,3 +19,53 @@
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
+
+  /* Direkt für .btn-success */
+.btn-success {
+  background-color: #006C84; /* Neuer Hintergrundfarbe */
+  border-color: #006C84;
+}
+
+/* Optional: Für den Hover-Zustand */
+.btn-success:hover {
+  background-color: #9cc2ca;
+  border-color: #9cc2ca;
+}
+
+.btn-secondary{
+  background-color: #006C84;
+  border-color: #006C84;
+}
+
+.btn-secondary:hover{
+  background-color: #9cc2ca;
+  border-color: #9cc2ca;
+}
+
+.btn-info{
+  background-color: #006C84;
+  border-color: #006C84;
+  color: #fff;
+}
+
+.btn-info:hover{
+  background-color: #9cc2ca;
+  border-color: #9cc2ca;
+}
+
+.btn-warning{
+  background-color: #006C84;
+  border-color: #006C84;
+  color: #fff;
+}
+
+.btn-warning:hover{
+  background-color: #9cc2ca;
+  border-color: #9cc2ca;
+}
+
+
+
+.btn-outline-primary:hover{
+  background-color: #9cc2ca;
+}

@@ -7,20 +7,23 @@ import { getAuthValue } from "./Header"; // Korrekt importieren
 
 const Customers = ({ userGroup }) => {
   const [customers, setCustomers] = useState([]);
+  const [offers, setOffers] = useState([]); // Neuer State für Angebote
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [newCustomer, setNewCustomer] = useState({
     name: "",
     email: "",
     address: "",
-    contact: "", // Neues Feld für Telefonnummer
+    contact: "",
   });
+  // State für aufgeklappte Kunden (zur Anzeige der zugehörigen Offers)
+  const [expandedCustomerIds, setExpandedCustomerIds] = useState([]);
 
   // Zustände für die Filterung
   const [filterCustomer, setFilterCustomer] = useState({
     name: "",
     email: "",
     address: "",
-    contact: "", // Optional: Filter für Telefonnummer
+    contact: "",
   });
   const [showFilters, setShowFilters] = useState(false);
 
@@ -28,9 +31,10 @@ const Customers = ({ userGroup }) => {
 
   useEffect(() => {
     fetchCustomers();
+    fetchOffers();
   }, [userGroup]);
 
-  // fetchCustomers akzeptiert optional Filter-Parameter (als Query-Parameter)
+  // Holt alle Kunden
   const fetchCustomers = async (filters = {}) => {
     try {
       const response = await axios.get("http://localhost:8080/customers", {
@@ -40,6 +44,18 @@ const Customers = ({ userGroup }) => {
       setCustomers(response.data);
     } catch (error) {
       console.error("Error fetching customers:", error);
+    }
+  };
+
+  // Holt alle Angebote
+  const fetchOffers = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/offers", {
+        headers: { Authorization: authValue },
+      });
+      setOffers(response.data);
+    } catch (error) {
+      console.error("Error fetching offers:", error);
     }
   };
 
@@ -101,6 +117,30 @@ const Customers = ({ userGroup }) => {
     fetchCustomers({});
   };
 
+  // Berechne für einen Kunden die Summe aller zugeordneten Angebote.
+  const getOfferSumForCustomer = (customerId) => {
+    const customerOffers = offers.filter(
+      (offer) => offer.customerId === customerId
+    );
+    return customerOffers.reduce((sum, offer) => sum + Number(offer.price), 0);
+  };
+
+  // Erstelle eine sortierte Kundenliste: Kunde mit höchster Angebotssumme oben
+  const sortedCustomers = [...customers].sort((a, b) => {
+    const sumA = getOfferSumForCustomer(a.id);
+    const sumB = getOfferSumForCustomer(b.id);
+    return sumB - sumA;
+  });
+
+  // Toggle-Funktion für die Detailansicht zu einem Kunden
+  const toggleCustomerOffers = (customerId) => {
+    if (expandedCustomerIds.includes(customerId)) {
+      setExpandedCustomerIds(expandedCustomerIds.filter((id) => id !== customerId));
+    } else {
+      setExpandedCustomerIds([...expandedCustomerIds, customerId]);
+    }
+  };
+
   return (
     <div className="container mt-4">
       <h1>Customers</h1>
@@ -142,7 +182,11 @@ const Customers = ({ userGroup }) => {
             setNewCustomer({ ...newCustomer, contact: e.target.value })
           }
         />
-        <button className="btn btn-primary" onClick={handleAddCustomer}>
+        <button
+          className="btn btn-primary"
+          style={{ backgroundColor: "#006C84" }}
+          onClick={handleAddCustomer}
+        >
           Add Customer
         </button>
       </div>
@@ -190,7 +234,10 @@ const Customers = ({ userGroup }) => {
               placeholder="Filter by Address"
               value={filterCustomer.address}
               onChange={(e) =>
-                setFilterCustomer({ ...filterCustomer, address: e.target.value })
+                setFilterCustomer({
+                  ...filterCustomer,
+                  address: e.target.value,
+                })
               }
             />
             <input
@@ -199,7 +246,10 @@ const Customers = ({ userGroup }) => {
               placeholder="Filter by Contact"
               value={filterCustomer.contact}
               onChange={(e) =>
-                setFilterCustomer({ ...filterCustomer, contact: e.target.value })
+                setFilterCustomer({
+                  ...filterCustomer,
+                  contact: e.target.value,
+                })
               }
             />
             <button
@@ -216,7 +266,7 @@ const Customers = ({ userGroup }) => {
             </button>
           </div>
         )}
-        {customers.length > 0 ? (
+        {sortedCustomers.length > 0 ? (
           <table className="table table-striped">
             <thead>
               <tr>
@@ -225,32 +275,81 @@ const Customers = ({ userGroup }) => {
                 <th>Email</th>
                 <th>Address</th>
                 <th>Contact</th>
+                <th>Angebotssumme</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {customers.map((customer) => (
-                <tr key={customer.id}>
-                  <td>{customer.id}</td>
-                  <td>{customer.name}</td>
-                  <td>{customer.email}</td>
-                  <td>{customer.address}</td>
-                  <td>{customer.contact}</td>
-                  <td>
-                    <button
-                      className="btn btn-warning btn-sm me-2"
-                      onClick={() => setSelectedCustomer(customer)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="btn btn-danger btn-sm"
-                      onClick={() => handleDeleteCustomer(customer.id)}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
+              {sortedCustomers.map((customer) => (
+                <React.Fragment key={customer.id}>
+                  <tr>
+                    <td>{customer.id}</td>
+                    <td>{customer.name}</td>
+                    <td>{customer.email}</td>
+                    <td>{customer.address}</td>
+                    <td>{customer.contact}</td>
+                    <td>{getOfferSumForCustomer(customer.id)}</td>
+                    <td>
+                      {/* Hier wird zuerst der Show Offers Button angezeigt, dann Edit, danach Delete */}
+                      <button
+                        className="btn btn-info btn-sm me-2"
+                        onClick={() => toggleCustomerOffers(customer.id)}
+                      >
+                        {expandedCustomerIds.includes(customer.id)
+                          ? "Hide Offers"
+                          : "Show Offers"}
+                      </button>
+                      <button
+                        className="btn btn-warning btn-sm me-2"
+                        onClick={() => setSelectedCustomer(customer)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="btn btn-danger btn-sm"
+                        onClick={() => handleDeleteCustomer(customer.id)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                  {expandedCustomerIds.includes(customer.id) && (
+                    <tr>
+                      <td colSpan="7">
+                        <div style={{ margin: "10px 0" }}>
+                          <h5>Offers for {customer.name}:</h5>
+                          {offers.filter((offer) => offer.customerId === customer.id)
+                            .length > 0 ? (
+                            <table className="table table-bordered">
+                              <thead>
+                                <tr>
+                                  <th>Offer ID</th>
+                                  <th>Name</th>
+                                  <th>Price</th>
+                                  <th>Status</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {offers
+                                  .filter((offer) => offer.customerId === customer.id)
+                                  .map((offer) => (
+                                    <tr key={offer.id}>
+                                      <td>{offer.id}</td>
+                                      <td>{offer.name}</td>
+                                      <td>{offer.price}</td>
+                                      <td>{offer.status}</td>
+                                    </tr>
+                                  ))}
+                              </tbody>
+                            </table>
+                          ) : (
+                            <p>No offers found for this customer.</p>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
               ))}
             </tbody>
           </table>
@@ -272,4 +371,6 @@ const Customers = ({ userGroup }) => {
 };
 
 export default Customers;
+
+
 

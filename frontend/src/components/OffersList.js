@@ -11,6 +11,7 @@ import "../CSS/Offers.css";
 const OffersList = ({ userGroup }) => {
   // Zustände für Angebote, Kunden, Modals und neue Angebote
   const [offers, setOffers] = useState([]);
+  const [onIceOffers, setOnIceOffers] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [selectedOffer, setSelectedOffer] = useState(null);
   const [selectedCommentsOffer, setSelectedCommentsOffer] = useState(null);
@@ -27,13 +28,14 @@ const OffersList = ({ userGroup }) => {
     status: "Draft"  // Standardstatus
   });
 
-  // Filter-Zustände
+  // Filter-Zustände (nur für Hauptliste; "On Ice" wurde aus dem Filter entfernt)
   const [filterOffer, setFilterOffer] = useState({
     name: "",
     price: "",
     status: ""
   });
   const [showFilters, setShowFilters] = useState(false);
+  const [showOnIceList, setShowOnIceList] = useState(false);
 
   // Auth-Token
   const authValue = getAuthValue(userGroup);
@@ -43,15 +45,35 @@ const OffersList = ({ userGroup }) => {
     fetchCustomers();
   }, [userGroup]);
 
+  // Holt alle Angebote und filtert die "On Ice"-Angebote heraus (Hauptliste)
   const fetchOffers = async (filters = {}) => {
     try {
       const response = await axios.get("http://localhost:8080/offers", {
         headers: { Authorization: authValue },
         params: filters,
       });
-      setOffers(response.data);
+      // Filtere Angebote mit Status "On Ice" heraus und sortiere absteigend (neustes zuerst)
+      const sortedOffers = response.data
+        .filter(offer => offer.status !== "On Ice")
+        .sort((a, b) => b.id - a.id);
+      setOffers(sortedOffers);
     } catch (error) {
       console.error("Error fetching offers:", error);
+    }
+  };
+
+  // Holt nur die "On Ice"-Angebote
+  const fetchOnIceOffers = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/offers", {
+        headers: { Authorization: authValue },
+      });
+      const iceOffers = response.data
+        .filter(offer => offer.status === "On Ice")
+        .sort((a, b) => b.id - a.id);
+      setOnIceOffers(iceOffers);
+    } catch (error) {
+      console.error("Error fetching On Ice offers:", error);
     }
   };
 
@@ -68,10 +90,17 @@ const OffersList = ({ userGroup }) => {
 
   const handleAddOffer = async () => {
     try {
-      await axios.post("http://localhost:8080/offers", newOffer, {
+      const response = await axios.post("http://localhost:8080/offers", newOffer, {
         headers: { Authorization: authValue },
       });
+      const createdOffer = response.data;
+      // Aktualisiere die Hauptliste
       fetchOffers();
+      // Falls der neue Datensatz "On Ice" ist und die On-Ice-Liste angezeigt wird, aktualisiere diese auch
+      if (createdOffer.status === "On Ice" && showOnIceList) {
+        fetchOnIceOffers();
+      }
+      // Zurücksetzen des Eingabeformulars
       setNewOffer({
         name: "",
         price: "",
@@ -80,6 +109,8 @@ const OffersList = ({ userGroup }) => {
         description: "",
         status: "Draft"
       });
+      // Automatisches Öffnen der Detailansicht des neuen Angebots
+      setSelectedDetailOffer(createdOffer);
     } catch (error) {
       console.error("Error adding offer:", error);
     }
@@ -91,6 +122,9 @@ const OffersList = ({ userGroup }) => {
         headers: { Authorization: authValue },
       });
       fetchOffers();
+      if (showOnIceList) {
+        fetchOnIceOffers();
+      }
     } catch (error) {
       console.error("Error deleting offer:", error);
     }
@@ -104,6 +138,9 @@ const OffersList = ({ userGroup }) => {
         { headers: { Authorization: authValue } }
       );
       fetchOffers();
+      if (showOnIceList) {
+        fetchOnIceOffers();
+      }
       setSelectedOffer(null);
     } catch (error) {
       console.error("Error updating offer:", error);
@@ -118,6 +155,13 @@ const OffersList = ({ userGroup }) => {
         { headers: { Authorization: authValue } }
       );
       fetchOffers(filterOffer);
+      if (showOnIceList) {
+        fetchOnIceOffers();
+      }
+      // Falls die Detailansicht gerade geöffnet ist, dort aktualisieren
+      if (selectedDetailOffer && selectedDetailOffer.id === id) {
+        setSelectedDetailOffer({ ...selectedDetailOffer, status: newStatus });
+      }
     } catch (error) {
       console.error("Error updating status:", error);
     }
@@ -132,13 +176,16 @@ const OffersList = ({ userGroup }) => {
     fetchOffers({});
   };
 
-  // Neue Funktion: Beispielangebote hinzufügen über den neuen Endpoint /offers/sample
+  // Neue Funktion: Beispielangebote hinzufügen über den Endpoint /offers/sample
   const handleAddSampleOffers = async () => {
     try {
       await axios.post("http://localhost:8080/offers/sample", {}, {
         headers: { Authorization: authValue },
       });
       fetchOffers();
+      if (showOnIceList) {
+        fetchOnIceOffers();
+      }
     } catch (error) {
       console.error("Error adding sample offers:", error);
     }
@@ -212,7 +259,7 @@ const OffersList = ({ userGroup }) => {
             ))}
           </select>
         </div>
-        <button className="btn btn-primary" onClick={handleAddOffer}>
+        <button className="btn btn-primary" style={{ background: "#006C84" }} onClick={handleAddOffer}>
           Add Offer
         </button>
       </div>
@@ -251,7 +298,6 @@ const OffersList = ({ userGroup }) => {
             <option value="Draft">Draft</option>
             <option value="In Progress">In Progress</option>
             <option value="Active">Active</option>
-            <option value="On Ice">On Ice</option>
           </select>
           <button className="btn btn-secondary" onClick={handleFilterOffers}>
             Filter Offers
@@ -269,7 +315,7 @@ const OffersList = ({ userGroup }) => {
         </button>
       </div>
 
-      {/* Angebote-Tabelle */}
+      {/* Haupt-Angebote-Tabelle (ohne "On Ice") */}
       <table className="table table-striped">
         <thead>
           <tr>
@@ -290,18 +336,8 @@ const OffersList = ({ userGroup }) => {
               <td>{offer.price}</td>
               <td>{offer.currency}</td>
               <td>{customers.find((c) => c.id === offer.customerId)?.name || "None"}</td>
-              <td>
-                <select
-                  className="form-select"
-                  value={offer.status}
-                  onChange={(e) => handleStatusChange(offer.id, e.target.value)}
-                >
-                  <option value="Draft">Draft</option>
-                  <option value="In Progress">In Progress</option>
-                  <option value="Active">Active</option>
-                  <option value="On Ice">On Ice</option>
-                </select>
-              </td>
+              {/* Anzeige des Status als Text */}
+              <td>{offer.status}</td>
               <td>
                 <button
                   className="btn btn-info me-2"
@@ -328,6 +364,77 @@ const OffersList = ({ userGroup }) => {
           ))}
         </tbody>
       </table>
+
+      {/* Button zum Anzeigen/Verstecken der On-Ice-Angebote */}
+      <div className="mb-3">
+        <button
+          className="btn btn-secondary"
+          onClick={() => {
+            const newState = !showOnIceList;
+            setShowOnIceList(newState);
+            if (newState) {
+              fetchOnIceOffers();
+            }
+          }}
+        >
+          {showOnIceList ? "On-Ice ausblenden" : "Alle Angebote anzeigen"}
+        </button>
+      </div>
+
+      {/* Zusätzliche Tabelle: Angebote mit Status "On Ice" */}
+      {showOnIceList && (
+        <>
+          <h4>Angebote mit Status "On Ice"</h4>
+          <table className="table table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Currency</th>
+                <th>Customer</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {onIceOffers.map((offer) => (
+                <tr key={offer.id}>
+                  <td>{offer.id}</td>
+                  <td>{offer.name}</td>
+                  <td>{offer.price}</td>
+                  <td>{offer.currency}</td>
+                  <td>{customers.find((c) => c.id === offer.customerId)?.name || "None"}</td>
+                  {/* Anzeige des Status als Text */}
+                  <td>{offer.status}</td>
+                  <td>
+                    <button
+                      className="btn btn-info me-2"
+                      onClick={() => setSelectedDetailOffer(offer)}
+                    >
+                      Detailansicht
+                    </button>
+                    <button
+                      className="btn btn-warning me-2"
+                      onClick={() => setSelectedOffer(offer)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => handleDeleteOffer(offer.id)}
+                      disabled={offer.status === "In Progress"}
+                      style={{ backgroundColor: offer.status === "In Progress" ? "#d3d3d3" : "" }}
+                    >
+                      🗑️
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
+      )}
 
       {/* Externe Modale */}
       {selectedOffer && (
@@ -365,6 +472,7 @@ const OffersList = ({ userGroup }) => {
           onViewComments={handleDetailViewComments}
           onViewDescription={handleDetailViewDescription}
           onViewTxt={handleDetailViewTxt}
+          onStatusChange={handleStatusChange}
         />
       )}
     </div>
@@ -395,8 +503,8 @@ const DescriptionModal = ({ offer, onClose }) => {
   );
 };
 
-// DetailViewModal als Navigations-Hub mit orangefarbenen Buttons und Back-Button
-const DetailViewModal = ({ offer, onClose, onViewComments, onViewDescription, onViewTxt }) => {
+// DetailViewModal als Navigations-Hub mit orangefarbenen Buttons, Back-Button und Status-Dropdown
+const DetailViewModal = ({ offer, onClose, onViewComments, onViewDescription, onViewTxt, onStatusChange }) => {
   return (
     <div className="modal show d-block" tabIndex="-1">
       <div className="modal-dialog">
@@ -408,6 +516,30 @@ const DetailViewModal = ({ offer, onClose, onViewComments, onViewDescription, on
              <button type="button" className="btn-close" onClick={onClose}></button>
            </div>
            <div className="modal-body d-flex flex-column gap-2">
+             {/* Status ändern */}
+             <div className="mb-3">
+               <label className="form-label" style={{ color: "white" }}>Status:</label>
+               <select
+                 className="form-select"
+                 value={offer.status}
+                 onChange={(e) => onStatusChange(offer.id, e.target.value)}
+               >
+                 {offer.status === "Draft" ? (
+                   <>
+                     <option value="Draft" disabled>Draft</option>
+                     <option value="Active">Active</option>
+                     <option value="On Ice">On Ice</option>
+                   </>
+                 ) : (
+                   <>
+                     <option value="Draft">Draft</option>
+                     <option value="In Progress">In Progress</option>
+                     <option value="Active">Active</option>
+                     <option value="On Ice">On Ice</option>
+                   </>
+                 )}
+               </select>
+             </div>
              <button
                className="btn"
                style={{ backgroundColor: "#ffccbb", border: "none" }}
@@ -431,7 +563,7 @@ const DetailViewModal = ({ offer, onClose, onViewComments, onViewDescription, on
              </button>
            </div>
            <div className="modal-footer d-flex justify-content-start">
-             <button className="btn btn-secondary" onClick={onClose}>
+             <button className="btn btn-secondary" style={{ backgroundColor: "#ffccbb", color: "black" }} onClick={onClose}>
                Back
              </button>
            </div>
@@ -442,6 +574,9 @@ const DetailViewModal = ({ offer, onClose, onViewComments, onViewDescription, on
 };
 
 export default OffersList;
+
+
+
 
 
 
