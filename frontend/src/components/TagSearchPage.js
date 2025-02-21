@@ -82,7 +82,7 @@ const TagSearchPage = ({ userGroup }) => {
   };
 
   return (
-    <Container className="mt-4">
+    <Container className="mt-4" style={{marginBottom: "15rem"}}>
       <h2>Suche nach Dateien über Tags</h2>
       {error && <Alert variant="danger">{error}</Alert>}
       <Form>
@@ -145,7 +145,7 @@ const TagSearchPage = ({ userGroup }) => {
               </tbody>
             </Table>
           )}
-          <Button variant="secondary" onClick={handleNewSearch}>
+          <Button variant="secondary" onClick={handleNewSearch} >
             Neue Suche
           </Button>
         </div>
