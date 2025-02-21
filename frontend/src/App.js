@@ -6,10 +6,10 @@ import Customers from "./components/Customers";
 import Home from "./components/Home";
 import "./App.css"
 
-
 function App() {
-  const [userGroup, setUserGroup] = useState("Basic User"); // Benutzergruppe speichern
+  const [userGroup, setUserGroup] = useState("Basic User");
   const [currentPage, setCurrentPage] = useState("home");
+  const [offerToShow, setOfferToShow] = useState(null);
 
   // Funktion zur Benutzergruppenänderung
   const handleGroupChange = (group) => {
@@ -22,15 +22,37 @@ function App() {
     setCurrentPage(page);
   };
 
-  // Seitenrendering basierend auf `currentPage`
+  // Funktion, um von Customers zur Detailansicht eines Offers zu navigieren
+  const handleShowOfferDetail = (offer) => {
+    setOfferToShow(offer);
+    setCurrentPage("offers");
+  };
+
+  // Reset für das globale Offer (wird beim Schließen der Detailansicht aufgerufen)
+  const resetOfferToShow = () => {
+    setOfferToShow(null);
+  };
+
+  // Seitenrendering basierend auf currentPage
   const renderPage = () => {
     switch (currentPage) {
       case "home":
         return <Home />;
       case "offers":
-        return <OffersList userGroup={userGroup} />;
+        return (
+          <OffersList
+            userGroup={userGroup}
+            offerToShow={offerToShow}
+            onResetOfferToShow={resetOfferToShow}
+          />
+        );
       case "customers":
-        return <Customers userGroup={userGroup} />;
+        return (
+          <Customers
+            userGroup={userGroup}
+            onShowOfferDetail={handleShowOfferDetail}
+          />
+        );
       case "services":
         return <h1>Our Services</h1>;
       case "contact":
@@ -50,3 +72,5 @@ function App() {
 }
 
 export default App;
+
+

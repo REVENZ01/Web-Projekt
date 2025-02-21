@@ -1,4 +1,3 @@
-// OffersList.js
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import EditOfferModal from "./EditOfferModal";
@@ -8,7 +7,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { getAuthValue } from "./Header"; // Auth-Token basierend auf der userGroup
 import "../CSS/Offers.css";
 
-const OffersList = ({ userGroup }) => {
+const OffersList = ({ userGroup, offerToShow, onResetOfferToShow }) => {
   // Zustände für Angebote, Kunden, Modals und neue Angebote
   const [offers, setOffers] = useState([]);
   const [onIceOffers, setOnIceOffers] = useState([]);
@@ -44,6 +43,13 @@ const OffersList = ({ userGroup }) => {
     fetchOffers();
     fetchCustomers();
   }, [userGroup]);
+
+  // Öffnet die Detailansicht automatisch, wenn ein Offer zum Anzeigen übergeben wurde
+  useEffect(() => {
+    if (offerToShow) {
+      setSelectedDetailOffer(offerToShow);
+    }
+  }, [offerToShow]);
 
   // Holt alle Angebote und filtert die "On Ice"-Angebote heraus (Hauptliste)
   const fetchOffers = async (filters = {}) => {
@@ -468,7 +474,12 @@ const OffersList = ({ userGroup }) => {
       {selectedDetailOffer && (
         <DetailViewModal
           offer={selectedDetailOffer}
-          onClose={() => setSelectedDetailOffer(null)}
+          onClose={() => {
+            setSelectedDetailOffer(null);
+            if (onResetOfferToShow) {
+              onResetOfferToShow();
+            }
+          }}
           onViewComments={handleDetailViewComments}
           onViewDescription={handleDetailViewDescription}
           onViewTxt={handleDetailViewTxt}
@@ -562,9 +573,9 @@ const DetailViewModal = ({ offer, onClose, onViewComments, onViewDescription, on
                📄.txt
              </button>
            </div>
-           <div className="modal-footer d-flex justify-content-start">
+           <div className="modal-footer d-flex justify-content-end">
              <button className="btn btn-secondary" style={{ backgroundColor: "#ffccbb", color: "black" }} onClick={onClose}>
-               Back
+               🗸
              </button>
            </div>
          </div>
@@ -574,12 +585,4 @@ const DetailViewModal = ({ offer, onClose, onViewComments, onViewDescription, on
 };
 
 export default OffersList;
-
-
-
-
-
-
-
-
 

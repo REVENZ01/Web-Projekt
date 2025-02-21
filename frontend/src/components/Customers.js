@@ -5,7 +5,7 @@ import "../CSS/Customers.css";
 import EditCustomer from "./EditCustomer.js"; // Importiere die Edit-Modal-Komponente
 import { getAuthValue } from "./Header"; // Korrekt importieren
 
-const Customers = ({ userGroup }) => {
+const Customers = ({ userGroup, onShowOfferDetail }) => {
   const [customers, setCustomers] = useState([]);
   const [offers, setOffers] = useState([]); // Neuer State für Angebote
   const [selectedCustomer, setSelectedCustomer] = useState(null);
@@ -290,7 +290,6 @@ const Customers = ({ userGroup }) => {
                     <td>{customer.contact}</td>
                     <td>{getOfferSumForCustomer(customer.id)}</td>
                     <td>
-                      {/* Hier wird zuerst der Show Offers Button angezeigt, dann Edit, danach Delete */}
                       <button
                         className="btn btn-info btn-sm me-2"
                         onClick={() => toggleCustomerOffers(customer.id)}
@@ -327,6 +326,7 @@ const Customers = ({ userGroup }) => {
                                   <th>Name</th>
                                   <th>Price</th>
                                   <th>Status</th>
+                                  <th>Actions</th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -338,6 +338,14 @@ const Customers = ({ userGroup }) => {
                                       <td>{offer.name}</td>
                                       <td>{offer.price}</td>
                                       <td>{offer.status}</td>
+                                      <td>
+                                        <button
+                                          className="btn btn-primary btn-sm"
+                                          onClick={() => onShowOfferDetail(offer)}
+                                        >
+                                          Detailansicht
+                                        </button>
+                                      </td>
                                     </tr>
                                   ))}
                               </tbody>
@@ -371,6 +379,8 @@ const Customers = ({ userGroup }) => {
 };
 
 export default Customers;
+
+
 
 
 
