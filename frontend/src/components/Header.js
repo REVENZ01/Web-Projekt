@@ -49,19 +49,19 @@ const Header = ({ onGroupChange, onNavigate, userGroup }) => {
 
       <nav className="main-nav">
         <button className="buttonHeader" onClick={() => onNavigate("home")}>
-        Home
+          Home
         </button>
         <button className="buttonHeader" onClick={() => onNavigate("offers")}>
           Offers
         </button>
-        <button
-          className="buttonHeader"
-          onClick={() => onNavigate("customers")}
-        >
+        <button className="buttonHeader" onClick={() => onNavigate("customers")}>
           Customers
         </button>
         <button className="buttonHeader" onClick={() => onNavigate("contact")}>
           Contact
+        </button>
+        <button className="buttonHeader" onClick={() => onNavigate("tag-search")}>
+          Tag Search
         </button>
       </nav>
 
@@ -92,3 +92,4 @@ const Header = ({ onGroupChange, onNavigate, userGroup }) => {
 };
 
 export default Header;
+

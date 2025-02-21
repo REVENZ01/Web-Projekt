@@ -1,0 +1,64 @@
+• Die Gestaltung von ihrer Webseite ist nicht ausschlaggebend, wir erwarten aber 
+für die Note „sehr gut“ ein ansprechendes Design gegenüber einer rudimentären 
+Implementierung.  
+o Beachten Sie hier auch die vorgestellten Konzepte der vorherigen 
+Semester  
+• Sollten Sie die Anforderung A6 nicht gelöst bekommen, lassen Sie das Konzept 
+der Rolle in ihrer Client Anwendung weg. Hierfür gibt es dann aber auch keine 
+Punkte.  
+• Halten Sie sich an die vorgestellten Konzepte des jeweiligen Frameworks. In 
+Angular bspw. legen wir Wert auf den Einsatz von Services für die Business Logik. 
+• Es steht Ihnen frei auch ihre Webseite mit beliebigen zusätzlichen Informationen 
+oder Funktionalitäten zu erweitern. 
+o Diese können Sie dann in der Dokumentation kurz beschreiben 
+• Sollten Sie NextJS für ihre Client Anwendung gewählt haben, implementieren Sie 
+bitte trotzdem die Server Schnittstelle aus Aufgabe 1 als Standalone API 
+o Bedeutet die Schnittstelle nicht mit NextJS API Routes lösen 
+o Sie dürfen aber Server Side Components beliebig einsetzen  
+Aufgabe 3 (10 Punkte) 
+Erweitern Sie ihre Lösungen aus Aufgabe 1 und 2 um die folgenden Funktionalitäten: 
+Der Projektverantwortliche Herr Conduit ist als Sie gerade fertig waren mit ihren ersten 
+Prototypen auf Sie zugekommen und möchte noch gerne weitere Funktionen 
+implementiert haben. Sie vereinbaren einen Termin und hören sich seine Idee an: 
+Mit unserer neuen Softwarelösung möchten wir in Zukunft unsere Angebotsphasen 
+beschleunigen und nicht immer alle Angebote von vorne beginnen. Aus diesem Grund 
+wäre es hilfreich, wenn wir an Dateien, die zu einem Projekt gehören, Meta 
+Informationen in Form von Tags hinzufügen könnten. Ich habe häufig den Fall, dass 
+Entwickler Lösungsskizzen entwerfen, die wir für andere Kunden auch nutzen können. 
+Wenn ein Entwickler dann eine Datei hochlädt, kann er in Tags angeben, um was sich 
+das Dokument handelt. Mit diesen Tags und dem Inhalt der Dokumente möchten wir in 
+naher Zukunft dann eine AI-Lösung bauen. Aus diesem Grund wäre es praktisch, wenn 
+Sie hierfür bereits einen Endpunkt zur Verarbeitung anbieten.  
+Sie notieren sich den neuen Anwendungsfall und zusammen mit ihren Kollegen 
+überlegen Sie sich folgende neuen Anforderungen:  
+A1 Dateien Tags Erweiterung  
+Dateien bekommen eine neue Eigenschaft in Form von Tags. Tags sind dabei einfach frei 
+wählbare Strings, die für eine Datei zusätzlich gespeichert werden. Erweitern Sie ihre 
+Schnittstelle, um die Funktionalität für eine existierende Datei Tags hinzuzufügen bzw. 
+zu modifizieren. Auch über die Benutzeroberfläche können Tags verwendet werden.  
+• (Frontend) Geben Sie in der Liste mit allen Dateien auch die Anzahl aller Tags aus 
+• Hinweis: Beim Hochladen von Dateien können Tags noch nicht mitgegeben 
+werden. In der Server Antwort ist die Liste an Tags einfach leer beim Anlegen. 
+• Dokumentieren Sie auch, wie sie hierbei vorgegangen sind bei der Erweiterung 
+ihrer Lösung und dem Datenmodell. 
+A2: Verarbeitung von Tags 
+Entwerfen Sie eine neue Schnittstelle, die eine Anzahl an beliebigen Tags 
+entgegennimmt. Suchen Sie dann alle Dateien, welche die Tags beinhalten und geben 
+Sie diese als Liste zurück. Weil diese Schnittstelle später auch die AI-Lösung beinhaltet, 
+implementieren Sie direkt eine Long Running Operation. 
+• Eine Long Running Operation ist eine Server Anfrage, die etwas Zeit in Anspruch 
+nimmt. Ihre Schnittstelle nimmt die Anfrage entgegen und gibt dem Client einen 
+202 Status Code zurück. Im Body befindet sich eine Task ID die den laufenden 
+Prozess abbildet. Auf Client Seite können Sie dann in einem definierten Intervall 
+zusammen mit der Task ID abfragen, ob der Vorgang bereits abgeschlossen ist 
+oder nicht.  
+• Wenn der Vorgang abgeschlossen ist, bekommen Sie einen http Status Code 200 
+von der Schnittstelle und im Body sind die aufgelösten Informationen enthalten 
+(In unserem Fall eine Liste mit allen Dateien, welche die gewählten Tags 
+beinhalten) 
+• Anschließend bekommen Sie für diese Task ID immer das fertige Ergebnis 
+zurück. 
+• Für die Long Running Operation können Sie sich folgendes Datenmodell 
+überlegen: ID, Status (Start, Pending, Completed) und einem optionalen Payload 
+mit dem Ergebnis. 
+• Hinwei

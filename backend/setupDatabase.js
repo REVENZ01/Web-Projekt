@@ -61,6 +61,7 @@ db.serialize(() => {
       id TEXT PRIMARY KEY,
       originalName TEXT,
       storedName TEXT,
+      tag TEXT,
       url TEXT,
       offerId TEXT,
       uploadedAt TEXT,
