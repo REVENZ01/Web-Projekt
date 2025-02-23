@@ -44,7 +44,7 @@ const Header = ({ onGroupChange, onNavigate, userGroup }) => {
   return (
     <header className="header">
       <div className="logo">
-        <a href="/">🪐</a>
+        <a href="/"><img class="homebild" src="/Prismarin.gif" alt="Prismarin" /></a>
       </div>
 
       <nav className="main-nav">
