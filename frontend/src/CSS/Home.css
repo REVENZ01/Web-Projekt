@@ -1,16 +1,15 @@
 /* src/CSS/Home.css */
 
 .home-container {
-  /* Der Container passt sich jetzt dem übergeordneten flex-Layout an */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* Text beginnt oben */
+  justify-content: flex-start;
   background-color: #9cc2ca;
   width: 100%;
-  padding: 2rem;           /* Etwas Innenabstand, damit Inhalte nicht direkt am Rand kleben */
-  box-sizing: border-box;  /* Damit Padding in der Breite enthalten ist */
-  min-height: 100vh;       /* Falls du sicherstellen möchtest, dass der Home-Inhalt mindestens die gesamte Höhe einnimmt */
+  padding: 2rem;
+  box-sizing: border-box;
+  min-height: 100vh;
 }
 
 .home-title {
@@ -40,10 +39,29 @@
 
 .home-button:hover {
   background-color: #9cc2ca;
-  border:#333;
-  border-color:#333;
-  border-style: solid;
+  border: 1px solid #333;
 }
+
+/* Grid-Container für die symmetrisch angeordneten Feature-Boxen */
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 2rem auto 0;
+}
+
+/* Stil für die einzelnen, abgerundeten Boxen */
+.feature-box {
+  background-color: #ffccbb;
+  border: 1px solid #000;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
 
 
  

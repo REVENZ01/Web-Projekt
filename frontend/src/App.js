@@ -54,10 +54,6 @@ function App() {
             onShowOfferDetail={handleShowOfferDetail}
           />
         );
-      case "services":
-        return <h1>Our Services</h1>;
-      case "contact":
-        return <h1>Contact Us</h1>;
       case "tag-search":
         return <TagSearchPage userGroup={userGroup} />;
       default:

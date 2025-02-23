@@ -6,24 +6,35 @@ const Footer = () => {
     <footer className="footer">
       <div className="container">
         <p>
-          &copy; {new Date().getFullYear()} Dein Unternehmen. Alle Rechte
+          &copy; {new Date().getFullYear()} Prismarine Solutions. Alle Rechte
           vorbehalten.
         </p>
-        <ul className="footer-links">
-          <li>
-            <a href="/impressum">Impressum</a>
-          </li>
-          <li>
-            <a href="/datenschutz">Datenschutz</a>
-          </li>
-          <li>
-            <a href="/kontakt">Kontakt</a>
-          </li>
-        </ul>
+        <div className="social-media">
+          <hr class ="border"></hr>
+          <ul className="social-links">
+            <li>
+              <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
+                <img src="/2959748_instagram_photo_share_icon.png" alt="Instagram" />
+              </a>
+            </li>
+            <li>
+              <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer">
+                <img src="/2959742_broadcast_google_streaming_video_youtube_icon.png" alt="YouTube" />
+              </a>
+            </li>
+            <li>
+              <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer">
+                <img src="/5340259_in_linkedin_media_portfolio_social_icon.png" alt="LinkedIn" />
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
     </footer>
   );
 };
 
 export default Footer;
+
+
 

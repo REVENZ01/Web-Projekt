@@ -57,9 +57,6 @@ const Header = ({ onGroupChange, onNavigate, userGroup }) => {
         <button className="buttonHeader" onClick={() => onNavigate("customers")}>
           Customers
         </button>
-        <button className="buttonHeader" onClick={() => onNavigate("contact")}>
-          Contact
-        </button>
         <button className="buttonHeader" onClick={() => onNavigate("tag-search")}>
           Tag Search
         </button>

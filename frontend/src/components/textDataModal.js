@@ -187,58 +187,54 @@ const TextDataModal = ({ offer, onClose, userGroup }) => {
                   </Button>
                 </div>
                 {activeTagFileId === file.id && (
-                  <div className="mt-3 border p-2">
+                  <div className="mt-3 border p-2 w-100">
                     <h6>Tags für {file.name}</h6>
                     {tagError && <p className="text-danger">{tagError}</p>}
                     {fileTags.length === 0 ? (
                       <p className="text-muted">Keine Tags vorhanden.</p>
                     ) : (
-                      <ul className="list-group">
+                      <ul className="list-group w-100">
                         {fileTags.map((tag) => (
-                          <li
-                            key={tag.id}
-                            className="list-group-item d-flex justify-content-between align-items-center"
-                          >
+                          <li key={tag.id} className="list-group-item d-flex align-items-center w-100">
                             {editingTagId === tag.id ? (
                               <Form.Control
                                 type="text"
                                 value={editedTagText}
                                 onChange={(e) => setEditedTagText(e.target.value)}
+                                className="me-2 flex-grow-1"
                               />
                             ) : (
-                              <span>{tag.text}</span>
+                              <span className="me-2 flex-grow-1">{tag.text}</span>
                             )}
-                            <div>
-                              {editingTagId === tag.id ? (
-                                <Button
-                                  variant="success"
-                                  size="sm"
-                                  className="me-2"
-                                  onClick={() => handleEditTag(tag.id)}
-                                >
-                                  Speichern
-                                </Button>
-                              ) : (
-                                <Button
-                                  variant="warning"
-                                  size="sm"
-                                  className="me-2"
-                                  onClick={() => {
-                                    setEditingTagId(tag.id);
-                                    setEditedTagText(tag.text);
-                                  }}
-                                >
-                                  Bearbeiten
-                                </Button>
-                              )}
+                            {editingTagId === tag.id ? (
                               <Button
-                                variant="danger"
+                                variant="success"
                                 size="sm"
-                                onClick={() => handleDeleteTag(tag.id)}
+                                className="me-2"
+                                onClick={() => handleEditTag(tag.id)}
                               >
-                                Löschen
+                                Speichern
                               </Button>
-                            </div>
+                            ) : (
+                              <Button
+                                variant="warning"
+                                size="sm"
+                                className="me-2"
+                                onClick={() => {
+                                  setEditingTagId(tag.id);
+                                  setEditedTagText(tag.text);
+                                }}
+                              >
+                                Bearbeiten
+                              </Button>
+                            )}
+                            <Button
+                              variant="danger"
+                              size="sm"
+                              onClick={() => handleDeleteTag(tag.id)}
+                            >
+                              🗑️
+                            </Button>
                           </li>
                         ))}
                       </ul>
@@ -274,6 +270,8 @@ const TextDataModal = ({ offer, onClose, userGroup }) => {
 };
 
 export default TextDataModal;
+
+
 
 
 

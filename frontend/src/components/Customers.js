@@ -308,7 +308,7 @@ const Customers = ({ userGroup, onShowOfferDetail }) => {
                         className="btn btn-danger btn-sm"
                         onClick={() => handleDeleteCustomer(customer.id)}
                       >
-                        Delete
+                        🗑️
                       </button>
                     </td>
                   </tr>
