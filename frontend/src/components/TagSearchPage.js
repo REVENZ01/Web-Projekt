@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Container, Form, Button, Table, Alert } from "react-bootstrap";
 import { getAuthValue } from "./Header"; // Falls Auth-Logik verwendet wird
+import "../CSS/TagSearchPage.css"
 
 const TagSearchPage = ({ userGroup }) => {
   const authValue = getAuthValue(userGroup);
@@ -97,10 +98,15 @@ const TagSearchPage = ({ userGroup }) => {
           />
         </Form.Group>
         <Button
-          variant="primary"
+          variant="secondary"
           className="mt-2"
           onClick={handleSearch}
           disabled={isSearching || !tagInput.trim()}
+          style={{
+            backgroundColor:
+              isSearching || !tagInput.trim() ? "lightgrey" : undefined,
+            // Optional: Weitere Anpassungen wie borderColor oder color
+          }}
         >
           Suche starten
         </Button>

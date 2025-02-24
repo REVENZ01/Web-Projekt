@@ -43,3 +43,8 @@
     background-color: #9cc2ca;
     border-color: #9cc2ca;
   }
+
+
+.btn-secondary:hover{
+  border-color: black;
+}

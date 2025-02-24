@@ -61,7 +61,7 @@
   background: none; /* Kein Hintergrund */
   border: none; /* Kein Rahmen */
   text-decoration: none; /* Kein Unterstrich */
-  font-size: 16px; /* Schriftgröße anpassen */
+  font-size: 1.2rem; /* Schriftgröße anpassen */
   cursor: pointer; /* Zeiger zeigt an, dass es klickbar ist */
   transition: color 0.3s ease; /* Sanfter Übergang beim Hovern */
 }
@@ -90,4 +90,10 @@
 .seedButton:hover {
   background-color: #f89777;
   transform: scale(1.05);
+}
+
+.main-nav .buttonHeader:not(:last-child) {
+  border-right: 1px solid #fff;
+  padding-right: 1rem; /* optional: Abstand zum Text */
+  margin-right: 1rem;  /* optional: Abstand zur nächsten Schaltfläche */
 }

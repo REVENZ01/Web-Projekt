@@ -183,7 +183,7 @@ const Customers = ({ userGroup, onShowOfferDetail }) => {
           }
         />
         <button
-          className="btn btn-primary"
+          className="btn btn-secondary"
           style={{ backgroundColor: "#006C84" }}
           onClick={handleAddCustomer}
         >
@@ -205,9 +205,10 @@ const Customers = ({ userGroup, onShowOfferDetail }) => {
           <div
             className="mb-3 d-flex gap-2"
             style={{
-              backgroundColor: "#e3f2fd",
+              backgroundColor: "#fff",
+              border: "1px solid #000",
               padding: "10px",
-              borderRadius: "5px",
+              borderRadius: "5px"
             }}
           >
             <input
@@ -291,7 +292,7 @@ const Customers = ({ userGroup, onShowOfferDetail }) => {
                     <td>{getOfferSumForCustomer(customer.id)}</td>
                     <td>
                       <button
-                        className="btn btn-info btn-sm me-2"
+                        className="btn btn-secondary btn-sm me-2"
                         onClick={() => toggleCustomerOffers(customer.id)}
                       >
                         {expandedCustomerIds.includes(customer.id)
@@ -299,7 +300,7 @@ const Customers = ({ userGroup, onShowOfferDetail }) => {
                           : "Show Offers"}
                       </button>
                       <button
-                        className="btn btn-warning btn-sm me-2"
+                        className="btn btn-secondary btn-sm me-2"
                         onClick={() => setSelectedCustomer(customer)}
                       >
                         Edit
@@ -340,7 +341,7 @@ const Customers = ({ userGroup, onShowOfferDetail }) => {
                                       <td>{offer.status}</td>
                                       <td>
                                         <button
-                                          className="btn btn-primary btn-sm"
+                                          className="btn btn-secondary btn-sm"
                                           onClick={() => onShowOfferDetail(offer)}
                                         >
                                           Detailansicht

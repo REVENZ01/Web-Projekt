@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "../CSS/Customers.css";
+
 
 const EditCustomerModal = ({ customer, onClose, onSave }) => {
   const [formData, setFormData] = useState({ ...customer });
@@ -63,10 +65,10 @@ const EditCustomerModal = ({ customer, onClose, onSave }) => {
             </div>
           </div>
           <div className="modal-footer">
-            <button className="btn btn-warning" onClick={onClose}>
+            <button className="btn btn-secondary" onClick={onClose}>
               Cancel
             </button>
-            <button className="btn btn-primary" onClick={handleSave}>
+            <button className="btn btn-dark" onClick={handleSave}>
               Save
             </button>
           </div>

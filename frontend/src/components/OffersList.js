@@ -265,7 +265,7 @@ const OffersList = ({ userGroup, offerToShow, onResetOfferToShow }) => {
             ))}
           </select>
         </div>
-        <button className="btn btn-primary" style={{ background: "#006C84" }} onClick={handleAddOffer}>
+        <button className="btn btn-secondary" style={{ background: "#006C84" }} onClick={handleAddOffer}>
           Add Offer
         </button>
       </div>
@@ -280,7 +280,12 @@ const OffersList = ({ userGroup, offerToShow, onResetOfferToShow }) => {
         </button>
       </div>
       {showFilters && (
-        <div className="mb-3 d-flex gap-2" style={{ backgroundColor: "#e3f2fd", padding: "10px", borderRadius: "5px" }}>
+        <div className="mb-3 d-flex gap-2" style={{
+          backgroundColor: "#fff",
+          border: "1px solid #000",
+          padding: "10px",
+          borderRadius: "5px"
+        }}>
           <input
             type="text"
             className="form-control"
@@ -316,7 +321,7 @@ const OffersList = ({ userGroup, offerToShow, onResetOfferToShow }) => {
 
       {/* Button zum Hinzufügen von Beispielangeboten */}
       <div className="mb-3">
-        <button className="btn btn-success" onClick={handleAddSampleOffers}>
+        <button className="btn btn-secondary" onClick={handleAddSampleOffers}>
           Add legacy data
         </button>
       </div>
@@ -346,13 +351,13 @@ const OffersList = ({ userGroup, offerToShow, onResetOfferToShow }) => {
               <td>{offer.status}</td>
               <td>
                 <button
-                  className="btn btn-info me-2"
+                  className="btn btn-secondary me-2"
                   onClick={() => setSelectedDetailOffer(offer)}
                 >
                   Detailansicht
                 </button>
                 <button
-                  className="btn btn-warning me-2"
+                  className="btn btn-secondary me-2"
                   onClick={() => setSelectedOffer(offer)}
                 >
                   Edit
@@ -415,13 +420,13 @@ const OffersList = ({ userGroup, offerToShow, onResetOfferToShow }) => {
                   <td>{offer.status}</td>
                   <td>
                     <button
-                      className="btn btn-info me-2"
+                      className="btn btn-secondary me-2"
                       onClick={() => setSelectedDetailOffer(offer)}
                     >
                       Detailansicht
                     </button>
                     <button
-                      className="btn btn-warning me-2"
+                      className="btn btn-secondary me-2"
                       onClick={() => setSelectedOffer(offer)}
                     >
                       Edit
@@ -552,21 +557,21 @@ const DetailViewModal = ({ offer, onClose, onViewComments, onViewDescription, on
                </select>
              </div>
              <button
-               className="btn"
+               className="btn btn-secondary"
                style={{ backgroundColor: "#ffccbb", border: "none" }}
                onClick={onViewComments}
              >
                View Comments
              </button>
              <button
-               className="btn"
+               className="btn btn-secondary"
                style={{ backgroundColor: "#ffccbb", border: "none" }}
                onClick={onViewDescription}
              >
                View Description
              </button>
              <button
-               className="btn"
+               className="btn btn-secondary"
                style={{ backgroundColor: "#ffccbb", border: "none" }}
                onClick={onViewTxt}
              >
@@ -585,4 +590,6 @@ const DetailViewModal = ({ offer, onClose, onViewComments, onViewDescription, on
 };
 
 export default OffersList;
+
+
 
