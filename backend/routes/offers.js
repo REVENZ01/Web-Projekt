@@ -41,6 +41,15 @@ function get(sql, params = []) {
 }
 
 async function offersRoutes(fastify, options) {
+  // Globaler Hook: Löscht Angebote, deren customerId in der customers-Tabelle nicht vorhanden ist.
+  fastify.addHook("onRequest", async (request, reply) => {
+    try {
+      await run("DELETE FROM offers WHERE customerId NOT IN (SELECT id FROM customers)");
+    } catch (error) {
+      fastify.log.error("Error cleaning offers with invalid customerId: " + error);
+    }
+  });
+
   // GET /offers – Mit Filterung via Query-Parameter (name, price, status)
   fastify.get(
     "/",
@@ -276,7 +285,7 @@ async function offersRoutes(fastify, options) {
     }
   );
 
-  // Neuer Endpoint: POST /offers/sample – Beispielangebote hinzufügen
+  // POST /offers/sample – Beispielangebote hinzufügen
   fastify.post(
     "/sample",
     { preHandler: authorize(["Account-Manager", "Developer"]) },

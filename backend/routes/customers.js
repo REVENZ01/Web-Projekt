@@ -58,8 +58,13 @@ async function customersRoutes(fastify, options) {
           params.push(`%${email.toLowerCase()}%`);
         }
         if (contact) {
-          query += " AND lower(contact) LIKE ?";
-          params.push(`%${contact.toLowerCase()}%`);
+          const contactInt = parseInt(contact, 10);
+          if (isNaN(contactInt)) {
+            reply.code(400).send({ message: "Invalid contact filter, must be an integer" });
+            return;
+          }
+          query += " AND contact = ?";
+          params.push(contactInt);
         }
         if (address) {
           query += " AND lower(address) LIKE ?";
@@ -84,6 +89,12 @@ async function customersRoutes(fastify, options) {
         const { name, email, address, contact } = request.body;
         const now = new Date().toISOString();
 
+        const contactInt = parseInt(contact, 10);
+        if (isNaN(contactInt)) {
+          reply.code(400).send({ message: "Invalid contact, must be an integer" });
+          return;
+        }
+
         // Hole die aktuell höchste ID (als Zahl) aus der Datenbank
         const result = await get("SELECT MAX(CAST(id AS INTEGER)) as maxId FROM customers");
         // Wenn kein Kunde existiert, starte mit 1, sonst erhöhe die höchste ID um 1
@@ -91,7 +102,7 @@ async function customersRoutes(fastify, options) {
 
         const sql =
           "INSERT INTO customers (id, name, email, address, contact, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        await run(sql, [newId, name, email, address, contact, now, now]);
+        await run(sql, [newId, name, email, address, contactInt, now, now]);
 
         // Neuen Kunden auslesen und zurückgeben
         const customer = await get("SELECT * FROM customers WHERE id = ?", [newId]);
@@ -103,7 +114,7 @@ async function customersRoutes(fastify, options) {
     }
   );
 
-  // PUT /customers/:idOrName
+  // PUT /customers/:idOrName – Aktualisieren eines Kunden
   fastify.put(
     "/:idOrName",
     { preHandler: authorize(["Account-Manager", "Developer"]) },
@@ -124,7 +135,15 @@ async function customersRoutes(fastify, options) {
         const updatedName = name || customer.name;
         const updatedEmail = email || customer.email;
         const updatedAddress = address || customer.address;
-        const updatedContact = contact || customer.contact;
+        let updatedContact = customer.contact;
+        if (contact !== undefined) {
+          const parsed = parseInt(contact, 10);
+          if (isNaN(parsed)) {
+            reply.code(400).send({ message: "Invalid contact, must be an integer" });
+            return;
+          }
+          updatedContact = parsed;
+        }
         const now = new Date().toISOString();
 
         const sql =
@@ -138,10 +157,7 @@ async function customersRoutes(fastify, options) {
           customer.id,
         ]);
 
-        const updatedCustomer = await get(
-          "SELECT * FROM customers WHERE id = ?",
-          [customer.id]
-        );
+        const updatedCustomer = await get("SELECT * FROM customers WHERE id = ?", [customer.id]);
         reply.code(200).send(updatedCustomer);
       } catch (err) {
         fastify.log.error(err);
@@ -150,7 +166,7 @@ async function customersRoutes(fastify, options) {
     }
   );
 
-  // DELETE /customers/:id
+  // DELETE /customers/:id – Löschen eines Kunden
   fastify.delete(
     "/:id",
     { preHandler: authorize(["Account-Manager"]) },
@@ -220,6 +236,7 @@ async function customersRoutes(fastify, options) {
           const customer = testCustomers[i];
           // Verwende hier eine einfache ID (i+1 als String)
           const id = (i + 1).toString();
+          const contactInt = parseInt(customer.contact, 10);
           const sql =
             "INSERT INTO customers (id, name, email, address, contact, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?)";
           await run(sql, [
@@ -227,7 +244,7 @@ async function customersRoutes(fastify, options) {
             customer.name,
             customer.email,
             customer.address,
-            customer.contact,
+            contactInt,
             now,
             now,
           ]);
@@ -244,5 +261,6 @@ async function customersRoutes(fastify, options) {
 }
 
 module.exports = customersRoutes;
+
 
 

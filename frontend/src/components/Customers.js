@@ -65,10 +65,17 @@ const Customers = ({ userGroup, onShowOfferDetail }) => {
       alert("Die Email-Adresse muss ein '@' enthalten.");
       return;
     }
+    // Validierung: Contact muss eine gültige Ganzzahl sein
+    const contactValue = parseInt(newCustomer.contact, 10);
+    if (isNaN(contactValue)) {
+      alert("Das Contact-Feld muss eine gültige Ganzzahl sein.");
+      return;
+    }
     try {
+      const payload = { ...newCustomer, contact: contactValue };
       const response = await axios.post(
         "http://localhost:8080/customers",
-        newCustomer,
+        payload,
         { headers: { Authorization: authValue } }
       );
       setCustomers([...customers, response.data]);
@@ -174,7 +181,7 @@ const Customers = ({ userGroup, onShowOfferDetail }) => {
           }
         />
         <input
-          type="text"
+          type="number"
           className="form-control mb-2"
           placeholder="☏ Contact"
           value={newCustomer.contact}
@@ -208,7 +215,7 @@ const Customers = ({ userGroup, onShowOfferDetail }) => {
               backgroundColor: "#fff",
               border: "1px solid #000",
               padding: "10px",
-              borderRadius: "5px"
+              borderRadius: "5px",
             }}
           >
             <input
@@ -242,7 +249,7 @@ const Customers = ({ userGroup, onShowOfferDetail }) => {
               }
             />
             <input
-              type="text"
+              type="number"
               className="form-control"
               placeholder="Filter by Contact"
               value={filterCustomer.contact}
@@ -380,6 +387,7 @@ const Customers = ({ userGroup, onShowOfferDetail }) => {
 };
 
 export default Customers;
+
 
 
 

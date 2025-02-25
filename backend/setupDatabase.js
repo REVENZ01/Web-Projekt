@@ -24,7 +24,7 @@ db.serialize(() => {
       name TEXT,
       email TEXT,
       address TEXT,
-      contact TEXT,
+      contact INTEGER,
       createdAt TEXT,
       updatedAt TEXT
     )
