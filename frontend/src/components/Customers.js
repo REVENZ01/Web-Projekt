@@ -2,39 +2,59 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../CSS/Customers.css";
-import EditCustomer from "./EditCustomer.js"; // Importiere die Edit-Modal-Komponente
-import { getAuthValue } from "./Header"; // Korrekt importieren
+import EditCustomer from "./EditCustomer.js"; // Importiere die Komponente zum Bearbeiten eines Kunden
+import { getAuthValue } from "./Header"; // Importiere die Funktion zur Authentifizierung
 
+/**
+ * Komponente Customers
+ * Zeigt eine Liste von Kunden und deren zugehörige Angebote an.
+ * Ermöglicht das Hinzufügen, Bearbeiten, Löschen und Filtern von Kunden.
+ *
+ * Props:
+ * - userGroup: Die Benutzergruppe des aktuell angemeldeten Nutzers (für Authentifizierung)
+ * - onShowOfferDetail: Callback, um Detailansichten von Angeboten anzuzeigen
+ */
 const Customers = ({ userGroup, onShowOfferDetail }) => {
+  // State zur Speicherung der Kundenliste
   const [customers, setCustomers] = useState([]);
-  const [offers, setOffers] = useState([]); // Neuer State für Angebote
+  // State zur Speicherung der Angebote (Offers)
+  const [offers, setOffers] = useState([]);
+  // State für den aktuell ausgewählten Kunden (zur Bearbeitung)
   const [selectedCustomer, setSelectedCustomer] = useState(null);
+  // State für ein neues Kundenformular
   const [newCustomer, setNewCustomer] = useState({
     name: "",
     email: "",
     address: "",
     contact: "",
   });
-  // State für aufgeklappte Kunden (zur Anzeige der zugehörigen Offers)
+  // State für IDs der Kunden, deren Angebote aktuell angezeigt werden (Detailansicht)
   const [expandedCustomerIds, setExpandedCustomerIds] = useState([]);
 
-  // Zustände für die Filterung
+  // States für Filter-Felder
   const [filterCustomer, setFilterCustomer] = useState({
     name: "",
     email: "",
     address: "",
     contact: "",
   });
+  // State, ob der Filterbereich angezeigt wird oder nicht
   const [showFilters, setShowFilters] = useState(false);
 
+  // Hole den Authentifizierungswert anhand der Benutzergruppe
   const authValue = getAuthValue(userGroup);
 
+  // Beim Laden der Komponente (oder wenn sich die Benutzergruppe ändert),
+  // werden Kunden und Angebote vom Server abgerufen.
   useEffect(() => {
     fetchCustomers();
     fetchOffers();
   }, [userGroup]);
 
-  // Holt alle Kunden
+  /**
+   * Ruft die Kunden vom Server ab.
+   * Optional können Filterkriterien übergeben werden.
+   */
   const fetchCustomers = async (filters = {}) => {
     try {
       const response = await axios.get("http://localhost:8080/customers", {
@@ -47,7 +67,9 @@ const Customers = ({ userGroup, onShowOfferDetail }) => {
     }
   };
 
-  // Holt alle Angebote
+  /**
+   * Ruft alle Angebote vom Server ab.
+   */
   const fetchOffers = async () => {
     try {
       const response = await axios.get("http://localhost:8080/offers", {
@@ -59,13 +81,17 @@ const Customers = ({ userGroup, onShowOfferDetail }) => {
     }
   };
 
+  /**
+   * Fügt einen neuen Kunden hinzu.
+   * Validiert, ob die Email ein "@" enthält und ob der Contact eine gültige Ganzzahl ist.
+   */
   const handleAddCustomer = async () => {
-    // Prüfen, ob in der Email ein "@" enthalten ist
+    // Email muss ein "@" enthalten
     if (!newCustomer.email.includes("@")) {
       alert("Die Email-Adresse muss ein '@' enthalten.");
       return;
     }
-    // Validierung: Contact muss eine gültige Ganzzahl sein
+    // Contact muss eine gültige Ganzzahl sein
     const contactValue = parseInt(newCustomer.contact, 10);
     if (isNaN(contactValue)) {
       alert("Das Contact-Feld muss eine gültige Ganzzahl sein.");
@@ -78,24 +104,34 @@ const Customers = ({ userGroup, onShowOfferDetail }) => {
         payload,
         { headers: { Authorization: authValue } }
       );
+      // Füge den neu erstellten Kunden zur Liste hinzu
       setCustomers([...customers, response.data]);
+      // Setze das Formular zurück
       setNewCustomer({ name: "", email: "", address: "", contact: "" });
     } catch (error) {
       console.error("Error adding customer:", error);
     }
   };
 
+  /**
+   * Löscht einen Kunden anhand der ID.
+   */
   const handleDeleteCustomer = async (id) => {
     try {
       await axios.delete(`http://localhost:8080/customers/${id}`, {
         headers: { Authorization: authValue },
       });
+      // Aktualisiere den State, indem der gelöschte Kunde entfernt wird
       setCustomers(customers.filter((customer) => customer.id !== id));
     } catch (error) {
       console.error("Error deleting customer:", error);
     }
   };
 
+  /**
+   * Aktualisiert einen Kunden.
+   * Wird beim Speichern der Bearbeitungen in der EditCustomer-Modal-Komponente aufgerufen.
+   */
   const handleUpdateCustomer = async (updatedCustomer) => {
     try {
       const response = await axios.put(
@@ -104,27 +140,38 @@ const Customers = ({ userGroup, onShowOfferDetail }) => {
         { headers: { Authorization: authValue } }
       );
       const updatedData = response.data;
+      // Ersetze den alten Kundeneintrag mit dem aktualisierten
       setCustomers(
         customers.map((customer) =>
           customer.id === updatedData.id ? updatedData : customer
         )
       );
-      setSelectedCustomer(null);
+      setSelectedCustomer(null); // Schließe die Edit-Modal
     } catch (error) {
       console.error("Error updating customer:", error);
     }
   };
 
+  /**
+   * Filtert die Kunden anhand der eingegebenen Filterkriterien.
+   */
   const handleFilterCustomers = () => {
     fetchCustomers(filterCustomer);
   };
 
+  /**
+   * Löscht die Filterkriterien und ruft alle Kunden erneut ab.
+   */
   const handleClearFilter = () => {
     setFilterCustomer({ name: "", email: "", address: "", contact: "" });
     fetchCustomers({});
   };
 
-  // Berechne für einen Kunden die Summe aller zugeordneten Angebote.
+  /**
+   * Berechnet die Summe der Preise aller Angebote eines bestimmten Kunden.
+   * @param {string} customerId - Die ID des Kunden.
+   * @returns {number} Die Summe der Angebote.
+   */
   const getOfferSumForCustomer = (customerId) => {
     const customerOffers = offers.filter(
       (offer) => offer.customerId === customerId
@@ -132,14 +179,19 @@ const Customers = ({ userGroup, onShowOfferDetail }) => {
     return customerOffers.reduce((sum, offer) => sum + Number(offer.price), 0);
   };
 
-  // Erstelle eine sortierte Kundenliste: Kunde mit höchster Angebotssumme oben
+  /**
+   * Sortiert die Kunden so, dass der Kunde mit der höchsten Angebotssumme oben steht.
+   */
   const sortedCustomers = [...customers].sort((a, b) => {
     const sumA = getOfferSumForCustomer(a.id);
     const sumB = getOfferSumForCustomer(b.id);
     return sumB - sumA;
   });
 
-  // Toggle-Funktion für die Detailansicht zu einem Kunden
+  /**
+   * Wechselt den Zustand, ob die Angebote eines Kunden angezeigt werden.
+   * @param {string} customerId - Die ID des Kunden.
+   */
   const toggleCustomerOffers = (customerId) => {
     if (expandedCustomerIds.includes(customerId)) {
       setExpandedCustomerIds(expandedCustomerIds.filter((id) => id !== customerId));
@@ -151,6 +203,7 @@ const Customers = ({ userGroup, onShowOfferDetail }) => {
   return (
     <div className="container mt-4">
       <h1>Customers</h1>
+      {/* Formular zum Hinzufügen eines neuen Kunden */}
       <div className="customer-form mb-4">
         <h2>Add a New Customer</h2>
         <input
@@ -197,9 +250,11 @@ const Customers = ({ userGroup, onShowOfferDetail }) => {
           Add Customer
         </button>
       </div>
+
+      {/* Liste der Kunden */}
       <div className="customer-list">
         <h2>Customer List</h2>
-        {/* Button zum Ein-/Ausblenden des Filterbereichs */}
+        {/* Button zum Anzeigen bzw. Verbergen des Filterbereichs */}
         <div className="mb-3">
           <button
             className="btn btn-outline-primary"
@@ -208,6 +263,7 @@ const Customers = ({ userGroup, onShowOfferDetail }) => {
             {showFilters ? "Hide Filters" : "Show Filters"}
           </button>
         </div>
+        {/* Filterbereich */}
         {showFilters && (
           <div
             className="mb-3 d-flex gap-2"
@@ -274,6 +330,7 @@ const Customers = ({ userGroup, onShowOfferDetail }) => {
             </button>
           </div>
         )}
+        {/* Anzeige der Kundenliste */}
         {sortedCustomers.length > 0 ? (
           <table className="table table-striped">
             <thead>
@@ -298,6 +355,7 @@ const Customers = ({ userGroup, onShowOfferDetail }) => {
                     <td>{customer.contact}</td>
                     <td>{getOfferSumForCustomer(customer.id)}</td>
                     <td>
+                      {/* Button zum Umschalten der Angebotsansicht */}
                       <button
                         className="btn btn-secondary btn-sm me-2"
                         onClick={() => toggleCustomerOffers(customer.id)}
@@ -306,12 +364,14 @@ const Customers = ({ userGroup, onShowOfferDetail }) => {
                           ? "Hide Offers"
                           : "Show Offers"}
                       </button>
+                      {/* Button zum Bearbeiten eines Kunden */}
                       <button
                         className="btn btn-secondary btn-sm me-2"
                         onClick={() => setSelectedCustomer(customer)}
                       >
                         Edit
                       </button>
+                      {/* Button zum Löschen eines Kunden */}
                       <button
                         className="btn btn-danger btn-sm"
                         onClick={() => handleDeleteCustomer(customer.id)}
@@ -320,6 +380,7 @@ const Customers = ({ userGroup, onShowOfferDetail }) => {
                       </button>
                     </td>
                   </tr>
+                  {/* Detailansicht: Anzeigen der Angebote eines Kunden */}
                   {expandedCustomerIds.includes(customer.id) && (
                     <tr>
                       <td colSpan="7">
@@ -374,7 +435,7 @@ const Customers = ({ userGroup, onShowOfferDetail }) => {
         )}
       </div>
 
-      {/* Integriere die EditCustomer-Modal-Komponente */}
+      {/* Anzeige des EditCustomer-Modals zum Bearbeiten eines Kunden */}
       {selectedCustomer && (
         <EditCustomer
           customer={selectedCustomer}
@@ -387,6 +448,7 @@ const Customers = ({ userGroup, onShowOfferDetail }) => {
 };
 
 export default Customers;
+
 
 
 

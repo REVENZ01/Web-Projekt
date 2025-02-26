@@ -1,9 +1,14 @@
-// src/components/Header.js
 import React, { useState, useEffect } from "react";
 import "../CSS/Header.css"; // Für die Stilgestaltung
 import { seedAllData } from "./seedData"; // Importieren der Seed-Funktion
 
-// Funktion zur Generierung des Auth-Header-Werts basierend auf der User-Gruppe
+/**
+ * getAuthValue
+ * Erzeugt den Auth-Header-Wert basierend auf der übergebenen User-Gruppe.
+ *
+ * @param {string} group - Die User-Gruppe.
+ * @returns {string} Den entsprechenden Auth-Header-Wert.
+ */
 export const getAuthValue = (group) => {
   switch (group) {
     case "Basic Account-Manager":
@@ -17,6 +22,13 @@ export const getAuthValue = (group) => {
   }
 };
 
+/**
+ * Header
+ * Hauptkomponente für den Seitenheader, der Navigation, Benutzergruppen-Auswahl und den Seed Data Button umfasst.
+ *
+ * @param {Object} props - Enthält onGroupChange, onNavigate und userGroup.
+ * @returns {JSX.Element} Das gerenderte Header-Element.
+ */
 const Header = ({ onGroupChange, onNavigate, userGroup }) => {
   const [selectedGroup, setSelectedGroup] = useState(userGroup || "Basic User");
 
@@ -30,7 +42,10 @@ const Header = ({ onGroupChange, onNavigate, userGroup }) => {
     onGroupChange(group);
   };
 
-  // Handler zum direkten Aufruf der Seed-Funktion, ohne Navigation
+  /**
+   * handleSeedData
+   * Ruft die Seed-Funktion auf, um Testdaten zu erzeugen, und lädt die Seite anschließend neu.
+   */
   const handleSeedData = async () => {
     try {
       await seedAllData(selectedGroup);
@@ -44,7 +59,9 @@ const Header = ({ onGroupChange, onNavigate, userGroup }) => {
   return (
     <header className="header">
       <div className="logo">
-        <a href="/"><img class="homebild" src="/Prismarin.gif" alt="Prismarin" /></a>
+        <a href="/">
+          <img className="homebild" src="/Prismarin.gif" alt="Prismarin" />
+        </a>
       </div>
 
       <nav className="main-nav">
@@ -54,10 +71,16 @@ const Header = ({ onGroupChange, onNavigate, userGroup }) => {
         <button className="buttonHeader" onClick={() => onNavigate("offers")}>
           Offers
         </button>
-        <button className="buttonHeader" onClick={() => onNavigate("customers")}>
+        <button
+          className="buttonHeader"
+          onClick={() => onNavigate("customers")}
+        >
           Customers
         </button>
-        <button className="buttonHeader" onClick={() => onNavigate("tag-search")}>
+        <button
+          className="buttonHeader"
+          onClick={() => onNavigate("tag-search")}
+        >
           Tag Search
         </button>
       </nav>

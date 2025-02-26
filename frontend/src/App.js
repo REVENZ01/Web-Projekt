@@ -1,40 +1,42 @@
+// Grundlegende Importe für die Anwendung
 import React, { useState } from "react";
 import OffersList from "./components/OffersList";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import Customers from "./components/Customers";
 import Home from "./components/Home";
-import TagSearchPage from "./components/TagSearchPage"; // Neue Komponente
+import TagSearchPage from "./components/TagSearchPage";
 import "./App.css";
 
 function App() {
+  // Zentrale State-Verwaltung für Benutzergruppe, aktuelle Seite und anzuzeigendes Angebot
   const [userGroup, setUserGroup] = useState("Basic User");
   const [currentPage, setCurrentPage] = useState("home");
   const [offerToShow, setOfferToShow] = useState(null);
 
-  // Funktion zur Benutzergruppenänderung
+  // Handler für Benutzergruppen-Wechsel
   const handleGroupChange = (group) => {
     setUserGroup(group);
     console.log(`Selected User Group: ${group}`);
   };
 
-  // Funktion zur Navigation
+  // Handler für Seitennavigation
   const handleNavigation = (page) => {
     setCurrentPage(page);
   };
 
-  // Funktion, um von Customers zur Detailansicht eines Offers zu navigieren
+  // Handler für Detailansicht von Angeboten aus der Kundenliste
   const handleShowOfferDetail = (offer) => {
     setOfferToShow(offer);
     setCurrentPage("offers");
   };
 
-  // Reset für das globale Offer (wird beim Schließen der Detailansicht aufgerufen)
+  // Zurücksetzen des ausgewählten Angebots
   const resetOfferToShow = () => {
     setOfferToShow(null);
   };
 
-  // Seitenrendering basierend auf currentPage
+  // Zentrale Routing-Logik für Seitenauswahl
   const renderPage = () => {
     switch (currentPage) {
       case "home":
@@ -61,6 +63,7 @@ function App() {
     }
   };
 
+  // Haupt-Rendering der Anwendung mit Header, Content und Footer
   return (
     <div className="App">
       <Header onGroupChange={handleGroupChange} onNavigate={handleNavigation} />

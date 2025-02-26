@@ -1,24 +1,32 @@
 // textDataModal.js
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Modal, Button, Form } from "react-bootstrap";
-import { getAuthValue } from "./Header"; // Falls du Auth-Logik verwendest
+import { getAuthValue } from "./Header";
 
+/**
+ * TextDataModal
+ * Anzeige eines Modals für den Datei-Upload und das Tag-Management zu einem Angebot.
+ *
+ * @param {Object} props - Enthält offer, onClose und userGroup.
+ */
 const TextDataModal = ({ offer, onClose, userGroup }) => {
   const authValue = getAuthValue(userGroup);
   const [files, setFiles] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
   const [error, setError] = useState("");
 
-  // Zustände für das Tag-Management
   const [activeTagFileId, setActiveTagFileId] = useState(null);
-  const [fileTags, setFileTags] = useState([]); // Aktuelle Tags des aktiven Dokuments
+  const [fileTags, setFileTags] = useState([]);
   const [newTag, setNewTag] = useState("");
   const [editingTagId, setEditingTagId] = useState(null);
   const [editedTagText, setEditedTagText] = useState("");
   const [tagError, setTagError] = useState("");
 
-  // Lädt die Dateien für das Angebot
+  /**
+   * Ruft die Dateien für das gegebene Angebot vom Server ab.
+   */
   const fetchFiles = async () => {
     try {
       const response = await axios.get(
@@ -36,10 +44,16 @@ const TextDataModal = ({ offer, onClose, userGroup }) => {
     fetchFiles();
   }, [offer.id]);
 
+  /**
+   * Aktualisiert den State, wenn eine Datei ausgewählt wird.
+   */
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
   };
 
+  /**
+   * Führt den Upload der ausgewählten .txt-Datei durch.
+   */
   const handleUpload = async () => {
     if (!selectedFile) {
       setError("Bitte wählen Sie eine Datei aus.");
@@ -65,7 +79,11 @@ const TextDataModal = ({ offer, onClose, userGroup }) => {
     }
   };
 
-  // Tag-Management Funktionen
+  /**
+   * Lädt die Tags für eine bestimmte Datei.
+   *
+   * @param {number} fileId - Die ID der Datei.
+   */
   const fetchTags = async (fileId) => {
     try {
       const response = await axios.get(
@@ -79,6 +97,11 @@ const TextDataModal = ({ offer, onClose, userGroup }) => {
     }
   };
 
+  /**
+   * Öffnet den Tag-Manager für eine spezifische Datei und lädt die zugehörigen Tags.
+   *
+   * @param {number} fileId - Die ID der Datei.
+   */
   const handleOpenTagManager = (fileId) => {
     setActiveTagFileId(fileId);
     setNewTag("");
@@ -88,6 +111,9 @@ const TextDataModal = ({ offer, onClose, userGroup }) => {
     fetchTags(fileId);
   };
 
+  /**
+   * Schließt den Tag-Manager und setzt alle zugehörigen States zurück.
+   */
   const handleCloseTagManager = () => {
     setActiveTagFileId(null);
     setFileTags([]);
@@ -97,6 +123,9 @@ const TextDataModal = ({ offer, onClose, userGroup }) => {
     setTagError("");
   };
 
+  /**
+   * Fügt der aktiven Datei einen neuen Tag hinzu.
+   */
   const handleAddTag = async () => {
     if (!newTag.trim()) return;
     try {
@@ -113,6 +142,11 @@ const TextDataModal = ({ offer, onClose, userGroup }) => {
     }
   };
 
+  /**
+   * Bearbeitet einen bestehenden Tag.
+   *
+   * @param {number} tagId - Die ID des zu bearbeitenden Tags.
+   */
   const handleEditTag = async (tagId) => {
     if (!editedTagText.trim()) return;
     try {
@@ -130,6 +164,11 @@ const TextDataModal = ({ offer, onClose, userGroup }) => {
     }
   };
 
+  /**
+   * Löscht einen bestehenden Tag.
+   *
+   * @param {number} tagId - Die ID des zu löschenden Tags.
+   */
   const handleDeleteTag = async (tagId) => {
     try {
       await axios.delete(
@@ -161,7 +200,6 @@ const TextDataModal = ({ offer, onClose, userGroup }) => {
         <h5>📂 Hochgeladene Dateien</h5>
         <ul className="list-group">
           {files.map((file) => {
-            // Berechne die Anzahl der Tags anhand der JSON-kodierten Zeichenkette in file.tag
             let tagCount = 0;
             try {
               tagCount = JSON.parse(file.tag || "[]").length;
@@ -195,16 +233,23 @@ const TextDataModal = ({ offer, onClose, userGroup }) => {
                     ) : (
                       <ul className="list-group w-100">
                         {fileTags.map((tag) => (
-                          <li key={tag.id} className="list-group-item d-flex align-items-center w-100">
+                          <li
+                            key={tag.id}
+                            className="list-group-item d-flex align-items-center w-100"
+                          >
                             {editingTagId === tag.id ? (
                               <Form.Control
                                 type="text"
                                 value={editedTagText}
-                                onChange={(e) => setEditedTagText(e.target.value)}
+                                onChange={(e) =>
+                                  setEditedTagText(e.target.value)
+                                }
                                 className="me-2 flex-grow-1"
                               />
                             ) : (
-                              <span className="me-2 flex-grow-1">{tag.text}</span>
+                              <span className="me-2 flex-grow-1">
+                                {tag.text}
+                              </span>
                             )}
                             {editingTagId === tag.id ? (
                               <Button
@@ -246,11 +291,19 @@ const TextDataModal = ({ offer, onClose, userGroup }) => {
                         value={newTag}
                         onChange={(e) => setNewTag(e.target.value)}
                       />
-                      <Button variant="primary" className="ms-2" onClick={handleAddTag}>
+                      <Button
+                        variant="primary"
+                        className="ms-2"
+                        onClick={handleAddTag}
+                      >
                         Hinzufügen
                       </Button>
                     </div>
-                    <Button variant="secondary" className="mt-2" onClick={handleCloseTagManager}>
+                    <Button
+                      variant="secondary"
+                      className="mt-2"
+                      onClick={handleCloseTagManager}
+                    >
                       Schließen
                     </Button>
                   </div>

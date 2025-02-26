@@ -1,4 +1,4 @@
-const authorize = require("../authorization/authorization");
+const authorize = require("../Authorization/Authorization");
 const db = require("../db");
 
 // Promise-basierte Wrapper für SQLite-Methoden

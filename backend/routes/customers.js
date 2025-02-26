@@ -1,4 +1,4 @@
-const authorize = require("../authorization/authorization");
+const authorize = require("../Authorization/Authorization");
 const db = require("../db");
 
 // Hilfsfunktionen, um die Callback-basierten SQLite-Methoden in Promises zu kapseln

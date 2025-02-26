@@ -1,10 +1,16 @@
-// TagSearchPage.js
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Container, Form, Button, Table, Alert } from "react-bootstrap";
 import { getAuthValue } from "./Header"; // Falls Auth-Logik verwendet wird
-import "../CSS/TagSearchPage.css"
+import "../CSS/TagSearchPage.css";
 
+/**
+ * TagSearchPage
+ * Komponente zur Suche nach Dateien anhand von Tags.
+ * Ermöglicht das Starten einer Suche, das Polling des Suchstatus und das Anzeigen der Ergebnisse.
+ *
+ * @param {Object} props - Enthält userGroup zur Authentifizierung.
+ */
 const TagSearchPage = ({ userGroup }) => {
   const authValue = getAuthValue(userGroup);
   const [tagInput, setTagInput] = useState("");
@@ -14,9 +20,12 @@ const TagSearchPage = ({ userGroup }) => {
   const [result, setResult] = useState([]);
   const [error, setError] = useState("");
 
-  // Starte die Suche mit den Flags für Teilstring- und case-insensitive Suche.
+  /**
+   * handleSearch
+   * Startet die Suche nach Dateien mit den eingegebenen, kommagetrennten Tags.
+   * Sendet eine POST-Anfrage, speichert die Task-ID und setzt den Status auf "Pending".
+   */
   const handleSearch = async () => {
-    // Tags parsen: Kommagetrennte Eingabe in ein Array umwandeln
     const tags = tagInput
       .split(",")
       .map((tag) => tag.trim())
@@ -35,7 +44,6 @@ const TagSearchPage = ({ userGroup }) => {
         { tags, substring: true, caseInsensitive: true },
         { headers: { Authorization: authValue } }
       );
-      // Erhalte die Task ID und starte das Polling
       setTaskId(response.data.taskId);
     } catch (err) {
       console.error("Fehler beim Starten der Suche:", err);
@@ -44,7 +52,11 @@ const TagSearchPage = ({ userGroup }) => {
     }
   };
 
-  // Polling: Alle 5 Sekunden den Status der Long Running Operation abfragen.
+  /**
+   * useEffect (Polling)
+   * Fragt alle 5 Sekunden den Status der Long Running Operation ab.
+   * Sobald der Status "Completed" erreicht ist, werden die Suchergebnisse abgerufen und angezeigt.
+   */
   useEffect(() => {
     let intervalId;
     if (taskId && searchStatus === "Pending") {
@@ -54,7 +66,6 @@ const TagSearchPage = ({ userGroup }) => {
             `http://localhost:8080/tags/search/${taskId}`,
             { headers: { Authorization: authValue } }
           );
-          // Ist der Status "Completed", ist das Ergebnis verfügbar
           if (response.data.status === "Completed") {
             setResult(response.data.result);
             setSearchStatus("Completed");
@@ -72,7 +83,10 @@ const TagSearchPage = ({ userGroup }) => {
     return () => clearInterval(intervalId);
   }, [taskId, searchStatus, authValue]);
 
-  // Reset der Suche für einen neuen Suchlauf
+  /**
+   * handleNewSearch
+   * Setzt alle States zurück, um eine neue Suche zu starten.
+   */
   const handleNewSearch = () => {
     setTagInput("");
     setTaskId(null);
@@ -83,7 +97,7 @@ const TagSearchPage = ({ userGroup }) => {
   };
 
   return (
-    <Container className="mt-4" style={{marginBottom: "15rem"}}>
+    <Container className="mt-4" style={{ marginBottom: "15rem" }}>
       <h2>Suche nach Dateien über Tags</h2>
       {error && <Alert variant="danger">{error}</Alert>}
       <Form>
@@ -105,7 +119,6 @@ const TagSearchPage = ({ userGroup }) => {
           style={{
             backgroundColor:
               isSearching || !tagInput.trim() ? "lightgrey" : undefined,
-            // Optional: Weitere Anpassungen wie borderColor oder color
           }}
         >
           Suche starten
@@ -151,7 +164,7 @@ const TagSearchPage = ({ userGroup }) => {
               </tbody>
             </Table>
           )}
-          <Button variant="secondary" onClick={handleNewSearch} >
+          <Button variant="secondary" onClick={handleNewSearch}>
             Neue Suche
           </Button>
         </div>

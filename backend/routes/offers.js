@@ -1,47 +1,54 @@
 // offers.js (Backend)
-const authorize = require("../authorization/authorization");
+
+// Importiere Autorisierungs-Middleware und Datenbank-Verbindung
+const authorize = require("../Authorization/Authorization");
 const db = require("../db");
+
+// Erlaubte Status-Werte für Angebote
 const VALID_STATUSES = ["Draft", "In Progress", "Active", "On Ice"];
 
-// Promise-basierte Wrapper für SQLite-Methoden
+/**
+ * Führt eine SQL-Anweisung aus, die keine Daten zurückgibt.
+ * Nutzt einen Promise-Wrapper für die SQLite-Methode.
+ */
 function run(sql, params = []) {
   return new Promise((resolve, reject) => {
     db.run(sql, params, function (err) {
-      if (err) {
-        reject(err);
-      } else {
-        resolve({ lastID: this.lastID, changes: this.changes });
-      }
+      if (err) reject(err);
+      else resolve({ lastID: this.lastID, changes: this.changes });
     });
   });
 }
 
+/**
+ * Führt eine SQL-Abfrage aus und gibt alle Zeilen zurück.
+ */
 function all(sql, params = []) {
   return new Promise((resolve, reject) => {
     db.all(sql, params, (err, rows) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(rows);
-      }
+      if (err) reject(err);
+      else resolve(rows);
     });
   });
 }
 
+/**
+ * Führt eine SQL-Abfrage aus und gibt eine einzelne Zeile zurück.
+ */
 function get(sql, params = []) {
   return new Promise((resolve, reject) => {
     db.get(sql, params, (err, row) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(row);
-      }
+      if (err) reject(err);
+      else resolve(row);
     });
   });
 }
 
+/**
+ * Definiert alle Routen für Angebote.
+ */
 async function offersRoutes(fastify, options) {
-  // Globaler Hook: Löscht Angebote, deren customerId in der customers-Tabelle nicht vorhanden ist.
+  // Vor jeder Anfrage: Lösche Angebote mit ungültiger customerId
   fastify.addHook("onRequest", async (request, reply) => {
     try {
       await run("DELETE FROM offers WHERE customerId NOT IN (SELECT id FROM customers)");
@@ -50,7 +57,7 @@ async function offersRoutes(fastify, options) {
     }
   });
 
-  // GET /offers – Mit Filterung via Query-Parameter (name, price, status)
+  // GET /offers – Alle Angebote abrufen, optional nach name, price oder status filtern
   fastify.get(
     "/",
     { preHandler: authorize(["Account-Manager", "Developer", "User"]) },
@@ -82,7 +89,7 @@ async function offersRoutes(fastify, options) {
     }
   );
 
-  // POST /offers – Neues Angebot anlegen mit fortlaufender ID
+  // POST /offers – Neues Angebot erstellen
   fastify.post(
     "/",
     { preHandler: authorize(["Account-Manager", "Developer"]) },
@@ -91,7 +98,7 @@ async function offersRoutes(fastify, options) {
         const { name, description, price, currency, customerId, status } = request.body;
         const now = new Date().toISOString();
 
-        // Ermittlung der aktuell höchsten ID in der Tabelle
+        // Bestimme die nächste freie ID
         const result = await get("SELECT MAX(CAST(id AS INTEGER)) as maxId FROM offers");
         const newId = result && result.maxId ? (parseInt(result.maxId, 10) + 1).toString() : "1";
 
@@ -110,7 +117,7 @@ async function offersRoutes(fastify, options) {
     }
   );
 
-  // PUT /offers/:id – Angebot aktualisieren
+  // PUT /offers/:id – Bestehendes Angebot aktualisieren
   fastify.put(
     "/:id",
     { preHandler: authorize(["Account-Manager", "Developer"]) },
@@ -124,6 +131,7 @@ async function offersRoutes(fastify, options) {
           return;
         }
 
+        // Neue Werte übernehmen oder vorhandene beibehalten
         const updatedName = updatedOfferData.name || offer.name;
         const updatedDescription = updatedOfferData.description || offer.description;
         const updatedPrice = updatedOfferData.price || offer.price;
@@ -184,7 +192,7 @@ async function offersRoutes(fastify, options) {
     }
   );
 
-  // PATCH /offers/:id/status – Status-Übergang mit Validierung
+  // PATCH /offers/:id/status – Ändere den Status eines Angebots (mit Validierung)
   fastify.patch(
     "/:id/status",
     { preHandler: authorize(["Account-Manager", "User"]) },
@@ -193,16 +201,18 @@ async function offersRoutes(fastify, options) {
         const { id } = request.params;
         const { newStatus } = request.body;
 
-        fastify.log.info(`Received status update request for offer ID: ${id}, New Status: ${newStatus}`);
+        fastify.log.info(`Status update for offer ID: ${id}, new status: ${newStatus}`);
 
+        // Prüfe, ob die ID eine gültige Zahl ist
         if (!/^\d+$/.test(id)) {
           reply.code(400).send({ message: "Invalid ID format. It must be a number." });
           return;
         }
 
+        // Prüfe, ob der neue Status erlaubt ist
         if (!VALID_STATUSES.includes(newStatus)) {
           reply.code(400).send({
-            message: `Invalid status value. Allowed values are: ${VALID_STATUSES.join(", ")}`
+            message: `Invalid status. Allowed values: ${VALID_STATUSES.join(", ")}`
           });
           return;
         }
@@ -217,7 +227,7 @@ async function offersRoutes(fastify, options) {
         await run("UPDATE offers SET status = ?, updatedAt = ? WHERE id = ?", [newStatus, now, id]);
 
         const updatedOffer = await get("SELECT * FROM offers WHERE id = ?", [id]);
-        fastify.log.info(`Offer ID ${id} successfully updated to status: ${newStatus}`);
+        fastify.log.info(`Offer ID ${id} updated to status: ${newStatus}`);
 
         reply.code(200).send({
           message: "Offer status successfully updated",
@@ -230,7 +240,7 @@ async function offersRoutes(fastify, options) {
     }
   );
 
-  // POST /offers/seed – Fiktive Angebote generieren
+  // POST /offers/seed – Erstelle 10 Testangebote
   fastify.post(
     "/seed",
     { preHandler: authorize(["Account-Manager", "Developer"]) },
@@ -246,7 +256,7 @@ async function offersRoutes(fastify, options) {
           testOffers.push({
             id: i.toString(),
             name: `Test Angebot ${i}`,
-            description: `Dies ist die Beschreibung für Angebot ${i}.`,
+            description: `Beschreibung für Angebot ${i}.`,
             price: price,
             currency: "EUR",
             customerId: randomCustomerId,
@@ -256,8 +266,8 @@ async function offersRoutes(fastify, options) {
           });
         }
 
+        // Alte Angebote löschen und Testangebote einfügen
         await run("DELETE FROM offers");
-
         for (const offer of testOffers) {
           const sql = `
             INSERT INTO offers (id, name, description, price, currency, customerId, status, createdAt, updatedAt)
@@ -315,14 +325,14 @@ async function offersRoutes(fastify, options) {
               currency: "EUR",
               state: "On-Ice",
               name: "Offer 2",
-              hints: ["Toller Kunde sollten wir definitiv gewinnen!"]
+              hints: ["Toller Kunde, den wir gewinnen sollten!"]
             }
           }
         ];
 
         for (const sample of sampleOffers) {
           const { xOffer } = sample;
-          // Konvertierung: hints in description übernehmen, state anpassen (On-Ice => On Ice)
+          // Übertrage "hints" in "description" und passe "state" an
           const convertedOffer = {
             name: xOffer.name,
             description: xOffer.hints && xOffer.hints.length > 0 ? xOffer.hints.join(" ") : "",
@@ -332,7 +342,7 @@ async function offersRoutes(fastify, options) {
             status: xOffer.state === "On-Ice" ? "On Ice" : xOffer.state
           };
 
-          // Ermittlung einer neuen fortlaufenden ID
+          // Bestimme die nächste freie ID
           const result = await get("SELECT MAX(CAST(id AS INTEGER)) as maxId FROM offers");
           const newId = result && result.maxId ? (parseInt(result.maxId, 10) + 1).toString() : "1";
           const now = new Date().toISOString();
@@ -364,6 +374,7 @@ async function offersRoutes(fastify, options) {
 }
 
 module.exports = offersRoutes;
+
 
 
 

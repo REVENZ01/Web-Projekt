@@ -8,11 +8,8 @@ const db = require("../db");
 function run(sql, params = []) {
   return new Promise((resolve, reject) => {
     db.run(sql, params, function (err) {
-      if (err) {
-        reject(err);
-      } else {
-        resolve({ lastID: this.lastID, changes: this.changes });
-      }
+      if (err) reject(err);
+      else resolve({ lastID: this.lastID, changes: this.changes });
     });
   });
 }
@@ -20,11 +17,8 @@ function run(sql, params = []) {
 function get(sql, params = []) {
   return new Promise((resolve, reject) => {
     db.get(sql, params, (err, row) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(row);
-      }
+      if (err) reject(err);
+      else resolve(row);
     });
   });
 }
@@ -32,32 +26,31 @@ function get(sql, params = []) {
 function all(sql, params = []) {
   return new Promise((resolve, reject) => {
     db.all(sql, params, (err, rows) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(rows);
-      }
+      if (err) reject(err);
+      else resolve(rows);
     });
   });
 }
 
-// In-Memory Storage für Long Running Tasks
-// Datenmodell: { id, status (Pending, Completed), payload (Ergebnis), tags, substring, caseInsensitive }
+// In-Memory Storage für lang laufende Aufgaben
+// Datenmodell: { id, status (Pending, Completed), payload, tags, substring, caseInsensitive }
 const tasks = {};
 
-// Hauptfunktion, welche die Routen definiert
+/**
+ * Definiert die Routen für Datei-Uploads, Tag-Verwaltung und lang laufende Tag-Suchen.
+ */
 async function fileRoutes(fastify, options) {
-  // Verzeichnis für die gespeicherten Dateien
+  // Erstelle das Verzeichnis für hochgeladene Dateien, falls es nicht existiert
   const assetsDir = path.join(__dirname, "..", "assets");
   await fs.promises.mkdir(assetsDir, { recursive: true });
 
-  // POST-Endpoint: Datei-Upload für ein Angebot  
-  // Hier wird die Spalte "tag" als leeres JSON-Array initialisiert.
+  // POST /offers/:offerId/files – Datei-Upload für ein Angebot
   fastify.post("/offers/:offerId/files", async (request, reply) => {
     const { offerId } = request.params;
     const data = await request.file();
     const originalName = data.filename;
 
+    // Nur .txt Dateien sind erlaubt
     if (path.extname(originalName).toLowerCase() !== ".txt") {
       reply.status(400).send({ error: "Nur .txt Dateien werden unterstützt." });
       return;
@@ -68,17 +61,18 @@ async function fileRoutes(fastify, options) {
       const storedFileName = `${fileId}.txt`;
       const filePath = path.join(assetsDir, storedFileName);
 
+      // Speichere die Datei auf dem Server
       await pump(data.file, fs.createWriteStream(filePath));
 
       const fileUrl = `/assets/${storedFileName}`;
       const now = new Date().toISOString();
 
-      // In der Datenbank entspricht die Spaltenreihenfolge der Setup-Datei.
+      // Füge die Dateiinformation in die Datenbank ein
+      // "tag" wird als leeres JSON-Array gespeichert
       const insertSql = `
         INSERT INTO textdata (id, originalName, storedName, tag, url, offerId, uploadedAt)
         VALUES (?, ?, ?, ?, ?, ?, ?)
       `;
-      // "tag" initial als leeres JSON-Array speichern.
       await run(insertSql, [fileId, originalName, storedFileName, "[]", fileUrl, offerId, now]);
 
       const newFileEntry = await get("SELECT * FROM textdata WHERE id = ?", [fileId]);
@@ -89,7 +83,7 @@ async function fileRoutes(fastify, options) {
     }
   });
 
-  // GET-Endpoint: Alle Dateien für ein Angebot abrufen
+  // GET /offers/:offerId/files – Alle Dateien eines Angebots abrufen
   fastify.get("/offers/:offerId/files", async (request, reply) => {
     const { offerId } = request.params;
     try {
@@ -104,14 +98,11 @@ async function fileRoutes(fastify, options) {
     }
   });
 
-  // GET-Endpoint: Alle Tags für ein bestimmtes Textdokument abrufen
+  // GET /offers/:offerId/files/:fileId/tags – Alle Tags eines Textdokuments abrufen
   fastify.get("/offers/:offerId/files/:fileId/tags", async (request, reply) => {
     const { offerId, fileId } = request.params;
     try {
-      const file = await get(
-        "SELECT tag FROM textdata WHERE id = ? AND offerId = ?",
-        [fileId, offerId]
-      );
+      const file = await get("SELECT tag FROM textdata WHERE id = ? AND offerId = ?", [fileId, offerId]);
       let tags = [];
       if (file && file.tag) {
         try {
@@ -127,7 +118,7 @@ async function fileRoutes(fastify, options) {
     }
   });
 
-  // POST-Endpoint: Neuen Tag für ein Textdokument hinzufügen
+  // POST /offers/:offerId/files/:fileId/tags – Neuen Tag zu einem Textdokument hinzufügen
   fastify.post("/offers/:offerId/files/:fileId/tags", async (request, reply) => {
     const { offerId, fileId } = request.params;
     const { text } = request.body;
@@ -136,10 +127,7 @@ async function fileRoutes(fastify, options) {
       return;
     }
     try {
-      const file = await get(
-        "SELECT tag FROM textdata WHERE id = ? AND offerId = ?",
-        [fileId, offerId]
-      );
+      const file = await get("SELECT tag FROM textdata WHERE id = ? AND offerId = ?", [fileId, offerId]);
       let tags = [];
       if (file && file.tag) {
         try {
@@ -150,10 +138,7 @@ async function fileRoutes(fastify, options) {
       }
       const newTag = { id: uuidv4(), text: text.trim() };
       tags.push(newTag);
-      await run(
-        "UPDATE textdata SET tag = ? WHERE id = ? AND offerId = ?",
-        [JSON.stringify(tags), fileId, offerId]
-      );
+      await run("UPDATE textdata SET tag = ? WHERE id = ? AND offerId = ?", [JSON.stringify(tags), fileId, offerId]);
       reply.send(newTag);
     } catch (error) {
       fastify.log.error(error);
@@ -161,7 +146,7 @@ async function fileRoutes(fastify, options) {
     }
   });
 
-  // PUT-Endpoint: Einen bestehenden Tag bearbeiten
+  // PUT /offers/:offerId/files/:fileId/tags/:tagId – Einen bestehenden Tag bearbeiten
   fastify.put("/offers/:offerId/files/:fileId/tags/:tagId", async (request, reply) => {
     const { offerId, fileId, tagId } = request.params;
     const { text } = request.body;
@@ -170,10 +155,7 @@ async function fileRoutes(fastify, options) {
       return;
     }
     try {
-      const file = await get(
-        "SELECT tag FROM textdata WHERE id = ? AND offerId = ?",
-        [fileId, offerId]
-      );
+      const file = await get("SELECT tag FROM textdata WHERE id = ? AND offerId = ?", [fileId, offerId]);
       let tags = [];
       if (file && file.tag) {
         try {
@@ -194,10 +176,7 @@ async function fileRoutes(fastify, options) {
         reply.status(404).send({ error: "Tag nicht gefunden." });
         return;
       }
-      await run(
-        "UPDATE textdata SET tag = ? WHERE id = ? AND offerId = ?",
-        [JSON.stringify(tags), fileId, offerId]
-      );
+      await run("UPDATE textdata SET tag = ? WHERE id = ? AND offerId = ?", [JSON.stringify(tags), fileId, offerId]);
       reply.send(updatedTag);
     } catch (error) {
       fastify.log.error(error);
@@ -205,14 +184,11 @@ async function fileRoutes(fastify, options) {
     }
   });
 
-  // DELETE-Endpoint: Einen Tag löschen
+  // DELETE /offers/:offerId/files/:fileId/tags/:tagId – Einen Tag löschen
   fastify.delete("/offers/:offerId/files/:fileId/tags/:tagId", async (request, reply) => {
     const { offerId, fileId, tagId } = request.params;
     try {
-      const file = await get(
-        "SELECT tag FROM textdata WHERE id = ? AND offerId = ?",
-        [fileId, offerId]
-      );
+      const file = await get("SELECT tag FROM textdata WHERE id = ? AND offerId = ?", [fileId, offerId]);
       let tags = [];
       if (file && file.tag) {
         try {
@@ -227,10 +203,7 @@ async function fileRoutes(fastify, options) {
         reply.status(404).send({ error: "Tag nicht gefunden." });
         return;
       }
-      await run(
-        "UPDATE textdata SET tag = ? WHERE id = ? AND offerId = ?",
-        [JSON.stringify(tags), fileId, offerId]
-      );
+      await run("UPDATE textdata SET tag = ? WHERE id = ? AND offerId = ?", [JSON.stringify(tags), fileId, offerId]);
       reply.send({ success: true });
     } catch (error) {
       fastify.log.error(error);
@@ -239,14 +212,15 @@ async function fileRoutes(fastify, options) {
   });
 
   // =====================================================================
-  // Neue Schnittstelle: Verarbeitung von Tags als Long Running Operation
+  // Lang laufende Operation: Suche nach Dateien anhand von Tags
   // =====================================================================
 
   /**
    * POST /tags/search
+   * Startet eine lang laufende Suche, die alle Dateien ermittelt,
+   * die alle angegebenen Tags enthalten.
    * Erwartet im Body: { tags: [ "tag1", "tag2", ... ], substring: boolean, caseInsensitive: boolean }
-   * Startet eine Long Running Operation, die alle Dateien sucht, die alle angegebenen Tags enthalten.
-   * Antwortet sofort mit einem 202 Status Code und einer Task ID.
+   * Antwortet sofort mit einer Task-ID (Status 202).
    */
   fastify.post("/tags/search", async (request, reply) => {
     const { tags, substring, caseInsensitive } = request.body;
@@ -255,15 +229,14 @@ async function fileRoutes(fastify, options) {
       return;
     }
     const taskId = uuidv4();
-    // Task initialisieren mit Status "Pending" und den gesuchten Tags sowie den Suchparametern speichern
     tasks[taskId] = { id: taskId, status: "Pending", payload: null, tags, substring, caseInsensitive };
 
-    // Simuliere eine Long Running Operation (60 Sekunden Verzögerung)
+    // Simuliere eine lang laufende Operation mit 60 Sekunden Verzögerung
     setTimeout(async () => {
       try {
-        // Hole alle Dateien mit Tags aus der Datenbank
+        // Hole alle Dateien aus der Datenbank
         const rows = await all("SELECT id, originalName AS name, url, tag FROM textdata");
-        // Filtere Dateien, die alle angefragten Tags enthalten
+        // Filtere Dateien, die alle gesuchten Tags enthalten
         const matchingFiles = rows.filter(row => {
           let fileTags = [];
           if (row.tag) {
@@ -273,14 +246,14 @@ async function fileRoutes(fastify, options) {
               fileTags = [];
             }
           }
-          // Extrahiere die Tag-Texte aus den gespeicherten Tag-Objekten
+          // Extrahiere die Tag-Texte
           const fileTagTexts = fileTags.map(t => t.text);
 
-          // Filterlogik:
-          // - Wenn substring und caseInsensitive true sind, suche case-insensitive als Teilstring.
-          // - Falls nur substring true ist, suche als Teilstring (case-sensitive).
-          // - Falls nur caseInsensitive true ist, vergleiche case-insensitive auf exakte Übereinstimmung.
-          // - Andernfalls erwarte exakte Übereinstimmung.
+          // Vergleiche basierend auf den Suchoptionen:
+          // - substring und caseInsensitive: Teilstring-Suche, ohne Beachtung der Groß-/Kleinschreibung
+          // - nur substring: Teilstring-Suche (case-sensitive)
+          // - nur caseInsensitive: exakte Übereinstimmung ohne Groß-/Kleinschreibung
+          // - ansonsten: exakte Übereinstimmung
           if (substring && caseInsensitive) {
             return tags.every(searchTag =>
               fileTagTexts.some(fileTag =>
@@ -289,9 +262,7 @@ async function fileRoutes(fastify, options) {
             );
           } else if (substring) {
             return tags.every(searchTag =>
-              fileTagTexts.some(fileTag =>
-                fileTag.includes(searchTag)
-              )
+              fileTagTexts.some(fileTag => fileTag.includes(searchTag))
             );
           } else if (caseInsensitive) {
             return tags.every(searchTag =>
@@ -311,17 +282,17 @@ async function fileRoutes(fastify, options) {
         tasks[taskId].payload = { error: "Fehler bei der Verarbeitung." };
         tasks[taskId].status = "Completed";
       }
-    }, 60000); // 60 Sekunden
+    }, 60000); // 60 Sekunden Verzögerung
 
-    // Sofortige Antwort mit Task ID und Status 202
+    // Sofortige Antwort mit Task-ID und Status 202
     reply.status(202).send({ taskId });
   });
 
   /**
    * GET /tags/search/:taskId
-   * Mit dieser Schnittstelle kann der Client den Status der Long Running Operation abfragen.
-   * - Solange die Operation läuft, wird ein 202 Status Code mit dem aktuellen Status zurückgegeben.
-   * - Ist die Operation abgeschlossen, wird ein 200 Status Code mit dem Ergebnis (Liste der Dateien) geliefert.
+   * Mit diesem Endpunkt kann der Status der lang laufenden Suche abgefragt werden.
+   * - Läuft die Suche noch, wird mit Status 202 geantwortet.
+   * - Bei Abschluss wird das Ergebnis mit Status 200 zurückgegeben.
    */
   fastify.get("/tags/search/:taskId", async (request, reply) => {
     const { taskId } = request.params;
@@ -331,16 +302,15 @@ async function fileRoutes(fastify, options) {
       return;
     }
     if (task.status !== "Completed") {
-      // Operation läuft noch, Antwort mit Status 202 und aktuellem Task-Status
       reply.status(202).send({ taskId: task.id, status: task.status });
       return;
     }
-    // Operation abgeschlossen, Rückgabe des Ergebnisses mit Status 200
     reply.status(200).send({ taskId: task.id, status: task.status, result: task.payload });
   });
 }
 
 module.exports = fileRoutes;
+
 
 
 
