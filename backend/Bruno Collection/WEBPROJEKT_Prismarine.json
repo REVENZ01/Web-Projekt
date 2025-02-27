@@ -1,0 +1,1640 @@
+{
+  "name": "WEBPROJEKT_Prismarine",
+  "version": "1",
+  "items": [
+    {
+      "type": "folder",
+      "name": "ACCOUNT-MANAGER",
+      "items": [
+        {
+          "type": "folder",
+          "name": "OFFER",
+          "items": [
+            {
+              "type": "http",
+              "name": "POST offer",
+              "seq": 2,
+              "request": {
+                "url": "http://localhost:8080/offers",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Account-Manager",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{ \n   \"name\": \"Test Angebot 2\",\n    \"description\": \"Beschreibung für Angebot 2.\",\n    \"price\": 304,\n    \"currency\": \"EUR\",\n    \"customerId\": \"4\",\n    \"status\": \"Draft\"\n }",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "PUT offer",
+              "seq": 3,
+              "request": {
+                "url": "http://localhost:8080/offers/11",
+                "method": "PUT",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Account-Manager",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": " {   \"name\": \"Peter\",\n    \"description\": \"Hallo\",\n    \"price\": 187,\n    \"currency\": \"EUR\",\n    \"customerId\": \"2\",\n    \"status\": \"Draft\"\n }",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "DELETE offer",
+              "seq": 4,
+              "request": {
+                "url": "http://localhost:8080/offers/12",
+                "method": "DELETE",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Account-Manager",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "PATCH offer",
+              "seq": 5,
+              "request": {
+                "url": "http://localhost:8080/offers/2/status",
+                "method": "PATCH",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Account-Manager",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\"newStatus\": \"Active\"}",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "POST Seed Offer",
+              "seq": 6,
+              "request": {
+                "url": "http://localhost:8080/offers/seed",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Account-Manager",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "[{}]",
+                  "xml": "{\n        const now = new Date().toISOString();\n        const testOffers = [];\n        for (let i = 1; i <= 10; i++) {\n          const price = Math.floor(Math.random() * 901) + 100;\n          const randomStatus = VALID_STATUSES[Math.floor(Math.random() * VALID_STATUSES.length)];\n          const randomCustomerId = String(Math.floor(Math.random() * 5) + 1);\n\n          testOffers.push({\n            id: i.toString(),\n            name: `Test Angebot ${i}`,\n            description: `Beschreibung für Angebot ${i}.`,\n            price: price,\n            currency: \"EUR\",\n            customerId: randomCustomerId,\n            status: randomStatus,\n            createdAt: now,\n            updatedAt: now,\n          });\n        }",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "POST Sample Offer",
+              "seq": 7,
+              "request": {
+                "url": "http://localhost:8080/offers/sample",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Account-Manager",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "[{}]",
+                  "xml": "{\n        const now = new Date().toISOString();\n        const testOffers = [];\n        for (let i = 1; i <= 10; i++) {\n          const price = Math.floor(Math.random() * 901) + 100;\n          const randomStatus = VALID_STATUSES[Math.floor(Math.random() * VALID_STATUSES.length)];\n          const randomCustomerId = String(Math.floor(Math.random() * 5) + 1);\n\n          testOffers.push({\n            id: i.toString(),\n            name: `Test Angebot ${i}`,\n            description: `Beschreibung für Angebot ${i}.`,\n            price: price,\n            currency: \"EUR\",\n            customerId: randomCustomerId,\n            status: randomStatus,\n            createdAt: now,\n            updatedAt: now,\n          });\n        }",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "GET offers",
+              "seq": 1,
+              "request": {
+                "url": "http://localhost:8080/offers",
+                "method": "GET",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Account-Manager",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{ \n\n    \"price\": 7569\n }",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "CUSTOMER",
+          "items": [
+            {
+              "type": "http",
+              "name": "GET customers",
+              "seq": 1,
+              "request": {
+                "url": "http://localhost:8080/customers",
+                "method": "GET",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Account-Manager",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "POST customers",
+              "seq": 2,
+              "request": {
+                "url": "http://localhost:8080/customers",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Account-Manager",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\"name\": \"Test Kunde 1\",\n    \"email\": \"test1@example.com\",\n    \"address\": \"Teststraße 1, Musterstadt\",\n    \"contact\": 123456789}",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "PUT customers",
+              "seq": 3,
+              "request": {
+                "url": "http://localhost:8080/customers/1",
+                "method": "PUT",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Account-Manager",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "   { \"name\": \"LOL Kunde 1\",\n    \"email\": \"test1@LOL.com\",\n    \"address\": \"LOL 1, Musterstadt\",\n    \"contact\": 1234353789}",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "DELETE customers",
+              "seq": 4,
+              "request": {
+                "url": "http://localhost:8080/customers/4",
+                "method": "DELETE",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Account-Manager",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "POST seed customers",
+              "seq": 5,
+              "request": {
+                "url": "http://localhost:8080/customers/seed",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Account-Manager",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "[{}]",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "COMMENTS",
+          "items": [
+            {
+              "type": "http",
+              "name": "GET comments",
+              "seq": 1,
+              "request": {
+                "url": "http://localhost:8080/offers/1/comments",
+                "method": "GET",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Account-Manager",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "POST comment",
+              "seq": 2,
+              "request": {
+                "url": "http://localhost:8080/offers/1/comments",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Account-Manager",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\"text\": \"w3wt4t\"}",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "PUT comment",
+              "seq": 3,
+              "request": {
+                "url": "http://localhost:8080/offers/1/comments/7",
+                "method": "PUT",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Account-Manager",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\"text\": \"LOL\"}",
+                  "xml": "{\"text\": \"LOL\"}",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "DELETE comment",
+              "seq": 4,
+              "request": {
+                "url": "http://localhost:8080/offers/1/comments/6",
+                "method": "DELETE",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Account-Manager",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "FILES_TEXTDATA",
+          "items": [
+            {
+              "type": "http",
+              "name": "POST file",
+              "seq": 1,
+              "request": {
+                "url": "http://localhost:8080/offers/{offer.id}/files",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Account-Manager",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "GET file",
+              "seq": 2,
+              "request": {
+                "url": "http://localhost:8080/offers/{offer.id}/files",
+                "method": "GET",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Account-Manager",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "GET tags",
+              "seq": 3,
+              "request": {
+                "url": "http://localhost:8080/offers/{offer.id}/files/{file.Id}/tags",
+                "method": "GET",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Account-Manager",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "POST tag",
+              "seq": 4,
+              "request": {
+                "url": "http://localhost:8080/offers/{offer.id}/files/{file.id}/tags",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Account-Manager",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "PUT tag",
+              "seq": 5,
+              "request": {
+                "url": "http://localhost:8080/offers/{offer.id}/files/{file.id}/tags/{tag.id}",
+                "method": "PUT",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Account-Manager",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "DELETE tag",
+              "seq": 6,
+              "request": {
+                "url": "http://localhost:8080/offers/{offer.id}/files/{file.id}/tags/{tag.id}",
+                "method": "DELETE",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Account-Manager",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "POST search tag",
+              "seq": 7,
+              "request": {
+                "url": "http://localhost:8080/tags/search",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Account-Manager",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "GET search result tag",
+              "seq": 8,
+              "request": {
+                "url": "http://localhost:8080/tags/search/{task.id}",
+                "method": "GET",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Account-Manager",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "DEVELOPER",
+      "items": [
+        {
+          "type": "folder",
+          "name": "OFFER",
+          "items": [
+            {
+              "type": "http",
+              "name": "GET offers",
+              "seq": 1,
+              "request": {
+                "url": "http://localhost:8080/offers",
+                "method": "GET",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Developer",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "POST offer",
+              "seq": 2,
+              "request": {
+                "url": "http://localhost:8080/offers/",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Developer",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{ \n   \"name\": \"Test Angebot 78\",\n    \"description\": \"Beschreibung für Angebot 8.\",\n    \"price\": 7569,\n    \"currency\": \"EUR\",\n    \"customerId\": \"2\",\n    \"status\": \"Draft\"\n }",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "PUT offer",
+              "seq": 3,
+              "request": {
+                "url": "http://localhost:8080/offers/12",
+                "method": "PUT",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Developer",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{ \n   \"name\": \"Test Angebot 78\",\n    \"description\": \"Beschreibung für Angebot 8.\",\n    \"price\": 759,\n    \"currency\": \"EUR\",\n    \"customerId\": \"2\",\n    \"status\": \"Draft\"\n }",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "POST Seed offer",
+              "seq": 4,
+              "request": {
+                "url": "http://localhost:8080/offers/seed",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Developer",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "[{}]",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "POST Sample offer",
+              "seq": 5,
+              "request": {
+                "url": "http://localhost:8080/offers/sample",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Developer",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "[{}]",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "FILES_TEXTDATA",
+          "items": [
+            {
+              "type": "http",
+              "name": "GET file",
+              "seq": 1,
+              "request": {
+                "url": "http://localhost:8080/offers/{offer.id}/files",
+                "method": "GET",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Developer",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "GET tags",
+              "seq": 2,
+              "request": {
+                "url": "http://localhost:8080/offers/{offer.id}/files/{file.Id}/tags",
+                "method": "GET",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Developer",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "POST search tag",
+              "seq": 3,
+              "request": {
+                "url": "http://localhost:8080/tags/search",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Developer",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "GET search result tag",
+              "seq": 4,
+              "request": {
+                "url": "http://localhost:8080/tags/search/{task.id}",
+                "method": "GET",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Developer",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "CUSTOMER",
+          "items": [
+            {
+              "type": "http",
+              "name": "GET customers",
+              "seq": 1,
+              "request": {
+                "url": "http://localhost:8080/customers",
+                "method": "GET",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Developer",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "POST customers",
+              "seq": 2,
+              "request": {
+                "url": "http://localhost:8080/customers",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Developer",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n  \"name\": \"Test Kunde 1\",\n  \"email\": \"test1@example.com\",\n  \"address\": \"Teststraße 1, Musterstadt\",\n  \"contact\": 123456789\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "PUT customers",
+              "seq": 3,
+              "request": {
+                "url": "http://localhost:8080/customers/1",
+                "method": "PUT",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Developer",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n  \"name\": \"LOL Kunde 1\",\n  \"email\": \"test1@LOL.com\",\n  \"address\": \"LOL 1, Musterstadt\",\n  \"contact\": 1234353789\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "POST seed customers",
+              "seq": 4,
+              "request": {
+                "url": "http://localhost:8080/customers/seed",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Developer",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "[{}]",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "COMMENTS",
+          "items": [
+            {
+              "type": "http",
+              "name": "GET comments",
+              "seq": 1,
+              "request": {
+                "url": "http://localhost:8080/offers/1/comments",
+                "method": "GET",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Developer",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "POST comment",
+              "seq": 2,
+              "request": {
+                "url": "http://localhost:8080/offers/1/comments",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Developer",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\"text\": \"w3wt4t\"}",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "PUT comment",
+              "seq": 3,
+              "request": {
+                "url": "http://localhost:8080/offers/1/comments/7",
+                "method": "PUT",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Developer",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\"text\": \"LOL\"}",
+                  "xml": "{\"text\": \"LOL\"}",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "DELETE comments",
+              "seq": 4,
+              "request": {
+                "url": "http://localhost:8080/offers/1/comments/6",
+                "method": "DELETE",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic Developer",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "USER",
+      "items": [
+        {
+          "type": "folder",
+          "name": "COMMENTS",
+          "items": [
+            {
+              "type": "http",
+              "name": "GET comments",
+              "seq": 1,
+              "request": {
+                "url": "http://localhost:8080/offers/1/comments",
+                "method": "GET",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic User",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "POST comment",
+              "seq": 2,
+              "request": {
+                "url": "http://localhost:8080/offers/1/comments",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic User",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\"text\": \"w3wt4t\"}",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "CUSTOMER",
+          "items": [
+            {
+              "type": "http",
+              "name": "GET customers",
+              "seq": 1,
+              "request": {
+                "url": "http://localhost:8080/customers",
+                "method": "GET",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic User",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "FILES_TEXTDATA",
+          "items": [
+            {
+              "type": "http",
+              "name": "GET file",
+              "seq": 1,
+              "request": {
+                "url": "http://localhost:8080/offers/{offer.id}/files",
+                "method": "GET",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic User",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "GET tags",
+              "seq": 2,
+              "request": {
+                "url": "http://localhost:8080/offers/{offer.id}/files/{file.Id}/tags",
+                "method": "GET",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic User",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "POST tag",
+              "seq": 3,
+              "request": {
+                "url": "http://localhost:8080/offers/{offer.id}/files/{file.id}/tags",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic User",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "PUT tag",
+              "seq": 4,
+              "request": {
+                "url": "http://localhost:8080/offers/{offer.id}/files/{file.id}/tags/{tag.id}",
+                "method": "PUT",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic User",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "POST search tag",
+              "seq": 5,
+              "request": {
+                "url": "http://localhost:8080/tags/search",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic User",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "GET search result tag",
+              "seq": 6,
+              "request": {
+                "url": "http://localhost:8080/tags/search/{task.id}",
+                "method": "GET",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic User",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "OFFER",
+          "items": [
+            {
+              "type": "http",
+              "name": "GET offers",
+              "seq": 1,
+              "request": {
+                "url": "http://localhost:8080/offers",
+                "method": "GET",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic User",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "PATCH offers",
+              "seq": 2,
+              "request": {
+                "url": "http://localhost:8080/offers/12/status",
+                "method": "PATCH",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Basic User",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\"newStatus\": \"On Ice\"}",
+                  "formUrlEncoded": [],
+                  "multipartForm": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "environments": [],
+  "brunoConfig": {
+    "version": "1",
+    "name": "WEBPROJEKT_Prismarine",
+    "type": "collection",
+    "ignore": [
+      "node_modules",
+      ".git"
+    ]
+  }
+}
