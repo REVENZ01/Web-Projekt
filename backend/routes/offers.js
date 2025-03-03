@@ -8,6 +8,8 @@ const db = require("../db");
 const VALID_STATUSES = ["Draft", "In Progress", "Active", "On Ice"];
 
 /**
+ *  * KI-generiert von ChatGPT O-3 mini high: bis Zeile 47. Prompt: „Zeige mit einen Node.js-Codeausschnitt, der einen Promise-Wrapper für  SQLite-Methoden einbaut. Folgende Funktionen sollen vorhanden sein:
+- run, get und all
  * Führt eine SQL-Anweisung aus, die keine Daten zurückgibt.
  * Nutzt einen Promise-Wrapper für die SQLite-Methode.
  */

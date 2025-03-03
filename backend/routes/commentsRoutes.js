@@ -1,39 +1,43 @@
 const authorize = require("../Authorization/Authorization");
 const db = require("../db");
 
-// Promise-basierte Wrapper für SQLite-Methoden
+
+/**
+ * KI-generiert von ChatGPT O-3 mini high: bis Zeile 43. Prompt: „Zeige mit einen Node.js-Codeausschnitt, der einen Promise-Wrapper für  SQLite-Methoden einbaut. Folgende Funktionen sollen vorhanden sein:
+- run, get und all
+
+ * Führt eine SQL-Anweisung aus, die keine Daten zurückgibt.
+ * Nutzt einen Promise-Wrapper für die SQLite-Methode.
+ */
 function run(sql, params = []) {
   return new Promise((resolve, reject) => {
     db.run(sql, params, function (err) {
-      if (err) {
-        reject(err);
-      } else {
-        resolve({ lastID: this.lastID, changes: this.changes });
-      }
+      if (err) reject(err);
+      else resolve({ lastID: this.lastID, changes: this.changes });
     });
   });
 }
 
-function get(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    db.get(sql, params, (err, row) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(row);
-      }
-    });
-  });
-}
-
+/**
+ * Führt eine SQL-Abfrage aus und gibt alle Zeilen zurück.
+ */
 function all(sql, params = []) {
   return new Promise((resolve, reject) => {
     db.all(sql, params, (err, rows) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(rows);
-      }
+      if (err) reject(err);
+      else resolve(rows);
+    });
+  });
+}
+
+/**
+ * Führt eine SQL-Abfrage aus und gibt eine einzelne Zeile zurück.
+ */
+function get(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.get(sql, params, (err, row) => {
+      if (err) reject(err);
+      else resolve(row);
     });
   });
 }

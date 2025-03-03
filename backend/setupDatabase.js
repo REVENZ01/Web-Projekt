@@ -4,6 +4,7 @@ const path = require("path");
 const dbPath = path.join(__dirname, "mydatabase.db");
 
 // Öffne die Datenbank im READWRITE-Modus und erstelle sie, falls sie nicht existiert:
+//KI-generiert mit ChatGPT O3-mini high bis Zeile 18, Prompt: „Schreibe Node.js-Code, der mit sqlite3 die Datenbank öffnet oder erstellt, falls es sie noch nicht gibt und Erfolg bzw. Fehler in der Konsole ausgibt.“
 const db = new sqlite3.Database(
   dbPath,
   sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE,
