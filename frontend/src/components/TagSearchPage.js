@@ -54,7 +54,7 @@ const TagSearchPage = ({ userGroup }) => {
 
   /**
    * useEffect (Polling)
-   * Fragt alle 5 Sekunden den Status der Long Running Operation ab.
+   * Fragt alle 60 Sekunden den Status der Long Running Operation ab.
    * Sobald der Status "Completed" erreicht ist, werden die Suchergebnisse abgerufen und angezeigt.
    */
   useEffect(() => {
@@ -78,7 +78,7 @@ const TagSearchPage = ({ userGroup }) => {
           setIsSearching(false);
           clearInterval(intervalId);
         }
-      }, 5000);
+      }, 60000);
     }
     return () => clearInterval(intervalId);
   }, [taskId, searchStatus, authValue]);
