@@ -11,3 +11,5 @@ Identifier:
 qwtel.sqlite-viewer
 Version:
 0.10.2
+
+Falls die Datenbank neu aufgesetzt werden muss, dann backend im Terminal startern und eingeben: node setupDatabase.js
